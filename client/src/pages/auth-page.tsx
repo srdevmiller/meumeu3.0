@@ -29,7 +29,7 @@ export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
+
   // Redirect if already logged in
   if (user) {
     setLocation("/");
@@ -42,10 +42,12 @@ export default function AuthPage() {
       username: "",
       password: "",
       confirmPassword: "",
+      businessName: "",
+      phone: "",
     },
   });
 
-  const loginForm = useForm<Omit<InsertUser, "confirmPassword">>({
+  const loginForm = useForm<Omit<InsertUser, "confirmPassword" | "businessName" | "phone">>({
     defaultValues: {
       username: "",
       password: "",
@@ -94,6 +96,42 @@ export default function AuthPage() {
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="businessName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome do Estabelecimento</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Nome do seu estabelecimento"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Telefone</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="(00) 00000-0000"
+                              type="tel"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     <FormField
                       control={form.control}
                       name="password"
@@ -125,6 +163,7 @@ export default function AuthPage() {
                         </FormItem>
                       )}
                     />
+
                     <FormField
                       control={form.control}
                       name="confirmPassword"
@@ -158,6 +197,7 @@ export default function AuthPage() {
                         </FormItem>
                       )}
                     />
+
                     <Button
                       type="submit"
                       className="w-full"

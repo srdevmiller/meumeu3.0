@@ -6,6 +6,8 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
+  businessName: text("business_name").notNull(),
+  phone: text("phone").notNull(),
 });
 
 export const categories = pgTable("categories", {
@@ -27,6 +29,8 @@ export const insertUserSchema = createInsertSchema(users)
   .pick({
     username: true,
     password: true,
+    businessName: true,
+    phone: true,
   })
   .extend({
     confirmPassword: z.string(),
