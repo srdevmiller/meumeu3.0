@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProductSchema, type InsertProduct, type Product } from "@shared/schema";
 import { useState, useEffect } from "react";
-import { Upload, Pencil, Trash2, Loader2, Settings } from "lucide-react";
+import { Upload, Pencil, Trash2, Loader2, Settings, Image, ExternalLink } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -261,118 +261,125 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
-        <div className="space-y-4 mb-8">
-          <h1 className="text-3xl font-bold">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-[13px] font-medium">
             Bem-vindo, {user?.businessName}!
           </h1>
-          <div className="flex flex-wrap gap-2">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Editar Perfil
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeaderDialog>
-                  <DialogTitle>Editar Perfil</DialogTitle>
-                  <DialogDescriptionDialog>
-                    Atualize as informações do seu estabelecimento
-                  </DialogDescriptionDialog>
-                </DialogHeaderDialog>
-                <Form {...profileForm}>
-                  <form
-                    onSubmit={profileForm.handleSubmit((data) =>
-                      updateProfileMutation.mutate(data)
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            disabled={logoutMutation.isPending}
+          >
+            Sair
+          </Button>
+        </div>
+
+        <div className="flex gap-2 mb-8">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Settings className="w-4 h-4 mr-2" />
+                Editar Perfil
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeaderDialog>
+                <DialogTitle>Editar Perfil</DialogTitle>
+                <DialogDescriptionDialog>
+                  Atualize as informações do seu estabelecimento
+                </DialogDescriptionDialog>
+              </DialogHeaderDialog>
+              <Form {...profileForm}>
+                <form
+                  onSubmit={profileForm.handleSubmit((data) =>
+                    updateProfileMutation.mutate(data)
+                  )}
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={profileForm.control}
+                    name="businessName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome do Estabelecimento</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
                     )}
-                    className="space-y-4"
+                  />
+                  <FormField
+                    control={profileForm.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefone</FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="submit"
+                    disabled={updateProfileMutation.isPending}
+                    className="w-full"
                   >
-                    <FormField
-                      control={profileForm.control}
-                      name="businessName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Nome do Estabelecimento</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={profileForm.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Telefone</FormLabel>
-                          <FormControl>
-                            <Input {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <Button
-                      type="submit"
-                      disabled={updateProfileMutation.isPending}
-                      className="w-full"
-                    >
-                      {updateProfileMutation.isPending && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      )}
-                      Salvar Alterações
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
-            <Button
-              variant="outline"
-              onClick={() => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = async (e) => {
-                  const file = (e.target as HTMLInputElement).files?.[0];
-                  if (file) {
-                    try {
-                      const optimizedImageUrl = await resizeImage(file);
-                      const res = await apiRequest("PATCH", "/api/user/banner", {
-                        bannerImageUrl: optimizedImageUrl,
-                      });
-                      if (res.ok) {
-                        toast({
-                          title: "Banner atualizado",
-                          description: "A imagem de fundo do seu cardápio foi atualizada com sucesso!",
-                        });
-                        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
-                      }
-                    } catch (error) {
+                    {updateProfileMutation.isPending && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    Salvar Alterações
+                  </Button>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (file) {
+                  try {
+                    const optimizedImageUrl = await resizeImage(file);
+                    const res = await apiRequest("PATCH", "/api/user/banner", {
+                      bannerImageUrl: optimizedImageUrl,
+                    });
+                    if (res.ok) {
                       toast({
-                        title: "Erro ao atualizar banner",
-                        description: "Não foi possível atualizar a imagem de fundo",
-                        variant: "destructive",
+                        title: "Banner atualizado",
+                        description: "A imagem de fundo do seu cardápio foi atualizada com sucesso!",
                       });
+                      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
                     }
+                  } catch (error) {
+                    toast({
+                      title: "Erro ao atualizar banner",
+                      description: "Não foi possível atualizar a imagem de fundo",
+                      variant: "destructive",
+                    });
                   }
-                };
-                input.click();
-              }}
-            >
-              Imagem de Fundo
+                }
+              };
+              input.click();
+            }}
+          >
+            <Image className="w-4 h-4 mr-2" />
+            Imagem de Fundo
+          </Button>
+
+          <Link href={`/menu/${user?.id}`}>
+            <Button variant="outline">
+              <ExternalLink className="w-4 h-4 mr-2" />
+              Ver Cardápio Público
             </Button>
-            <Link href={`/menu/${user?.id}`}>
-              <Button variant="outline">Ver Cardápio Público</Button>
-            </Link>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              disabled={logoutMutation.isPending}
-            >
-              Sair
-            </Button>
-          </div>
+          </Link>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2">
