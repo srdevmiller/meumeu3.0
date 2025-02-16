@@ -47,9 +47,6 @@ export const insertProductSchema = createInsertSchema(products)
     price: true,
     imageUrl: true,
     categoryId: true,
-  })
-  .extend({
-    price: z.string().transform((val) => parseFloat(val)),
   });
 
 // Types

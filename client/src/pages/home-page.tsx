@@ -43,7 +43,7 @@ export default function HomePage() {
     resolver: zodResolver(insertProductSchema),
     defaultValues: {
       name: "",
-      price: "0",
+      price: 0,
       imageUrl: "",
       categoryId: 0,
     },
@@ -174,9 +174,7 @@ export default function HomePage() {
                           step="0.01"
                           placeholder="0.00"
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseFloat(e.target.value))
-                          }
+                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
