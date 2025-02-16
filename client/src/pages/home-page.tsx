@@ -33,6 +33,44 @@ const categories = [
   { id: 3, name: "Tabacaria" },
 ];
 
+const MAX_IMAGE_SIZE = 800; // pixels
+
+function resizeImage(file: File): Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Redimensionar se a imagem for muito grande
+        if (width > MAX_IMAGE_SIZE || height > MAX_IMAGE_SIZE) {
+          if (width > height) {
+            height = (height / width) * MAX_IMAGE_SIZE;
+            width = MAX_IMAGE_SIZE;
+          } else {
+            width = (width / height) * MAX_IMAGE_SIZE;
+            height = MAX_IMAGE_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Converter para JPEG com qualidade reduzida
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(dataUrl);
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
@@ -49,15 +87,20 @@ export default function HomePage() {
     },
   });
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-        form.setValue("imageUrl", reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        const optimizedImageUrl = await resizeImage(file);
+        setImagePreview(optimizedImageUrl);
+        form.setValue("imageUrl", optimizedImageUrl);
+      } catch (error) {
+        toast({
+          title: "Erro ao processar imagem",
+          description: "Não foi possível processar a imagem selecionada",
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -112,7 +155,9 @@ export default function HomePage() {
           <CardContent>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit((data) => createProductMutation.mutate(data))}
+                onSubmit={form.handleSubmit((data) =>
+                  createProductMutation.mutate(data)
+                )}
                 className="space-y-4"
               >
                 <div className="flex justify-center mb-6">
