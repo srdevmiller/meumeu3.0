@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
+import { insertProductSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
@@ -12,8 +13,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const userId = req.user!.id;
 
     try {
+      // Validar os dados recebidos
+      const productData = insertProductSchema.parse(req.body);
+
       const product = await storage.createProduct({
-        ...req.body,
+        ...productData,
         userId,
       });
       res.status(201).json(product);
