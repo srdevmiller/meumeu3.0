@@ -44,9 +44,11 @@ export const insertUserSchema = createInsertSchema(users)
 export const insertProductSchema = createInsertSchema(products)
   .pick({
     name: true,
-    price: true,
     imageUrl: true,
     categoryId: true,
+  })
+  .extend({
+    price: z.number().min(0, "O preço deve ser maior que zero"),
   });
 
 // Types

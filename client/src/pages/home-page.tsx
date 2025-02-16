@@ -112,9 +112,7 @@ export default function HomePage() {
           <CardContent>
             <Form {...form}>
               <form
-                onSubmit={form.handleSubmit((data) =>
-                  createProductMutation.mutate(data)
-                )}
+                onSubmit={form.handleSubmit((data) => createProductMutation.mutate(data))}
                 className="space-y-4"
               >
                 <div className="flex justify-center mb-6">
@@ -165,16 +163,17 @@ export default function HomePage() {
                 <FormField
                   control={form.control}
                   name="price"
-                  render={({ field }) => (
+                  render={({ field: { onChange, ...field } }) => (
                     <FormItem>
                       <FormLabel>Preço</FormLabel>
                       <FormControl>
                         <Input
                           type="number"
                           step="0.01"
+                          min="0"
                           placeholder="0.00"
+                          onChange={(e) => onChange(Number(e.target.value))}
                           {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
                         />
                       </FormControl>
                       <FormMessage />
@@ -228,9 +227,6 @@ export default function HomePage() {
             </Form>
           </CardContent>
         </Card>
-        <p className="text-muted-foreground">
-          Você está logado com sucesso no sistema.
-        </p>
       </div>
     </div>
   );
