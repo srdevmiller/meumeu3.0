@@ -13,9 +13,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const userId = req.user!.id;
 
     try {
-      // Validar os dados recebidos
       const productData = insertProductSchema.parse(req.body);
-
       const product = await storage.createProduct({
         ...productData,
         userId,
@@ -30,6 +28,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const products = await storage.getProducts(req.user!.id);
     res.json(products);
+  });
+
+  // Nova rota para buscar produtos públicos por userId
+  app.get("/api/menu/:userId", async (req, res) => {
+    const userId = parseInt(req.params.userId);
+    try {
+      const products = await storage.getProducts(userId);
+      const user = await storage.getUser(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "Estabelecimento não encontrado" });
+      }
+
+      res.json({ 
+        products,
+        businessName: user.businessName
+      });
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
   });
 
   app.patch("/api/products/:id", async (req, res) => {

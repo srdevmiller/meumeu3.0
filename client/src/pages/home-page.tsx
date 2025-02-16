@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import {
   Card,
   CardContent,
@@ -218,13 +218,18 @@ export default function HomePage() {
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Bem-vindo, {user?.username}!</h1>
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            disabled={logoutMutation.isPending}
-          >
-            Sair
-          </Button>
+          <div className="flex gap-2">
+            <Link href={`/menu/${user?.id}`}>
+              <Button variant="outline">Ver Cardápio Público</Button>
+            </Link>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              disabled={logoutMutation.isPending}
+            >
+              Sair
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-8 md:grid-cols-2">
