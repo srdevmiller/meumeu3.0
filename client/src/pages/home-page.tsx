@@ -219,6 +219,41 @@ export default function HomePage() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Bem-vindo, {user?.username}!</h1>
           <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = async (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (file) {
+                    try {
+                      const optimizedImageUrl = await resizeImage(file);
+                      const res = await apiRequest("PATCH", "/api/user/banner", {
+                        bannerImageUrl: optimizedImageUrl
+                      });
+                      if (res.ok) {
+                        toast({
+                          title: "Banner atualizado",
+                          description: "A imagem de fundo do seu cardápio foi atualizada com sucesso!",
+                        });
+                        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Erro ao atualizar banner",
+                        description: "Não foi possível atualizar a imagem de fundo",
+                        variant: "destructive",
+                      });
+                    }
+                  }
+                };
+                input.click();
+              }}
+            >
+              Imagem de Fundo
+            </Button>
             <Link href={`/menu/${user?.id}`}>
               <Button variant="outline">Ver Cardápio Público</Button>
             </Link>

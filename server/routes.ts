@@ -43,7 +43,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ 
         products,
-        businessName: user.businessName
+        businessName: user.businessName,
+        bannerImageUrl: user.bannerImageUrl
       });
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -77,6 +78,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       await storage.deleteProduct(productId, userId);
       res.sendStatus(200);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
+  // Adicionar nova rota para atualizar banner
+  app.patch("/api/user/banner", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+
+    try {
+      const { bannerImageUrl } = req.body;
+      const user = await storage.updateUserBanner(userId, bannerImageUrl);
+      res.json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
     }

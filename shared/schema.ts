@@ -8,6 +8,7 @@ export const users = pgTable("users", {
   password: text("password").notNull(),
   businessName: text("business_name").notNull(),
   phone: text("phone").notNull(),
+  bannerImageUrl: text("banner_image_url"),
 });
 
 export const categories = pgTable("categories", {
@@ -31,6 +32,7 @@ export const insertUserSchema = createInsertSchema(users)
     password: true,
     businessName: true,
     phone: true,
+    bannerImageUrl: true, // Added bannerImageUrl to the schema
   })
   .extend({
     confirmPassword: z.string(),

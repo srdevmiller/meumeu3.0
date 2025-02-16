@@ -23,6 +23,7 @@ const categories = [
 type MenuData = {
   products: Product[];
   businessName: string;
+  bannerImageUrl?: string; // Added bannerImageUrl to MenuData
 };
 
 export default function MenuPage() {
@@ -77,7 +78,14 @@ export default function MenuPage() {
       {/* Hero Section */}
       <div className="relative h-48 bg-black/50 flex items-center justify-center">
         <div className="absolute inset-0 z-0">
-          <div className="w-full h-full bg-gradient-to-r from-primary/20 to-primary/40" />
+          {data.bannerImageUrl && (
+            <img 
+              src={data.bannerImageUrl} 
+              alt={data.businessName}
+              className="w-full h-full object-cover"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/40" />
         </div>
         <h1 className="text-4xl font-bold text-white z-10">{data.businessName}</h1>
       </div>
