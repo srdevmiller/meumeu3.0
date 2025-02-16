@@ -12,7 +12,8 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, LayoutGrid, List } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -23,7 +24,7 @@ const categories = [
 type MenuData = {
   products: Product[];
   businessName: string;
-  bannerImageUrl?: string; // Added bannerImageUrl to MenuData
+  bannerImageUrl?: string;
 };
 
 export default function MenuPage() {
@@ -31,6 +32,7 @@ export default function MenuPage() {
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { data, isLoading } = useQuery<MenuData>({
     queryKey: [`/api/menu/${userId}`],
@@ -159,27 +161,56 @@ export default function MenuPage() {
 
           {/* Products Grid */}
           <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="flex justify-end mb-4 gap-2">
+              <Button 
+                variant={viewMode === "grid" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setViewMode("grid")}
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === "list" ? "default" : "outline"}
+                size="icon"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <div className={`grid gap-6 ${
+              viewMode === "grid" 
+                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
+                : "grid-cols-1"
+            }`}>
               {filteredProducts.map((product) => (
                 <Card key={product.id}>
-                  <div className="aspect-square relative">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
-                    />
+                  <div className={`${viewMode === "list" ? "flex" : ""}`}>
+                    <div className={`${
+                      viewMode === "list" 
+                        ? "w-48 h-48" 
+                        : "aspect-square"
+                    } relative`}>
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <CardHeader>
+                        <CardTitle className="text-lg">{product.name}</CardTitle>
+                        <CardDescription>
+                          {categories.find((c) => c.id === product.categoryId)?.name}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-2xl font-bold">
+                          R$ {Number(product.price).toFixed(2)}
+                        </p>
+                      </CardContent>
+                    </div>
                   </div>
-                  <CardHeader>
-                    <CardTitle className="text-lg">{product.name}</CardTitle>
-                    <CardDescription>
-                      {categories.find((c) => c.id === product.categoryId)?.name}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold">
-                      R$ {Number(product.price).toFixed(2)}
-                    </p>
-                  </CardContent>
                 </Card>
               ))}
             </div>
