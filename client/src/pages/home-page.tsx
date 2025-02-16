@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProductSchema, type InsertProduct, type Product } from "@shared/schema";
 import { useState, useEffect } from "react";
-import { Upload, Pencil, Trash2, Loader2, Settings, Image, ExternalLink } from "lucide-react";
+import { Upload, Pencil, Trash2, Loader2, Settings, Image, ExternalLink, Plus, LayoutGrid, List } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -96,6 +96,8 @@ export default function HomePage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [showPublishForm, setShowPublishForm] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const form = useForm<InsertProduct>({
     resolver: zodResolver(insertProductSchema),
@@ -262,7 +264,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-[13px] font-medium">
+          <h1 className="text-[25px] font-medium">
             Bem-vindo, {user?.businessName}!
           </h1>
           <Button
@@ -382,24 +384,30 @@ export default function HomePage() {
           </Link>
         </div>
 
+        <Button
+          variant="default"
+          onClick={() => setShowPublishForm(!showPublishForm)}
+          className="mb-4"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Novo Produto
+        </Button>
+
         <div className="grid gap-8 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                {editingProduct ? "Editar Produto" : "Publicar Produto"}
-              </CardTitle>
-              <CardDescription>
-                {editingProduct
-                  ? "Atualize os dados do produto"
-                  : "Preencha os dados do produto que deseja publicar"}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(handleSubmit)}
-                  className="space-y-4"
-                >
+          {showPublishForm && (
+            <Card>
+              <CardHeader>
+                <CardTitle>
+                  {editingProduct ? "Editar Produto" : "Publicar Produto"}
+                </CardTitle>
+                <CardDescription>
+                  {editingProduct
+                    ? "Atualize os dados do produto"
+                    : "Preencha os dados do produto que deseja publicar"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
                   <div className="flex justify-center mb-6">
                     <div className="relative">
                       <input
@@ -530,17 +538,37 @@ export default function HomePage() {
                       </Button>
                     )}
                   </div>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                </Form>
+              </CardContent>
+            </Card>
+          )}
 
-          <Card>
+          <Card className={showPublishForm ? "" : "md:col-span-2"}>
             <CardHeader>
-              <CardTitle>Produtos Publicados</CardTitle>
-              <CardDescription>
-                Gerencie seus produtos publicados
-              </CardDescription>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Produtos Publicados</CardTitle>
+                  <CardDescription>
+                    Gerencie seus produtos publicados
+                  </CardDescription>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("grid")}
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("list")}
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               {isLoadingProducts ? (
@@ -552,16 +580,24 @@ export default function HomePage() {
                   Nenhum produto publicado ainda.
                 </p>
               ) : (
-                <div className="space-y-4">
+                <div className={`grid gap-4 ${
+                  viewMode === "grid" 
+                    ? "grid-cols-3" 
+                    : "grid-cols-1"
+                }`}>
                   {products.map((product) => (
                     <div
                       key={product.id}
-                      className="flex items-center gap-4 p-4 border rounded-lg"
+                      className={`flex ${viewMode === "list" ? "items-center" : "flex-col"} gap-4 p-4 border rounded-lg`}
                     >
                       <img
                         src={product.imageUrl}
                         alt={product.name}
-                        className="w-16 h-16 object-cover rounded"
+                        className={`${
+                          viewMode === "list" 
+                            ? "w-16 h-16" 
+                            : "w-full aspect-square"
+                        } object-cover rounded`}
                       />
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium truncate">{product.name}</h3>
@@ -595,6 +631,10 @@ export default function HomePage() {
             </CardContent>
           </Card>
         </div>
+
+        <footer className="mt-8 text-center text-sm text-muted-foreground">
+          {user?.businessName} - ID#{user?.id}
+        </footer>
 
         <AlertDialog
           open={productToDelete !== null}
