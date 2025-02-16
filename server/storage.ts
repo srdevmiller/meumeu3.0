@@ -1,4 +1,4 @@
-import { users, type User, type InsertUser } from "@shared/schema";
+import { users, products, type User, type InsertUser, type Product, type InsertProduct } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 import session from "express-session";
@@ -11,6 +11,8 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  createProduct(product: InsertProduct & { userId: number }): Promise<Product>;
+  getProducts(userId: number): Promise<Product[]>;
   sessionStore: session.Store;
 }
 
@@ -43,6 +45,21 @@ export class DatabaseStorage implements IStorage {
       .values(insertUser)
       .returning();
     return user;
+  }
+
+  async createProduct(product: InsertProduct & { userId: number }): Promise<Product> {
+    const [newProduct] = await db
+      .insert(products)
+      .values(product)
+      .returning();
+    return newProduct;
+  }
+
+  async getProducts(userId: number): Promise<Product[]> {
+    return db
+      .select()
+      .from(products)
+      .where(eq(products.userId, userId));
   }
 }
 
