@@ -13,6 +13,8 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   createProduct(product: InsertProduct & { userId: number }): Promise<Product>;
   getProducts(userId: number): Promise<Product[]>;
+  updateProduct(id: number, userId: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  deleteProduct(id: number, userId: number): Promise<void>;
   sessionStore: session.Store;
 }
 
@@ -50,7 +52,7 @@ export class DatabaseStorage implements IStorage {
   async createProduct(product: InsertProduct & { userId: number }): Promise<Product> {
     const [newProduct] = await db.insert(products).values({
       name: product.name,
-      price: product.price.toString(), // Convertendo o número para string para o banco
+      price: product.price.toString(),
       imageUrl: product.imageUrl,
       categoryId: product.categoryId,
       userId: product.userId,
@@ -63,6 +65,26 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(products)
       .where(eq(products.userId, userId));
+  }
+
+  async updateProduct(id: number, userId: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+    const [updatedProduct] = await db
+      .update(products)
+      .set({
+        ...product,
+        price: product.price?.toString(),
+      })
+      .where(eq(products.id, id))
+      .and(eq(products.userId, userId))
+      .returning();
+    return updatedProduct;
+  }
+
+  async deleteProduct(id: number, userId: number): Promise<void> {
+    await db
+      .delete(products)
+      .where(eq(products.id, id))
+      .and(eq(products.userId, userId));
   }
 }
 

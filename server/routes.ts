@@ -32,6 +32,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(products);
   });
 
+  app.patch("/api/products/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+    const productId = parseInt(req.params.id);
+
+    try {
+      const productData = insertProductSchema.partial().parse(req.body);
+      const product = await storage.updateProduct(productId, userId, productData);
+
+      if (!product) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+
+      res.json(product);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
+  app.delete("/api/products/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+    const productId = parseInt(req.params.id);
+
+    try {
+      await storage.deleteProduct(productId, userId);
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
