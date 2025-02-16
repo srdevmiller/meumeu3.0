@@ -263,7 +263,7 @@ export default function HomePage() {
       <div className="max-w-5xl mx-auto">
         <div className="space-y-4 mb-8">
           <h1 className="text-3xl font-bold">
-            Bem-vindo ao {user?.businessName}!
+            Bem-vindo, {user?.businessName}!
           </h1>
           <div className="flex flex-wrap gap-2">
             <Dialog>
