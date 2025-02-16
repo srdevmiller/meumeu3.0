@@ -21,8 +21,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProductSchema, type InsertProduct, type Product } from "@shared/schema";
-import { useState } from "react";
-import { Upload, Pencil, Trash2, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Upload, Pencil, Trash2, Loader2, Settings } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +36,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription as DialogDescriptionDialog,
+  DialogHeader as DialogHeaderDialog,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -213,6 +221,43 @@ export default function HomePage() {
     setLocation("/auth");
   };
 
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: { businessName: string; phone: string }) => {
+      const res = await apiRequest("PATCH", "/api/user/profile", data);
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      toast({
+        title: "Perfil atualizado",
+        description: "As informações foram atualizadas com sucesso!",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro ao atualizar perfil",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const profileForm = useForm({
+    defaultValues: {
+      businessName: user?.businessName || "",
+      phone: user?.phone || "",
+    },
+  });
+
+  useEffect(() => {
+    if (user) {
+      profileForm.reset({
+        businessName: user.businessName,
+        phone: user.phone,
+      });
+    }
+  }, [user]);
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
@@ -221,6 +266,67 @@ export default function HomePage() {
             Bem-vindo ao {user?.businessName}!
           </h1>
           <div className="flex flex-wrap gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Editar Perfil
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeaderDialog>
+                  <DialogTitle>Editar Perfil</DialogTitle>
+                  <DialogDescriptionDialog>
+                    Atualize as informações do seu estabelecimento
+                  </DialogDescriptionDialog>
+                </DialogHeaderDialog>
+                <Form {...profileForm}>
+                  <form
+                    onSubmit={profileForm.handleSubmit((data) =>
+                      updateProfileMutation.mutate(data)
+                    )}
+                    className="space-y-4"
+                  >
+                    <FormField
+                      control={profileForm.control}
+                      name="businessName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome do Estabelecimento</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={profileForm.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Telefone</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      disabled={updateProfileMutation.isPending}
+                      className="w-full"
+                    >
+                      {updateProfileMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Salvar Alterações
+                    </Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
             <Button
               variant="outline"
               onClick={() => {
@@ -233,7 +339,7 @@ export default function HomePage() {
                     try {
                       const optimizedImageUrl = await resizeImage(file);
                       const res = await apiRequest("PATCH", "/api/user/banner", {
-                        bannerImageUrl: optimizedImageUrl
+                        bannerImageUrl: optimizedImageUrl,
                       });
                       if (res.ok) {
                         toast({

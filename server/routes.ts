@@ -97,6 +97,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add this route before the last return statement
+  app.patch("/api/user/profile", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+
+    try {
+      const { businessName, phone } = req.body;
+      const user = await storage.updateUserProfile(userId, { businessName, phone });
+      res.json(user);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

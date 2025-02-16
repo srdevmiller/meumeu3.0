@@ -16,6 +16,7 @@ export interface IStorage {
   updateProduct(id: number, userId: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: number, userId: number): Promise<void>;
   updateUserBanner(userId: number, bannerImageUrl: string): Promise<User>;
+  updateUserProfile(userId: number, data: { businessName?: string; phone?: string }): Promise<User>;
   sessionStore: session.Store;
 }
 
@@ -76,7 +77,7 @@ export class DatabaseStorage implements IStorage {
         price: product.price?.toString(),
       })
       .where(eq(products.id, id))
-      .and(eq(products.userId, userId))
+      .where(eq(products.userId, userId))
       .returning();
     return updatedProduct;
   }
@@ -85,13 +86,22 @@ export class DatabaseStorage implements IStorage {
     await db
       .delete(products)
       .where(eq(products.id, id))
-      .and(eq(products.userId, userId));
+      .where(eq(products.userId, userId));
   }
 
   async updateUserBanner(userId: number, bannerImageUrl: string): Promise<User> {
     const [user] = await db
       .update(users)
       .set({ bannerImageUrl })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  async updateUserProfile(userId: number, data: { businessName?: string; phone?: string }): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set(data)
       .where(eq(users.id, userId))
       .returning();
     return user;
