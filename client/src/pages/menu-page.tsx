@@ -81,8 +81,8 @@ export default function MenuPage() {
       <div className="relative h-48 bg-black/50 flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           {data.bannerImageUrl && (
-            <img 
-              src={data.bannerImageUrl} 
+            <img
+              src={data.bannerImageUrl}
               alt={data.businessName}
               className="w-full h-full object-cover"
             />
@@ -162,7 +162,7 @@ export default function MenuPage() {
           {/* Products Grid */}
           <div>
             <div className="flex justify-end mb-4 gap-2">
-              <Button 
+              <Button
                 variant={viewMode === "grid" ? "default" : "outline"}
                 size="icon"
                 onClick={() => setViewMode("grid")}
@@ -178,13 +178,13 @@ export default function MenuPage() {
               </Button>
             </div>
 
-            <div className={`grid gap-6 ${
+            <div className={`grid gap-4 ${
               viewMode === "grid" 
-                ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
+                ? "grid-cols-3" 
                 : "grid-cols-1"
             }`}>
               {filteredProducts.map((product) => (
-                <Card key={product.id}>
+                <Card key={product.id} className="overflow-hidden">
                   <div className={`${viewMode === "list" ? "flex" : ""}`}>
                     <div className={`${
                       viewMode === "list" 
@@ -194,18 +194,18 @@ export default function MenuPage() {
                       <img
                         src={product.imageUrl}
                         alt={product.name}
-                        className="absolute inset-0 w-full h-full object-cover rounded-t-lg"
+                        className="absolute inset-0 w-full h-full object-cover"
                       />
                     </div>
                     <div className="flex-1">
-                      <CardHeader>
-                        <CardTitle className="text-lg">{product.name}</CardTitle>
-                        <CardDescription>
+                      <CardHeader className="p-3">
+                        <CardTitle className="text-sm sm:text-base truncate">{product.name}</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">
                           {categories.find((c) => c.id === product.categoryId)?.name}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent>
-                        <p className="text-2xl font-bold">
+                      <CardContent className="p-3 pt-0">
+                        <p className="text-lg sm:text-xl font-bold">
                           R$ {Number(product.price).toFixed(2)}
                         </p>
                       </CardContent>
