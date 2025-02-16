@@ -216,9 +216,11 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Bem-vindo, {user?.username}!</h1>
-          <div className="flex gap-2">
+        <div className="space-y-4 mb-8">
+          <h1 className="text-3xl font-bold">
+            Bem-vindo ao {user?.businessName}!
+          </h1>
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="outline"
               onClick={() => {
@@ -268,7 +270,6 @@ export default function HomePage() {
         </div>
 
         <div className="grid gap-8 md:grid-cols-2">
-          {/* Form Card */}
           <Card>
             <CardHeader>
               <CardTitle>
@@ -421,7 +422,6 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          {/* Products List Card */}
           <Card>
             <CardHeader>
               <CardTitle>Produtos Publicados</CardTitle>
