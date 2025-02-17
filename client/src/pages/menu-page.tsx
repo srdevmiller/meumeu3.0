@@ -225,7 +225,7 @@ export default function MenuPage() {
             <img
               src={data.bannerImageUrl}
               alt={data.businessName}
-              className="w-full h-full object-cover filter blur-sm scale-115 transform"
+              className="w-full h-full object-cover filter blur-sm scale-120 transform"
             />
           )}
           <div className="absolute inset-0 bg-[var(--theme-color)]/90" />
@@ -279,7 +279,7 @@ export default function MenuPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-[300px_1fr] gap-8">
           <div className="space-y-6">
-            <Card className="h-[80%]">
+            <Card className="h-[15%]">
               <CardHeader className="p-4">
                 <CardTitle>Buscar</CardTitle>
               </CardHeader>
@@ -320,7 +320,17 @@ export default function MenuPage() {
                     <CardContent>
                       <div className="flex flex-wrap gap-2">
                         {categories.map((category) => (
-                          <div key={category.id} className="flex items-center space-x-2 min-w-[120px]">
+                          <button
+                            key={category.id}
+                            className="flex items-center space-x-2 min-w-[120px] hover:bg-accent/50 p-1 rounded-md"
+                            onClick={() => {
+                              setSelectedCategories(
+                                selectedCategories.includes(category.id)
+                                  ? selectedCategories.filter((id) => id !== category.id)
+                                  : [...selectedCategories, category.id]
+                              );
+                            }}
+                          >
                             <Checkbox
                               checked={selectedCategories.includes(category.id)}
                               onCheckedChange={(checked) => {
@@ -331,10 +341,10 @@ export default function MenuPage() {
                                 );
                               }}
                             />
-                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            <label className="text-sm font-medium leading-none cursor-pointer">
                               {category.name}
                             </label>
-                          </div>
+                          </button>
                         ))}
                       </div>
                     </CardContent>
@@ -351,10 +361,7 @@ export default function MenuPage() {
                         step={1}
                         value={priceRange}
                         onValueChange={setPriceRange}
-                        className="my-6"
-                        style={{
-                          "--theme-color": data?.themeColor || "#7c3aed",
-                        } as React.CSSProperties}
+                        className="my-6 [&_[role=slider]]:bg-[var(--theme-color)] [&_[role=slider]]:border-[var(--theme-color)] [&_[role=slider]]:focus:ring-[var(--theme-color)]/50 [&_.track]:bg-[var(--theme-color)]"
                       />
                       <div className="flex justify-between text-sm">
                         <span>R$ {priceRange[0]}</span>
