@@ -48,18 +48,20 @@ const container = {
     opacity: 1,
     transition: {
       staggerChildren: 0.1,
+      delayChildren: 0.2,
     },
   },
 };
 
 const item = {
-  hidden: { opacity: 0, scale: 0.9 },
+  hidden: { opacity: 0, y: 20 },
   show: {
     opacity: 1,
-    scale: 1,
+    y: 0,
     transition: {
       type: "spring",
-      duration: 0.5,
+      stiffness: 300,
+      damping: 25,
     },
   },
 };
@@ -407,17 +409,27 @@ export default function MenuPage() {
                 <motion.div
                   key={product.id}
                   variants={item}
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
+                  whileHover={{ 
+                    scale: 1.03,
+                    transition: { type: "spring", stiffness: 400, damping: 17 }
+                  }}
+                  whileTap={{ scale: 0.98 }}
+                  layout
+                  initial="hidden"
+                  animate="show"
+                  exit="hidden"
                 >
-                  <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 transition-colors`}>
-                    <div className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}>
+                  <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}>
+                    <motion.div 
+                      className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
+                      layoutId={`image-${product.id}`}
+                    >
                       <img
                         src={product.imageUrl}
                         alt={product.name}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
-                    </div>
+                    </motion.div>
                     <div className="flex-1">
                       <CardHeader className="p-3">
                         <div className="flex justify-between items-start">
@@ -426,43 +438,60 @@ export default function MenuPage() {
                               {product.name}
                             </CardTitle>
                             <CardDescription className="text-xs sm:text-sm">
-                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                              <motion.span 
+                                className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]"
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
                                 {categories.find((c) => c.id === product.categoryId)?.name}
-                              </span>
+                              </motion.span>
                             </CardDescription>
                           </div>
                         </div>
                       </CardHeader>
                       <CardContent className="p-3 pt-0">
                         <div className="flex justify-between items-center">
-                          <p className="text-lg sm:text-xl font-bold">
-                            R$ {Number(product.price).toFixed(2)}
-                          </p>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 relative overflow-hidden"
-                            onClick={(e) => {
-                              createRipple(e);
-                              toggleFavorite(product.id);
-                            }}
+                          <motion.p 
+                            className="text-lg sm:text-xl font-bold"
+                            layoutId={`price-${product.id}`}
                           >
-                            <motion.div
-                              initial={{ scale: 1 }}
-                              animate={{
-                                scale: data?.favorites.includes(product.id) ? [1, 1.3, 1] : 1
+                            R$ {Number(product.price).toFixed(2)}
+                          </motion.p>
+                          <motion.div
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 relative overflow-hidden"
+                              onClick={(e) => {
+                                createRipple(e);
+                                toggleFavorite(product.id);
                               }}
-                              transition={{ duration: 0.3 }}
                             >
-                              <Heart
-                                className={`h-4 w-4 ${
-                                  data?.favorites.includes(product.id)
-                                    ? "fill-current text-red-500"
-                                    : "text-muted-foreground"
-                                }`}
-                              />
-                            </motion.div>
-                          </Button>
+                              <motion.div
+                                initial={{ scale: 1 }}
+                                animate={{
+                                  scale: data?.favorites.includes(product.id) 
+                                    ? [1, 1.3, 1] 
+                                    : 1,
+                                  rotate: data?.favorites.includes(product.id)
+                                    ? [0, 15, -15, 0]
+                                    : 0
+                                }}
+                                transition={{ duration: 0.4, type: "spring" }}
+                              >
+                                <Heart
+                                  className={`h-4 w-4 transition-colors ${
+                                    data?.favorites.includes(product.id)
+                                      ? "fill-current text-red-500"
+                                      : "text-muted-foreground"
+                                  }`}
+                                />
+                              </motion.div>
+                            </Button>
+                          </motion.div>
                         </div>
                       </CardContent>
                     </div>
