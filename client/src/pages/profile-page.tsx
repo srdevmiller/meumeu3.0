@@ -11,18 +11,18 @@ import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
 const themeColors = [
-  { name: "Roxo Imperial", hex: "#7c3aed" },
-  { name: "Verde Oceano", hex: "#10b981" },
-  { name: "Azul Safira", hex: "#2563eb" },
-  { name: "Rosa Flamingo", hex: "#ec4899" },
-  { name: "Laranja Sol", hex: "#f97316" },
-  { name: "Vermelho Carmim", hex: "#dc2626" },
-  { name: "Azul Turquesa", hex: "#06b6d4" },
-  { name: "Verde Limão", hex: "#84cc16" },
-  { name: "Dourado", hex: "#f59e0b" },
-  { name: "Azul Índigo", hex: "#4f46e5" },
-  { name: "Roxo Lavanda", hex: "#9333ea" },
-  { name: "Coral", hex: "#f43f5e" }
+  { name: "Grapefruit", hex: "#DD5465" },
+  { name: "Bittersweet", hex: "#FE5E3F" },
+  { name: "Sunflower", hex: "#FDE584" },
+  { name: "Grass", hex: "#8BC152" },
+  { name: "Mint", hex: "#48CEAD" },
+  { name: "Aqua", hex: "#3BC1E9" },
+  { name: "Blue Jeans", hex: "#5D96CC" },
+  { name: "Lavander", hex: "#AC92EC" },
+  { name: "Pink Rose", hex: "#EC87AD" },
+  { name: "Light Gray", hex: "#F5F7FA" },
+  { name: "Medium Gray", hex: "#CCD1D9" },
+  { name: "Dark Gray", hex: "#656D78" }
 ];
 
 export default function ProfilePage() {
