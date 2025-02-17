@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -15,32 +15,44 @@ type AuthContextType = {
   loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
-  logout: () => void; // Added the logout function type
+  logout: () => void;
 };
 
 type LoginData = Pick<InsertUser, "username" | "password">;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+
   const {
     data: user,
     error,
     isLoading,
-  } = useQuery<SelectUser | undefined, Error>({
+    refetch
+  } = useQuery<SelectUser | null>({
     queryKey: ["/api/user"],
-    queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false,
+    staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
+      console.log("Attempting login with:", credentials.username);
       const res = await apiRequest("POST", "/api/login", credentials);
-      return await res.json();
+      const userData = await res.json();
+      console.log("Login response:", userData);
+      return userData;
     },
     onSuccess: (user: SelectUser) => {
+      console.log("Login successful, updating user data:", user);
       queryClient.setQueryData(["/api/user"], user);
+      refetch(); // Força uma nova busca do usuário após o login
     },
     onError: (error: Error) => {
+      console.error("Login error:", error);
       toast({
         title: "Login failed",
         description: error.message,
@@ -51,13 +63,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation({
     mutationFn: async (credentials: InsertUser) => {
+      console.log("Attempting registration");
       const res = await apiRequest("POST", "/api/register", credentials);
-      return await res.json();
+      const userData = await res.json();
+      console.log("Registration response:", userData);
+      return userData;
     },
     onSuccess: (user: SelectUser) => {
+      console.log("Registration successful, updating user data:", user);
       queryClient.setQueryData(["/api/user"], user);
+      refetch(); // Força uma nova busca do usuário após o registro
     },
     onError: (error: Error) => {
+      console.error("Registration error:", error);
       toast({
         title: "Registration failed",
         description: error.message,
@@ -68,12 +86,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
+      console.log("Attempting logout");
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
+      console.log("Logout successful, clearing user data");
       queryClient.setQueryData(["/api/user"], null);
+      refetch(); // Força uma nova busca do usuário após o logout
     },
     onError: (error: Error) => {
+      console.error("Logout error:", error);
       toast({
         title: "Logout failed",
         description: error.message,
@@ -82,10 +104,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  // Create a helper function to handle logout
   const logout = () => {
     logoutMutation.mutate();
   };
+
+  // Log o estado atual do usuário sempre que mudar
+  useEffect(() => {
+    console.log("Current auth state:", {
+      user,
+      isLoading,
+      error
+    });
+  }, [user, isLoading, error]);
 
   return (
     <AuthContext.Provider
@@ -96,7 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginMutation,
         logoutMutation,
         registerMutation,
-        logout, // Export the logout function
+        logout,
       }}
     >
       {children}

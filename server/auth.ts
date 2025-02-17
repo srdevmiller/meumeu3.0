@@ -41,6 +41,11 @@ export function setupAuth(app: Express) {
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
     store: storage.sessionStore,
   };
 
@@ -63,12 +68,23 @@ export function setupAuth(app: Express) {
     }),
   );
 
-  passport.serializeUser((user, done) => done(null, user.id));
+  passport.serializeUser((user, done) => {
+    console.log("Serializing user:", user.id);
+    done(null, user.id);
+  });
+
   passport.deserializeUser(async (id: number, done) => {
     try {
+      console.log("Deserializing user:", id);
       const user = await storage.getUser(id);
+      if (!user) {
+        console.log("User not found during deserialization");
+        return done(null, false);
+      }
+      console.log("User deserialized successfully:", user.username);
       done(null, user);
     } catch (error) {
+      console.error("Error deserializing user:", error);
       done(error);
     }
   });
@@ -96,17 +112,23 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", passport.authenticate("local"), (req, res) => {
+    console.log("Login successful, user:", req.user);
     res.status(200).json(req.user);
   });
 
   app.post("/api/logout", (req, res, next) => {
+    const username = req.user?.username;
+    console.log("Logging out user:", username);
     req.logout((err) => {
       if (err) return next(err);
+      console.log("User logged out successfully:", username);
       res.sendStatus(200);
     });
   });
 
   app.get("/api/user", (req, res) => {
+    console.log("GET /api/user - isAuthenticated:", req.isAuthenticated());
+    console.log("GET /api/user - user:", req.user);
     if (!req.isAuthenticated()) return res.sendStatus(401);
     res.json(req.user);
   });
