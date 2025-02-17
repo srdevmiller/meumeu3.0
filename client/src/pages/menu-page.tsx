@@ -764,7 +764,7 @@ export default function MenuPage() {
         >
           <div className="container mx-auto px-4 text-center">
             <h3 className="text-2xl font-bold mb-4">Quer ter um cardápio digital como este?</h3>
-            <Link href="/register">
+            <Link href="/auth">
               <Button
                 className="bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 text-white px-8 py-6 h-auto text-lg font-semibold relative overflow-hidden"
                 onClick={createRipple}
