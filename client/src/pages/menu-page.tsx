@@ -766,7 +766,7 @@ export default function MenuPage() {
             <Link href="/">
               <Button
                 variant="outline"
-                className="bg-white hover:bg-gray-50 text-black px-12 py-8 h-auto text-xl font-semibold tracking-wide rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-white/20"
+                className="bg-white hover:bg-gray-50 text-black hover:text-black px-12 py-8 h-auto text-xl font-semibold tracking-wide rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-white/20"
               >
                 Crie seu cardápio gratuitamente
               </Button>
