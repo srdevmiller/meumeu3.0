@@ -10,18 +10,18 @@ import { motion } from "framer-motion";
 
 // 12 cores diferentes que combinam bem entre si
 const themeColors = [
-  { name: "Azul Real", hex: "#2563eb" },
-  { name: "Verde Esmeralda", hex: "#059669" },
   { name: "Roxo Imperial", hex: "#7c3aed" },
-  { name: "Rosa Magenta", hex: "#db2777" },
-  { name: "Laranja Vibrante", hex: "#ea580c" },
-  { name: "Vermelho Rubi", hex: "#dc2626" },
-  { name: "Azul Turquesa", hex: "#0891b2" },
-  { name: "Verde Lima", hex: "#84cc16" },
-  { name: "Âmbar Dourado", hex: "#d97706" },
-  { name: "Índigo Profundo", hex: "#4f46e5" },
-  { name: "Violeta Ametista", hex: "#9333ea" },
-  { name: "Vermelho Coral", hex: "#f43f5e" }
+  { name: "Verde Oceano", hex: "#10b981" },
+  { name: "Azul Safira", hex: "#2563eb" },
+  { name: "Rosa Flamingo", hex: "#ec4899" },
+  { name: "Laranja Sol", hex: "#f97316" },
+  { name: "Vermelho Carmim", hex: "#dc2626" },
+  { name: "Azul Turquesa", hex: "#06b6d4" },
+  { name: "Verde Limão", hex: "#84cc16" },
+  { name: "Dourado", hex: "#f59e0b" },
+  { name: "Azul Índigo", hex: "#4f46e5" },
+  { name: "Roxo Lavanda", hex: "#9333ea" },
+  { name: "Coral", hex: "#f43f5e" }
 ];
 
 export default function ProfilePage() {
@@ -34,7 +34,7 @@ export default function ProfilePage() {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: { businessName?: string; phone?: string; themeColor?: string; logoUrl?: string; }) => {
       const response = await apiRequest("PATCH", "/api/user/profile", data);
-      return response.json();
+      return await response.json(); // Corrected to use response
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
@@ -48,7 +48,7 @@ export default function ProfilePage() {
   const updateBannerMutation = useMutation({
     mutationFn: async (bannerImageUrl: string) => {
       const response = await apiRequest("PATCH", "/api/user/banner", { bannerImageUrl });
-      return response.json();
+      return await response.json(); //Corrected to use response
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
@@ -63,7 +63,7 @@ export default function ProfilePage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validar tipo de arquivo para logo
+    // Validate file type for logo
     if (type === 'logo' && file.type !== 'image/png') {
       toast({
         title: "Formato inválido",
@@ -106,7 +106,16 @@ export default function ProfilePage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Editar Perfil</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Editar Perfil</h1>
+        <Button
+          variant="outline"
+          onClick={() => window.location.href = `/menu/${user?.businessName}/${user?.id}`}
+          className="flex items-center gap-2"
+        >
+          Ver Cardápio Público
+        </Button>
+      </div>
 
       <div className="grid gap-8 md:grid-cols-2">
         <Card>
