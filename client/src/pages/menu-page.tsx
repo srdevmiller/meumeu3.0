@@ -33,7 +33,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence } from "framer-motion";
 
-
 const categories = [
   { id: 1, name: "Bebidas" },
   { id: 2, name: "Alimentos" },
@@ -328,8 +327,9 @@ export default function MenuPage() {
                           }}
                         />
                       </TooltipTrigger>
-                      <TooltipContent>
+                      <TooltipContent side="right" align="center">
                         <p>Digite para buscar produtos por nome</p>
+                        <p className="text-xs text-muted-foreground mt-1">A busca é atualizada automaticamente enquanto você digita</p>
                       </TooltipContent>
                     </Tooltip>
                   </div>
@@ -346,8 +346,9 @@ export default function MenuPage() {
                     {showFilters ? "Ocultar filtros" : "Filtrar produtos"}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent side="right" align="center">
                   <p>Clique para {showFilters ? 'ocultar' : 'exibir'} opções de filtro</p>
+                  <p className="text-xs text-muted-foreground mt-1">Filtre por categoria e faixa de preço</p>
                 </TooltipContent>
               </Tooltip>
 
@@ -395,8 +396,9 @@ export default function MenuPage() {
                                   </label>
                                 </button>
                               </TooltipTrigger>
-                              <TooltipContent>
+                              <TooltipContent side="right">
                                 <p>Filtrar produtos da categoria {category.name}</p>
+                                <p className="text-xs text-muted-foreground mt-1">Clique para {selectedCategories.includes(category.id) ? 'remover' : 'adicionar'} o filtro</p>
                               </TooltipContent>
                             </Tooltip>
                           ))}
@@ -422,8 +424,9 @@ export default function MenuPage() {
                               />
                             </div>
                           </TooltipTrigger>
-                          <TooltipContent>
+                          <TooltipContent side="right">
                             <p>Ajuste o intervalo de preços dos produtos</p>
+                            <p className="text-xs text-muted-foreground mt-1">Arraste os controles para definir o preço mínimo e máximo</p>
                           </TooltipContent>
                         </Tooltip>
                         <div className="flex justify-between text-sm">
@@ -464,7 +467,10 @@ export default function MenuPage() {
                           </SheetTrigger>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>Comparar produtos selecionados</p>
+                          <p>Ver produtos selecionados para comparação</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {compareProducts.length} {compareProducts.length === 1 ? 'produto selecionado' : 'produtos selecionados'}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
                       <SheetContent side="right" className="w-[90vw] sm:w-[600px]">
@@ -525,7 +531,8 @@ export default function MenuPage() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Visualizar em grade</p>
+                      <p>Visualizar produtos em grade</p>
+                      <p className="text-xs text-muted-foreground mt-1">Ideal para ver mais produtos de uma vez</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
@@ -540,7 +547,8 @@ export default function MenuPage() {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Visualizar em lista</p>
+                      <p>Visualizar produtos em lista</p>
+                      <p className="text-xs text-muted-foreground mt-1">Ideal para ver mais detalhes de cada produto</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
