@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
 import { insertProductSchema } from "@shared/schema";
-import { eq, and, count } from "drizzle-orm";
+import { eq, and, count, sql } from "drizzle-orm";
 import { products, users } from "@shared/schema";
 import { db } from "./db";
 
@@ -35,20 +35,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const usersWithProducts = await db.query`
-        WITH product_counts AS (
-          SELECT u.id, COUNT(p.id)::integer as product_count
-          FROM users u
-          LEFT JOIN products p ON u.id = p.user_id
-          GROUP BY u.id
-        )
-        SELECT 
-          u.*,
-          COALESCE(pc.product_count, 0) as product_count
-        FROM users u
-        LEFT JOIN product_counts pc ON u.id = pc.id
-        ORDER BY u.id
-      `;
+      const usersWithProducts = await db
+        .select({
+          ...users,
+          product_count: sql<number>`count(${products.id})::integer`
+        })
+        .from(users)
+        .leftJoin(products, eq(users.id, products.userId))
+        .groupBy(users.id)
+        .orderBy(users.id);
 
       const productsCount = await storage.getProductsCount();
 
