@@ -638,25 +638,23 @@ export default function MenuPage() {
                                   </p>
                                 </TooltipContent>
                               </Tooltip>
-                              <div>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 relative overflow-hidden"
-                                  onClick={(e) => {
-                                    createRipple(e);
-                                    toggleFavorite(product.id);
-                                  }}
-                                >
-                                  <Heart
-                                    className={`h-4 w-4 transition-colors ${
-                                      data?.favorites.includes(product.id)
-                                        ? "fill-current text-red-500"
-                                        : "text-muted-foreground"
-                                    }`}
-                                  />
-                                </Button>
-                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 relative overflow-hidden"
+                                onClick={(e) => {
+                                  createRipple(e);
+                                  toggleFavorite(product.id);
+                                }}
+                              >
+                                <Heart
+                                  className={`h-4 w-4 ${
+                                    data?.favorites.includes(product.id)
+                                      ? "fill-current text-red-500"
+                                      : "text-muted-foreground"
+                                  }`}
+                                />
+                              </Button>
                             </div>
                           </div>
                         </CardContent>
