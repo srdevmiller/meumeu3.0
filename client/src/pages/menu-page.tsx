@@ -95,7 +95,7 @@ export default function MenuPage() {
               className="w-full h-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/40 backdrop-blur-[2px]" />
         </div>
         <div className="z-10 flex flex-col items-center gap-4">
           <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
