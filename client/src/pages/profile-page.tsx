@@ -65,7 +65,6 @@ export default function ProfilePage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type for logo
     if (type === 'logo' && file.type !== 'image/png') {
       toast({
         title: "Formato inválido",
@@ -109,7 +108,6 @@ export default function ProfilePage() {
   const handleSave = () => {
     updateProfileMutation.mutate({
       themeColor: selectedColor,
-      // Add other fields if needed
     });
   };
 
@@ -123,21 +121,6 @@ export default function ProfilePage() {
               Voltar
             </Button>
           </Link>
-          <Button
-            variant="outline"
-            onClick={() => window.location.href = `/menu/${user?.businessName}/${user?.id}`}
-          >
-            Ver Cardápio Público
-          </Button>
-          <Button
-            onClick={handleSave}
-            disabled={updateProfileMutation.isPending || updateBannerMutation.isPending}
-          >
-            {(updateProfileMutation.isPending || updateBannerMutation.isPending) && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
-            Salvar Alterações
-          </Button>
         </div>
       </div>
 
@@ -232,6 +215,18 @@ export default function ProfilePage() {
                   <span className="sr-only">{color.name}</span>
                 </motion.button>
               ))}
+            </div>
+            <div className="mt-6">
+              <Button
+                onClick={handleSave}
+                disabled={updateProfileMutation.isPending || updateBannerMutation.isPending}
+                className="w-full"
+              >
+                {(updateProfileMutation.isPending || updateBannerMutation.isPending) && (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                Salvar Alterações
+              </Button>
             </div>
           </CardContent>
         </Card>
