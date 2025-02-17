@@ -57,7 +57,7 @@ function resizeImage(file: File): Promise<string> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const img = new Image();
+      const img = document.createElement('img');
       img.onload = () => {
         const canvas = document.createElement('canvas');
         let width = img.width;
@@ -157,6 +157,9 @@ export default function HomePage() {
     mutationFn: async (data: InsertProduct & { id: number }) => {
       const { id, ...product } = data;
       const res = await apiRequest("PATCH", `/api/products/${id}`, product);
+      if (!res.ok) {
+        throw new Error('Falha ao atualizar produto');
+      }
       return res.json();
     },
     onSuccess: () => {
@@ -168,6 +171,7 @@ export default function HomePage() {
       setEditingProduct(null);
       form.reset();
       setImagePreview(null);
+      setShowPublishForm(false);
     },
     onError: (error: Error) => {
       toast({
