@@ -225,7 +225,7 @@ export default function MenuPage() {
             <img
               src={data.bannerImageUrl}
               alt={data.businessName}
-              className="w-full h-full object-cover filter blur-sm scale-105 transform"
+              className="w-full h-full object-cover filter blur-sm scale-115 transform"
             />
           )}
           <div className="absolute inset-0 bg-[var(--theme-color)]/90" />
@@ -279,11 +279,11 @@ export default function MenuPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-[300px_1fr] gap-8">
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
+            <Card className="h-[80%]">
+              <CardHeader className="p-4">
                 <CardTitle>Buscar</CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4">
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
@@ -409,7 +409,7 @@ export default function MenuPage() {
                 <motion.div
                   key={product.id}
                   variants={item}
-                  whileHover={{ 
+                  whileHover={{
                     scale: 1.03,
                     transition: { type: "spring", stiffness: 400, damping: 17 }
                   }}
@@ -420,7 +420,7 @@ export default function MenuPage() {
                   exit="hidden"
                 >
                   <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}>
-                    <motion.div 
+                    <motion.div
                       className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
                       layoutId={`image-${product.id}`}
                     >
@@ -438,7 +438,7 @@ export default function MenuPage() {
                               {product.name}
                             </CardTitle>
                             <CardDescription className="text-xs sm:text-sm">
-                              <motion.span 
+                              <motion.span
                                 className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
@@ -451,7 +451,7 @@ export default function MenuPage() {
                       </CardHeader>
                       <CardContent className="p-3 pt-0">
                         <div className="flex justify-between items-center">
-                          <motion.p 
+                          <motion.p
                             className="text-lg sm:text-xl font-bold"
                             layoutId={`price-${product.id}`}
                           >
@@ -473,8 +473,8 @@ export default function MenuPage() {
                               <motion.div
                                 initial={{ scale: 1 }}
                                 animate={{
-                                  scale: data?.favorites.includes(product.id) 
-                                    ? [1, 1.3, 1] 
+                                  scale: data?.favorites.includes(product.id)
+                                    ? [1, 1.3, 1]
                                     : 1,
                                   rotate: data?.favorites.includes(product.id)
                                     ? [0, 15, -15, 0]
