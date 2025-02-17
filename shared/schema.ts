@@ -34,6 +34,16 @@ export const favorites = pgTable("favorites", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Novo modelo para logs administrativos
+export const adminLogs = pgTable("admin_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  action: text("action").notNull(),
+  details: text("details").notNull(),
+  ipAddress: text("ip_address").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users)
   .pick({
     username: true,
@@ -78,6 +88,14 @@ export const insertFavoriteSchema = createInsertSchema(favorites).pick({
   productId: true,
 });
 
+// Novo schema para inserção de logs
+export const insertAdminLogSchema = createInsertSchema(adminLogs).pick({
+  userId: true,
+  action: true,
+  details: true,
+  ipAddress: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Product = typeof products.$inferSelect;
@@ -85,3 +103,5 @@ export type InsertProduct = z.infer<typeof insertProductSchema>;
 export type Category = typeof categories.$inferSelect;
 export type Favorite = typeof favorites.$inferSelect;
 export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
+export type AdminLog = typeof adminLogs.$inferSelect;
+export type InsertAdminLog = z.infer<typeof insertAdminLogSchema>;

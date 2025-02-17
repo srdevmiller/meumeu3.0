@@ -1,6 +1,6 @@
-import { users, products, favorites, type User, type InsertUser, type Product, type InsertProduct, type Favorite, type InsertFavorite } from "@shared/schema";
+import { users, products, favorites, adminLogs, type User, type InsertUser, type Product, type InsertProduct, type Favorite, type InsertFavorite, type AdminLog, type InsertAdminLog } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, count } from "drizzle-orm";
+import { eq, and, count, desc } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
@@ -29,6 +29,10 @@ export interface IStorage {
   createFavorite(favorite: InsertFavorite): Promise<Favorite>;
   getFavorites(userId: number): Promise<Favorite[]>;
   removeFavorite(userId: number, productId: number): Promise<void>;
+  // Novos métodos para gerenciamento de logs
+  createAdminLog(log: InsertAdminLog): Promise<AdminLog>;
+  getAdminLogs(page?: number, limit?: number): Promise<{ logs: AdminLog[], total: number }>;
+  getAdminLogsByUser(userId: number, page?: number, limit?: number): Promise<{ logs: AdminLog[], total: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -167,6 +171,53 @@ export class DatabaseStorage implements IStorage {
       .select({ value: count() })
       .from(products);
     return Number(result.value);
+  }
+  async createAdminLog(log: InsertAdminLog): Promise<AdminLog> {
+    const [newLog] = await db
+      .insert(adminLogs)
+      .values(log)
+      .returning();
+    return newLog;
+  }
+
+  async getAdminLogs(page = 1, limit = 10): Promise<{ logs: AdminLog[], total: number }> {
+    const offset = (page - 1) * limit;
+    const logs = await db
+      .select()
+      .from(adminLogs)
+      .orderBy(desc(adminLogs.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    const [result] = await db
+      .select({ value: count() })
+      .from(adminLogs);
+
+    return {
+      logs,
+      total: Number(result.value)
+    };
+  }
+
+  async getAdminLogsByUser(userId: number, page = 1, limit = 10): Promise<{ logs: AdminLog[], total: number }> {
+    const offset = (page - 1) * limit;
+    const logs = await db
+      .select()
+      .from(adminLogs)
+      .where(eq(adminLogs.userId, userId))
+      .orderBy(desc(adminLogs.createdAt))
+      .limit(limit)
+      .offset(offset);
+
+    const [result] = await db
+      .select({ value: count() })
+      .from(adminLogs)
+      .where(eq(adminLogs.userId, userId));
+
+    return {
+      logs,
+      total: Number(result.value)
+    };
   }
 }
 

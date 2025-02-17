@@ -33,6 +33,20 @@ type DashboardStats = {
   }[];
 };
 
+type AdminLog = {
+  id: number;
+  userId: number;
+  action: string;
+  details: string;
+  ipAddress: string;
+  createdAt: string;
+};
+
+type LogsResponse = {
+  logs: AdminLog[];
+  total: number;
+};
+
 export default function AdminDashboard() {
   const { user, logout, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -74,12 +88,12 @@ export default function AdminDashboard() {
     return <Redirect to="/" />;
   }
 
-  const { data, isLoading, error } = useQuery<DashboardStats>({
+  const { data: statsData, isLoading: isLoadingStats, error: statsError } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/stats"],
     retry: false,
     refetchOnWindowFocus: false,
     onError: (error: any) => {
-      console.error("AdminDashboard - Query error:", error);
+      console.error("AdminDashboard - Stats query error:", error);
       toast({
         title: "Erro",
         description: error?.message || "Erro ao carregar dados do painel admin",
@@ -91,7 +105,21 @@ export default function AdminDashboard() {
     },
   });
 
-  if (isLoading) {
+  const { data: logsData, isLoading: isLoadingLogs, error: logsError } = useQuery<LogsResponse>({
+    queryKey: ["/api/admin/logs"],
+    retry: false,
+    refetchOnWindowFocus: false,
+    onError: (error: any) => {
+      console.error("AdminDashboard - Logs query error:", error);
+      toast({
+        title: "Erro",
+        description: error?.message || "Erro ao carregar logs",
+        variant: "destructive",
+      });
+    }
+  });
+
+  if (isLoadingStats || isLoadingLogs) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -99,14 +127,14 @@ export default function AdminDashboard() {
     );
   }
 
-  if (error || !data) {
+  if (statsError || logsError || !statsData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-2xl font-bold text-red-600 mb-4">
           Erro ao carregar dados
         </h1>
         <p className="text-gray-600 mb-4">
-          {error instanceof Error ? error.message : "Tente fazer login novamente"}
+          {(statsError || logsError) instanceof Error ? (statsError || logsError).message : "Tente fazer login novamente"}
         </p>
         <Button onClick={logout}>Fazer login novamente</Button>
       </div>
@@ -130,7 +158,7 @@ export default function AdminDashboard() {
             <Users className="h-6 w-6 text-white" />
           </CardHeader>
           <CardContent>
-            <div className="text-6xl font-bold">{data.totalUsers}</div>
+            <div className="text-6xl font-bold">{statsData.totalUsers}</div>
           </CardContent>
         </Card>
 
@@ -140,10 +168,47 @@ export default function AdminDashboard() {
             <Package className="h-6 w-6 text-white" />
           </CardHeader>
           <CardContent>
-            <div className="text-6xl font-bold">{data.totalProducts}</div>
+            <div className="text-6xl font-bold">{statsData.totalProducts}</div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Log de Atividades */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Log de Atividades</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoadingLogs ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Ação</TableHead>
+                  <TableHead>Detalhes</TableHead>
+                  <TableHead>IP</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {logsData?.logs.map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell>
+                      {new Date(log.createdAt).toLocaleString('pt-BR')}
+                    </TableCell>
+                    <TableCell>{log.action}</TableCell>
+                    <TableCell>{log.details}</TableCell>
+                    <TableCell>{log.ipAddress}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
@@ -161,7 +226,7 @@ export default function AdminDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.users.map((user) => (
+              {statsData.users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.businessName}</TableCell>
                   <TableCell>{user.phone}</TableCell>

@@ -1,11 +1,27 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
-import { insertProductSchema, insertFavoriteSchema, updateProductSchema } from "@shared/schema";
+import { insertProductSchema, insertFavoriteSchema, updateProductSchema, insertAdminLogSchema } from "@shared/schema";
 import { eq, and, count, sql } from "drizzle-orm";
 import { products, users, favorites } from "@shared/schema";
 import { db } from "./db";
+
+// Função para criar logs administrativos
+async function createAdminLog(req: Request, action: string, details: string) {
+  if (!req.user?.id) return;
+
+  try {
+    await storage.createAdminLog({
+      userId: req.user.id,
+      action,
+      details,
+      ipAddress: req.ip
+    });
+  } catch (error) {
+    console.error('Error creating admin log:', error);
+  }
+}
 
 async function ensureAdminUser() {
   const adminUser = await storage.getUserByUsername("admin@admin.com");
@@ -24,22 +40,34 @@ async function ensureAdminUser() {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
-
-  // Garantir que o usuário admin existe
   await ensureAdminUser();
 
-  // Rota para estatísticas do admin
-  app.get("/api/admin/stats", async (req, res) => {
-    // Log para debug
-    console.log("Admin stats request:", {
-      isAuthenticated: req.isAuthenticated(),
-      user: req.user,
-      headers: req.headers,
-      session: req.session
-    });
+  // Novas rotas para logs administrativos
+  app.get("/api/admin/logs", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
+      return res.status(403).json({ 
+        error: "FORBIDDEN",
+        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+      });
+    }
 
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const logs = await storage.getAdminLogs(page, limit);
+      res.json(logs);
+    } catch (error) {
+      console.error('Error fetching admin logs:', error);
+      res.status(500).json({ 
+        error: "SERVER_ERROR",
+        message: "Erro ao buscar logs administrativos" 
+      });
+    }
+  });
+
+  // Rota para estatísticas do admin (atualizada com log)
+  app.get("/api/admin/stats", async (req, res) => {
     if (!req.isAuthenticated()) {
-      console.log("User not authenticated");
       return res.status(401).json({ 
         error: "AUTH_ERROR",
         message: "Não autorizado" 
@@ -47,7 +75,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     if (!req.user || req.user.username !== "admin@admin.com") {
-      console.log("User not admin:", req.user?.username);
       return res.status(403).json({ 
         error: "FORBIDDEN",
         message: "Acesso negado. Apenas administradores podem acessar esta rota." 
@@ -69,6 +96,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .orderBy(users.id);
 
       const productsCount = await storage.getProductsCount();
+
+      await createAdminLog(req, "VIEW_STATS", "Visualização das estatísticas do sistema");
 
       res.json({
         totalUsers: usersWithProducts.length,
@@ -95,6 +124,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...productData,
         userId,
       });
+
+      await createAdminLog(req, "CREATE_PRODUCT", `Produto criado: ${product.name}`);
+
       res.status(201).json(product);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -131,6 +163,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Valida e atualiza o produto
       const productData = updateProductSchema.parse(req.body);
       const updatedProduct = await storage.updateProduct(productId, productData);
+      await createAdminLog(req, "UPDATE_PRODUCT", `Produto atualizado: ${updatedProduct.name}`); //Added Log
       res.json(updatedProduct);
     } catch (error) {
       console.error('Error updating product:', error);
@@ -154,6 +187,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       await storage.deleteProduct(productId, userId);
+      await createAdminLog(req, "DELETE_PRODUCT", `Produto excluído: ${existingProduct.name}`); //Added Log
       res.sendStatus(200);
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -172,6 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId,
       });
       const favorite = await storage.createFavorite(favoriteData);
+      await createAdminLog(req, "CREATE_FAVORITE", `Favorito criado: Produto ID ${favorite.productId}`); //Added Log
       res.status(201).json(favorite);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -195,6 +230,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       await storage.removeFavorite(userId, productId);
+      await createAdminLog(req, "DELETE_FAVORITE", `Favorito removido: Produto ID ${productId}`); //Added Log
       res.sendStatus(200);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -239,6 +275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { bannerImageUrl } = req.body;
       const user = await storage.updateUserBanner(userId, bannerImageUrl);
+      await createAdminLog(req, "UPDATE_BANNER", `Banner atualizado para usuário ID ${userId}`); //Added Log
       res.json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -257,6 +294,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         themeColor,
         logoUrl
       });
+      await createAdminLog(req, "UPDATE_PROFILE", `Perfil atualizado para usuário ID ${userId}`); //Added Log
       res.json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
