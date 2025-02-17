@@ -130,7 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update the menu route to include favorites information
+  // Update the menu route to include themeColor
   app.get("/api/menu/:userId", async (req, res) => {
     const userId = parseInt(req.params.userId);
     try {
@@ -151,6 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         products,
         businessName: user.businessName,
         bannerImageUrl: user.bannerImageUrl,
+        themeColor: user.themeColor,
         favorites: favorites.map(f => f.productId)
       });
     } catch (error) {

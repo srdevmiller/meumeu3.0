@@ -17,7 +17,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const categories = [
   { id: 1, name: "Bebidas" },
