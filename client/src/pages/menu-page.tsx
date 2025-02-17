@@ -279,11 +279,11 @@ export default function MenuPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-[300px_1fr] gap-8">
           <div className="space-y-6">
-            <Card className="h-[15%]">
-              <CardHeader className="p-4">
+            <Card>
+              <CardHeader className="pb-2">
                 <CardTitle>Buscar</CardTitle>
               </CardHeader>
-              <CardContent className="p-4">
+              <CardContent className="pb-4">
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
