@@ -274,23 +274,6 @@ export default function MenuPage() {
                       </div>
                     </CardContent>
                   </Card>
-
-                  {/* Counter */}
-                  <Card>
-                    <CardContent className="py-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <span className="text-lg font-semibold">R$ {priceRange[0]}</span>
-                          <span className="mx-2">-</span>
-                          <span className="text-lg font-semibold">R$ {priceRange[1]}</span>
-                        </div>
-                        <div className="text-lg">
-                          Qtd Produtos{" "}
-                          <span className="font-bold">{filteredProducts.length}</span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -298,21 +281,29 @@ export default function MenuPage() {
 
           {/* Products Grid */}
           <div>
-            <div className="flex justify-end mb-4 gap-2">
-              <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("grid")}
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "outline"}
-                size="icon"
-                onClick={() => setViewMode("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-sm">
+                R$ {priceRange[0]} - R$ {priceRange[1]} •{" "}
+                <span className="font-bold">
+                  Qtd Produtos {filteredProducts.length}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("grid")}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "outline"}
+                  size="icon"
+                  onClick={() => setViewMode("list")}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
 
             <AnimatePresence mode="wait">
