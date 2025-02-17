@@ -8,13 +8,14 @@ import HomePage from "@/pages/home-page";
 import MenuPage from "@/pages/menu-page";
 import AdminDashboard from "@/pages/admin-dashboard";
 import ProfilePage from "@/pages/profile-page";
+import LandingPage from "@/pages/landing-page";
 import { AuthProvider, useAuth } from "./hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 
 // Separate component for root route to avoid conditional hook usage
 function RootRoute() {
   const { user } = useAuth();
-  return user ? <HomePage /> : <Redirect to="/auth" />;
+  return user ? <HomePage /> : <LandingPage />;
 }
 
 function Router() {
