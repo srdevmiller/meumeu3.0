@@ -32,6 +32,7 @@ import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck,
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "wouter";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -753,200 +754,221 @@ export default function MenuPage() {
             </motion.div>
           </div>
         </div>
-      </motion.div>
-      <style>
-        {`
-          .ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            background-color: rgba(255, 255, 255, 0.7);
-            pointer-events: none;
-            z-index: 50;
-          }
 
-          @keyframes ripple {
-            to {
-              transform: scale(4);
-              opacity: 0;
+        {/* Footer with CTA */}
+        <motion.div
+          className="py-8 bg-muted mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.6 }}
+        >
+          <div className="container mx-auto px-4 text-center">
+            <h3 className="text-2xl font-bold mb-4">Quer ter um cardápio digital como este?</h3>
+            <Link href="/register">
+              <Button
+                className="bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 text-white px-8 py-6 h-auto text-lg font-semibold relative overflow-hidden"
+                onClick={createRipple}
+              >
+                Crie seu menu gratuitamente
+              </Button>
+            </Link>
+          </div>
+        </motion.div>
+
+        <style>
+          {`
+            .ripple {
+              position: absolute;
+              border-radius: 50%;
+              transform: scale(0);
+              animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+              background-color: rgba(255, 255, 255, 0.7);
+              pointer-events: none;
+              z-index: 50;
             }
-          }
 
-          /* Ensure proper stacking context for animations */
-          .relative {
-            position: relative;
-          }
-
-          /* Smooth transitions for interactive elements */
-          button,
-          .card-interactive {
-            transition: all 0.2s ease-in-out;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-          }
-
-          /* Prevent animation flicker */
-          .motion-safe:transform {
-            transform: translateZ(0);
-            backface-visibility: hidden;
-            perspective: 1000px;
-          }
-
-          /* Ensure proper z-index stacking for tooltips */
-          .tooltip-trigger {
-            position: relative;
-            z-index: 30;
-          }
-
-          /* Fix for Safari animation performance */
-          .animate-presence {
-            will-change: transform, opacity;
-          }
-
-          /* Smoother hover transitions */
-          .hover-scale {
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-
-          .hover-scale:hover {
-            transform: scale(1.02);
-          }
-
-          /* Prevent layout shifts during animations */
-          .grid-container {
-            contain: layout style paint;
-          }
-
-          /* Enhanced hover effects */
-          .card-interactive {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-
-          .card-interactive:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
-          }
-
-          /* Smooth transitions for filters */
-          .filter-transition {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-
-          /* Interactive tooltips */
-          .tooltip-content {
-            transform-origin: var(--radix-tooltip-content-transform-origin);
-            animation: tooltip-slide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          }
-
-          @keyframes tooltip-slide {
-            from {
-              opacity: 0;
-              transform: scale(0.96);
+            @keyframes ripple {
+              to {
+                transform: scale(4);
+                opacity: 0;
+              }
             }
-            to {
+
+            /* Ensure proper stacking context for animations */
+            .relative {
+              position: relative;
+            }
+
+            /* Smooth transitions for interactive elements */
+            button,
+            .card-interactive {
+              transition: all 0.2s ease-in-out;
+              transform: translateZ(0);
+              backface-visibility: hidden;
+            }
+
+            /* Prevent animation flicker */
+            .motion-safe:transform {
+              transform: translateZ(0);
+              backface-visibility: hidden;
+              perspective: 1000px;
+            }
+
+            /* Ensure proper z-index stacking for tooltips */
+            .tooltip-trigger {
+              position: relative;
+              z-index: 30;
+            }
+
+            /* Fix for Safari animation performance */
+            .animate-presence {
+              will-change: transform, opacity;
+            }
+
+            /* Smoother hover transitions */
+            .hover-scale {
+              transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .hover-scale:hover {
+              transform: scale(1.02);
+            }
+
+            /* Prevent layout shifts during animations */
+            .grid-container {
+              contain: layout style paint;
+            }
+
+            /* Enhanced hover effects */
+            .card-interactive {
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .card-interactive:hover {
+              transform: translateY(-4px);
+              box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+            }
+
+            /* Smooth transitions for filters */
+            .filter-transition {
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Interactive tooltips */
+            .tooltip-content {
+              transform-origin: var(--radix-tooltip-content-transform-origin);
+              animation: tooltip-slide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            @keyframes tooltip-slide {
+              from {
+                opacity: 0;
+                transform: scale(0.96);
+              }
+              to {
+                opacity: 1;
+                transform: scale(1);
+              }
+            }
+
+            /* Filter highlight effect */
+            .filter-active {
+              background: var(--theme-color);
+              color: white;
+              transform: scale(1.05);
+            }
+
+            /* Scroll reveal animation */
+            .scroll-reveal {            opacity: 0;
+              transform: translateY(20px);
+              transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .scroll-reveal.visible {
               opacity: 1;
-              transform: scale(1);
+              transform: translateY(0);
             }
-          }
 
-          /* Filter highlight effect */
-          .filter-active {
-            background: var(--theme-color);
-            color: white;
-            transform: scale(1.05);
-          }
-
-          /* Scroll reveal animation */
-          .scroll-reveal {            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-
-          .scroll-reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-          }
-
-          /* Loading skeleton pulse animation */
-          @keyframes skeleton-pulse {
-            0% {
-              opacity: 0.6;
+            /* Loading skeleton pulse animation */
+            @keyframes skeleton-pulse {
+              0% {
+                opacity: 0.6;
+              }
+              50% {
+                opacity: 0.8;
+              }
+              100% {
+                opacity: 0.6;
+              }
             }
-            50% {
-              opacity: 0.8;
+
+            .animate-pulse {
+              animation: skeleton-pulse 1.5s ease-in-out infinite;
             }
-            100% {
-              opacity: 0.6;
+
+            /* Smooth slider transitions */
+            [role="slider"] {
+              transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             }
-          }
 
-          .animate-pulse {
-            animation: skeleton-pulse 1.5s ease-in-out infinite;
-          }
-
-          /* Smooth slider transitions */
-          [role="slider"] {
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-
-          [role="slider"]:hover {
-            transform: scale(1.2);
-          }
-
-          [role="slider"]:active {
-            transform: scale(0.95);
-          }
-
-          /* Range track styling */
-          .range {
-            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-
-          /* Add spring effect to buttons */
-          button:active {
-            transform: scale(0.95);
-            transition: transform 0.1s;
-          }
-
-          /* Enhance ripple effect */
-          .ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            background-color: rgba(255, 255, 255, 0.7);
-            pointer-events: none;
-            z-index: 50;
-          }
-
-          @keyframes ripple {
-            to {
-              transform: scale(4);
-              opacity: 0;
+            [role="slider"]:hover {
+              transform: scale(1.2);
             }
-          }
 
-          /* Checkbox animations */
-          [role="checkbox"] {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          }
+            [role="slider"]:active {
+              transform: scale(0.95);
+            }
 
-          [role="checkbox"]:hover {
-            background-color: var(--theme-color-90);
-          }
+            /* Range track styling */
+            .range {
+              transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
 
-          /* Category pill animations */
-          .category-pill {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          }
+            /* Add spring effect to buttons */
+            button:active {
+              transform: scale(0.95);
+              transition: transform 0.1s;
+            }
 
-          .category-pill:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
-          }
-        `}
-      </style>
+            /* Enhance ripple effect */
+            .ripple {
+              position: absolute;
+              border-radius: 50%;
+              transform: scale(0);
+              animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+              background-color: rgba(255, 255, 255, 0.7);
+              pointer-events: none;
+              z-index: 50;
+            }
+
+            @keyframes ripple {
+              to {
+                transform: scale(4);
+                opacity: 0;
+              }
+            }
+
+            /* Checkbox animations */
+            [role="checkbox"] {
+              transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            [role="checkbox"]:hover {
+              background-color: var(--theme-color-90);
+            }
+
+            /* Category pill animations */
+            .category-pill {
+              transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .category-pill:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+            }
+          `}
+        </style>
+      </motion.div>
     </TooltipProvider>
   );
 }
