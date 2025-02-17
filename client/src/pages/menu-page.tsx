@@ -762,12 +762,11 @@ export default function MenuPage() {
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <div className="container mx-auto px-4 text-center">
-            <h3 className="text-2xl font-bold mb-4 text-white">Quer ter um cardápio digital como este?</h3>
+            <h3 className="text-2xl font-bold mb-6 text-white">Quer ter um cardápio digital como este?</h3>
             <Link href="/">
               <Button
                 variant="outline"
-                size="lg"
-                className="bg-white hover:bg-gray-100 text-black font-semibold"
+                className="bg-white hover:bg-gray-50 text-black px-12 py-8 h-auto text-xl font-semibold tracking-wide rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-white/20"
               >
                 Crie seu cardápio gratuitamente
               </Button>
