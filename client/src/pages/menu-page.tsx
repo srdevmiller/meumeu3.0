@@ -31,7 +31,7 @@ export default function MenuPage() {
   const { userId } = useParams();
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { data, isLoading } = useQuery<MenuData>({
@@ -73,7 +73,6 @@ export default function MenuPage() {
     );
   }
 
-  const maxPrice = Math.max(...data.products.map((p) => Number(p.price)));
 
   return (
     <div className="min-h-screen bg-background">
@@ -145,7 +144,7 @@ export default function MenuPage() {
               <CardContent>
                 <Slider
                   min={0}
-                  max={maxPrice}
+                  max={5000}
                   step={1}
                   value={priceRange}
                   onValueChange={setPriceRange}
@@ -179,16 +178,16 @@ export default function MenuPage() {
             </div>
 
             <div className={`grid gap-4 ${
-              viewMode === "grid" 
-                ? "grid-cols-3" 
+              viewMode === "grid"
+                ? "grid-cols-3"
                 : "grid-cols-1"
             }`}>
               {filteredProducts.map((product) => (
                 <Card key={product.id} className="overflow-hidden">
                   <div className={`${viewMode === "list" ? "flex" : ""}`}>
                     <div className={`${
-                      viewMode === "list" 
-                        ? "w-48 h-48" 
+                      viewMode === "list"
+                        ? "w-48 h-48"
                         : "aspect-square"
                     } relative`}>
                       <img
