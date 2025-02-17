@@ -14,7 +14,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
-import { Search, LayoutGrid, List, Moon, Sun, Heart } from "lucide-react";
+import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -61,6 +61,7 @@ export default function MenuPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [showFilters, setShowFilters] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const [theme, setTheme] = useState<"light" | "dark">(
@@ -207,69 +208,92 @@ export default function MenuPage() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Categorias</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
-                    <div key={category.id} className="flex items-center space-x-2 min-w-[120px]">
-                      <Checkbox
-                        checked={selectedCategories.includes(category.id)}
-                        onCheckedChange={(checked) => {
-                          setSelectedCategories(
-                            checked
-                              ? [...selectedCategories, category.id]
-                              : selectedCategories.filter((id) => id !== category.id)
-                          );
-                        }}
+            {/* Botão Filtrar Produtos */}
+            <Button 
+              onClick={() => setShowFilters(!showFilters)}
+              className="w-full flex items-center gap-2"
+            >
+              <Filter className="h-4 w-4" />
+              Filtrar produtos
+            </Button>
+
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-6"
+                >
+                  {/* Categorias */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Categorias</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="flex flex-wrap gap-2">
+                        {categories.map((category) => (
+                          <div key={category.id} className="flex items-center space-x-2 min-w-[120px]">
+                            <Checkbox
+                              checked={selectedCategories.includes(category.id)}
+                              onCheckedChange={(checked) => {
+                                setSelectedCategories(
+                                  checked
+                                    ? [...selectedCategories, category.id]
+                                    : selectedCategories.filter((id) => id !== category.id)
+                                );
+                              }}
+                            />
+                            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                              {category.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Faixa de Preço */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Faixa de Preço</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Slider
+                        min={0}
+                        max={5000}
+                        step={1}
+                        value={priceRange}
+                        onValueChange={setPriceRange}
+                        className="my-6"
                       />
-                      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        {category.name}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                      <div className="flex justify-between text-sm">
+                        <span>R$ {priceRange[0]}</span>
+                        <span>R$ {priceRange[1]}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Faixa de Preço</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Slider
-                  min={0}
-                  max={5000}
-                  step={1}
-                  value={priceRange}
-                  onValueChange={setPriceRange}
-                  className="my-6"
-                />
-                <div className="flex justify-between text-sm">
-                  <span>R$ {priceRange[0]}</span>
-                  <span>R$ {priceRange[1]}</span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Counter - Moved below price range */}
-            <Card>
-              <CardContent className="py-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-lg font-semibold">R$ {priceRange[0]}</span>
-                    <span className="mx-2">-</span>
-                    <span className="text-lg font-semibold">R$ {priceRange[1]}</span>
-                  </div>
-                  <div className="text-lg">
-                    Qtd Produtos{" "}
-                    <span className="font-bold">{filteredProducts.length}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                  {/* Counter */}
+                  <Card>
+                    <CardContent className="py-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-lg font-semibold">R$ {priceRange[0]}</span>
+                          <span className="mx-2">-</span>
+                          <span className="text-lg font-semibold">R$ {priceRange[1]}</span>
+                        </div>
+                        <div className="text-lg">
+                          Qtd Produtos{" "}
+                          <span className="font-bold">{filteredProducts.length}</span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Products Grid */}
