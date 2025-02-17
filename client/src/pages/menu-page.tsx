@@ -23,7 +23,13 @@ const categories = [
   { id: 1, name: "Bebidas" },
   { id: 2, name: "Alimentos" },
   { id: 3, name: "Tabacaria" },
-  { id: 4, name: "Outros" },
+  { id: 4, name: "Destilados" },
+  { id: 5, name: "Cervejas" },
+  { id: 6, name: "Vinhos" },
+  { id: 7, name: "Petiscos" },
+  { id: 8, name: "Porções" },
+  { id: 9, name: "Drinks" },
+  { id: 10, name: "Sobremesas" },
 ];
 
 type MenuData = {
@@ -32,6 +38,7 @@ type MenuData = {
   bannerImageUrl?: string;
   favorites: number[];
   themeColor?: string;
+  logoUrl?: string; // Added logoUrl
 };
 
 const container = {
@@ -217,10 +224,19 @@ export default function MenuPage() {
               className="w-full h-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-[var(--theme-color)]/20 to-[var(--theme-color)]/40 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-[var(--theme-color)]/50" />
         </div>
         <div className="z-10 flex flex-col items-center gap-4">
-          <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
+          <div className="flex items-center gap-4">
+            {data.logoUrl && (
+              <img
+                src={data.logoUrl}
+                alt={`Logo ${data.businessName}`}
+                className="w-16 h-16 rounded-full object-cover"
+              />
+            )}
+            <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
+          </div>
           <div className="flex gap-2">
             <motion.div whileTap={{ scale: 0.95 }}>
               <Button
@@ -332,6 +348,9 @@ export default function MenuPage() {
                         value={priceRange}
                         onValueChange={setPriceRange}
                         className="my-6"
+                        style={{
+                          "--theme-color": data?.themeColor || "#7c3aed",
+                        } as React.CSSProperties}
                       />
                       <div className="flex justify-between text-sm">
                         <span>R$ {priceRange[0]}</span>
@@ -414,7 +433,7 @@ export default function MenuPage() {
                       </CardHeader>
                       <CardContent className="p-3 pt-0">
                         <div className="flex justify-between items-center">
-                          <p className="text-lg sm:text-xl font-bold text-[var(--theme-color)]">
+                          <p className="text-lg sm:text-xl font-bold">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
                           <Button

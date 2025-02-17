@@ -229,13 +229,8 @@ export default function HomePage() {
     }
   };
 
-  const handleLogout = async () => {
-    await logoutMutation.mutateAsync();
-    setLocation("/auth");
-  };
-
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: { businessName: string; phone: string; themeColor: string }) => {
+    mutationFn: async (data: { businessName: string; phone: string; themeColor: string; logoUrl: string }) => {
       const res = await apiRequest("PATCH", "/api/user/profile", data);
       return res.json();
     },
@@ -260,6 +255,7 @@ export default function HomePage() {
       businessName: user?.businessName || "",
       phone: user?.phone || "",
       themeColor: user?.themeColor || "#7c3aed",
+      logoUrl: user?.logoUrl || "", // Add default value for logoUrl
     },
   });
 
@@ -269,6 +265,7 @@ export default function HomePage() {
         businessName: user.businessName,
         phone: user.phone,
         themeColor: user.themeColor || "#7c3aed",
+        logoUrl: user.logoUrl || "", // Add logoUrl to reset
       });
     }
   }, [user]);
@@ -328,7 +325,6 @@ export default function HomePage() {
     },
   };
 
-
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
@@ -372,6 +368,54 @@ export default function HomePage() {
                     )}
                     className="space-y-4"
                   >
+                    <div className="flex justify-center mb-6">
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              try {
+                                const optimizedImageUrl = await resizeImage(file);
+                                profileForm.setValue("logoUrl", optimizedImageUrl);
+                                toast({
+                                  title: "Logo carregado",
+                                  description: "O logo foi carregado com sucesso!",
+                                });
+                              } catch (error) {
+                                toast({
+                                  title: "Erro ao carregar logo",
+                                  description: "Não foi possível processar a imagem",
+                                  variant: "destructive",
+                                });
+                              }
+                            }
+                          }}
+                          className="hidden"
+                          id="logo-upload"
+                        />
+                        <label
+                          htmlFor="logo-upload"
+                          className="cursor-pointer flex flex-col items-center"
+                        >
+                          {profileForm.watch("logoUrl") ? (
+                            <img
+                              src={profileForm.watch("logoUrl")}
+                              alt="Logo Preview"
+                              className="w-24 h-24 object-cover rounded-full"
+                            />
+                          ) : (
+                            <div className="w-24 h-24 border-2 border-dashed rounded-full flex items-center justify-center">
+                              <Upload className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                          )}
+                          <span className="mt-2 text-sm text-muted-foreground">
+                            Clique para fazer upload do logo
+                          </span>
+                        </label>
+                      </div>
+                    </div>
                     <FormField
                       control={profileForm.control}
                       name="businessName"
