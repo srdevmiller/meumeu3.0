@@ -28,7 +28,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
-import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck, Scale } from "lucide-react";
+import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck, Scale, ArrowUp01, ArrowDown01 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
@@ -71,6 +71,7 @@ export default function MenuPage() {
   const [copied, setCopied] = useState(false);
   const [compareProducts, setCompareProducts] = useState<Product[]>([]);
   const [showCompareSheet, setShowCompareSheet] = useState(false);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -141,6 +142,16 @@ export default function MenuPage() {
       return matchesSearch && matchesCategory && matchesPrice;
     });
   }, [data?.products, search, selectedCategories, priceRange]);
+
+  const sortedProducts = useMemo(() => {
+    if (!sortOrder) return filteredProducts;
+
+    return [...filteredProducts].sort((a, b) => {
+      const priceA = Number(a.price);
+      const priceB = Number(b.price);
+      return sortOrder === "asc" ? priceA - priceB : priceB - priceA;
+    });
+  }, [filteredProducts, sortOrder]);
 
   const formatPrice = (price: string | number) => {
     return new Intl.NumberFormat("pt-BR", {
@@ -323,6 +334,37 @@ export default function MenuPage() {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Alternar tema</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={sortOrder === "asc" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setSortOrder(sortOrder === "asc" ? null : "asc")}
+                    className={sortOrder === "asc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
+                  >
+                    <ArrowUp01 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Ordenar por preço crescente</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant={sortOrder === "desc" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setSortOrder(sortOrder === "desc" ? null : "desc")}
+                    className={sortOrder === "desc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
+                  >
+                    <ArrowDown01 className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Ordenar por preço decrescente</p>
                 </TooltipContent>
               </Tooltip>
             </div>
@@ -599,7 +641,7 @@ export default function MenuPage() {
                       : "flex flex-col gap-4"
                   }`}
                 >
-                  {filteredProducts.map((product, index) => (
+                  {sortedProducts.map((product, index) => (
                     <motion.div
                       key={product.id}
                       className="card-interactive scroll-reveal"
@@ -818,8 +860,7 @@ export default function MenuPage() {
           }
 
           /* Scroll reveal animation */
-          .scroll-reveal {
-            opacity: 0;
+          .scroll-reveal {            opacity: 0;
             transform: translateY(20px);
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
           }
