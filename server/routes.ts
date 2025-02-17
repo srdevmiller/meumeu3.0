@@ -35,18 +35,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const allUsers = await storage.getAllUsers(); 
-      const productsCount = await storage.getProductsCount(); 
+      const usersWithProducts = await db.query`
+        WITH product_counts AS (
+          SELECT u.id, COUNT(p.id)::integer as product_count
+          FROM users u
+          LEFT JOIN products p ON u.id = p.user_id
+          GROUP BY u.id
+        )
+        SELECT 
+          u.*,
+          COALESCE(pc.product_count, 0) as product_count
+        FROM users u
+        LEFT JOIN product_counts pc ON u.id = pc.id
+        ORDER BY u.id
+      `;
+
+      const productsCount = await storage.getProductsCount();
 
       res.json({
-        totalUsers: allUsers.length,
+        totalUsers: usersWithProducts.length,
         totalProducts: productsCount,
-        users: allUsers.map((user) => ({
+        users: usersWithProducts.map((user) => ({
           ...user,
-          password: undefined 
+          password: undefined,
         }))
       });
     } catch (error) {
+      console.error('Error in admin stats:', error);
       res.status(500).json({ message: (error as Error).message });
     }
   });
