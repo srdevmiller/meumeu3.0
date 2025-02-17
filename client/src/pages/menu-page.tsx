@@ -298,40 +298,43 @@ export default function MenuPage() {
           </div>
         </motion.div>
 
-        <style jsx global>{`
-          .ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple 600ms linear;
-            background-color: rgba(255, 255, 255, 0.7);
-          }
-
-          @keyframes ripple {
-            to {
-              transform: scale(4);
-              opacity: 0;
+        {/* Global styles for animations */}
+        <style>
+          {`
+            .ripple {
+              position: absolute;
+              border-radius: 50%;
+              transform: scale(0);
+              animation: ripple 600ms linear;
+              background-color: rgba(255, 255, 255, 0.7);
             }
-          }
 
-          .card-interactive {
-            cursor: pointer;
-          }
-
-          .scroll-reveal {
-            visibility: visible;
-          }
-
-          @media (prefers-reduced-motion: no-preference) {
-            .motion-safe {
-              transition: all 0.3s ease;
+            @keyframes ripple {
+              to {
+                transform: scale(4);
+                opacity: 0;
+              }
             }
-          }
 
-          .filter-transition {
-            transition: opacity 0.2s, height 0.2s;
-          }
-        `}</style>
+            .card-interactive {
+              cursor: pointer;
+            }
+
+            .scroll-reveal {
+              visibility: visible;
+            }
+
+            @media (prefers-reduced-motion: no-preference) {
+              .motion-safe {
+                transition: all 0.3s ease;
+              }
+            }
+
+            .filter-transition {
+              transition: opacity 0.2s, height 0.2s;
+            }
+          `}
+        </style>
       </motion.div>
     </TooltipProvider>
   );
