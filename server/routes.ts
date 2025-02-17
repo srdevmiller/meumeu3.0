@@ -151,7 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         products,
         businessName: user.businessName,
         bannerImageUrl: user.bannerImageUrl,
-        themeColor: user.themeColor,
+        themeColor: user.themeColor || "#7c3aed", // Garantir um valor padrão
         favorites: favorites.map(f => f.productId)
       });
     } catch (error) {
