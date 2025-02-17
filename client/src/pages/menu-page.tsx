@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState, useMemo } from "react";
-import { Search, LayoutGrid, List } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { Search, LayoutGrid, List, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const categories = [
@@ -34,6 +34,15 @@ export default function MenuPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [theme, setTheme] = useState<"light" | "dark">(
+    () => (localStorage.getItem("menu-theme") as "light" | "dark") || "light"
+  );
+
+  useEffect(() => {
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(theme);
+    localStorage.setItem("menu-theme", theme);
+  }, [theme]);
 
   const { data, isLoading } = useQuery<MenuData>({
     queryKey: [`/api/menu/${id}`],
@@ -88,7 +97,21 @@ export default function MenuPage() {
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/40" />
         </div>
-        <h1 className="text-4xl font-bold text-white z-10">{data.businessName}</h1>
+        <div className="z-10 flex flex-col items-center gap-4">
+          <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
+          <Button
+            variant="outline"
+            size="icon"
+            className="bg-background/80 backdrop-blur-sm"
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
