@@ -437,7 +437,7 @@ export default function MenuPage() {
                                 step={1}
                                 value={priceRange}
                                 onValueChange={setPriceRange}
-                                className="my-6 [&_[role=slider]]:bg-[var(--theme-color)] [&_[role=slider]]:border-[var(--theme-color)] [&_[role=slider]]:focus:ring-[var(--theme-color)]/50 [&_.track]:bg-[var(--theme-color)]"
+                                className="my-6 [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:bg-[var(--theme-color)] [&_[role=slider]]:border-2 [&_[role=slider]]:border-background [&_[role=slider]]:shadow-sm [&_[role=slider]]:hover:scale-110 [&_[role=slider]]:transition-transform [&_[role=slider]]:focus:ring-2 [&_[role=slider]]:focus:ring-[var(--theme-color)]/50 [&_.range]:bg-[var(--theme-color)] [&_.track]:bg-muted"
                               />
                             </div>
                           </TooltipTrigger>
