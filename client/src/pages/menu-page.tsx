@@ -17,10 +17,18 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
-import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck } from "lucide-react";
+import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,6 +93,8 @@ export default function MenuPage() {
     () => (localStorage.getItem("menu-theme") as "light" | "dark") || "light"
   );
   const [copied, setCopied] = useState(false);
+  const [compareProducts, setCompareProducts] = useState<Product[]>([]);
+  const [showCompareSheet, setShowCompareSheet] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -157,9 +167,9 @@ export default function MenuPage() {
   }, [data?.products, search, selectedCategories, priceRange]);
 
   const formatPrice = (price: string | number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(Number(price));
   };
 
@@ -193,7 +203,6 @@ export default function MenuPage() {
     }, 600);
   };
 
-
   const copyMenuLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
@@ -210,6 +219,24 @@ export default function MenuPage() {
         variant: "destructive",
       });
     }
+  };
+
+  const toggleCompare = (product: Product) => {
+    setCompareProducts((current) => {
+      const isSelected = current.some((p) => p.id === product.id);
+      if (isSelected) {
+        return current.filter((p) => p.id !== product.id);
+      }
+      if (current.length >= 3) {
+        toast({
+          title: "Limite atingido",
+          description: "Você pode comparar até 3 produtos por vez",
+          variant: "destructive",
+        });
+        return current;
+      }
+      return [...current, product];
+    });
   };
 
   if (isLoading) {
@@ -445,6 +472,73 @@ export default function MenuPage() {
                   </span>
                 </div>
                 <div className="flex gap-2">
+                  {compareProducts.length > 0 && (
+                    <Sheet open={showCompareSheet} onOpenChange={setShowCompareSheet}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <SheetTrigger asChild>
+                            <Button
+                              variant="default"
+                              size="icon"
+                              className="bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 relative"
+                            >
+                              <Scale className="h-4 w-4" />
+                              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
+                                {compareProducts.length}
+                              </span>
+                            </Button>
+                          </SheetTrigger>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Comparar produtos selecionados</p>
+                        </TooltipContent>
+                      </Tooltip>
+                      <SheetContent side="right" className="w-[90vw] sm:w-[600px]">
+                        <SheetHeader>
+                          <SheetTitle>Comparação de Produtos</SheetTitle>
+                          <SheetDescription>
+                            Compare as características dos produtos selecionados
+                          </SheetDescription>
+                        </SheetHeader>
+                        <div className="mt-6">
+                          <div className="grid grid-cols-{compareProducts.length} gap-4">
+                            {compareProducts.map((product) => (
+                              <Card key={product.id}>
+                                <CardHeader>
+                                  <img
+                                    src={product.imageUrl}
+                                    alt={product.name}
+                                    className="w-full aspect-square object-cover rounded-md"
+                                  />
+                                  <CardTitle className="text-lg mt-2">{product.name}</CardTitle>
+                                  <CardDescription>
+                                    {categories.find((c) => c.id === product.categoryId)?.name}
+                                  </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                  <p className="text-2xl font-bold text-[var(--theme-color)]">
+                                    {formatPrice(product.price)}
+                                  </p>
+                                  <Button
+                                    variant="ghost"
+                                    className="w-full mt-4"
+                                    onClick={() => {
+                                      toggleCompare(product);
+                                      if (compareProducts.length === 1) {
+                                        setShowCompareSheet(false);
+                                      }
+                                    }}
+                                  >
+                                    Remover da comparação
+                                  </Button>
+                                </CardContent>
+                              </Card>
+                            ))}
+                          </div>
+                        </div>
+                      </SheetContent>
+                    </Sheet>
+                  )}
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
@@ -494,7 +588,7 @@ export default function MenuPage() {
                     variants={item}
                     whileHover={{
                       scale: 1.03,
-                      transition: { type: "spring", stiffness: 400, damping: 17 }
+                      transition: { type: "spring", stiffness: 400, damping: 17 },
                     }}
                     whileTap={{ scale: 0.98 }}
                     layout
@@ -502,7 +596,9 @@ export default function MenuPage() {
                     animate="show"
                     exit="hidden"
                   >
-                    <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}>
+                    <Card
+                      className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                    >
                       <motion.div
                         className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
                         layoutId={`image-${product.id}`}
@@ -540,41 +636,70 @@ export default function MenuPage() {
                             >
                               {formatPrice(product.price)}
                             </motion.p>
-                            <motion.div
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 relative overflow-hidden"
-                                onClick={(e) => {
-                                  createRipple(e);
-                                  toggleFavorite(product.id);
-                                }}
-                              >
-                                <motion.div
-                                  initial={{ scale: 1 }}
-                                  animate={{
-                                    scale: data?.favorites.includes(product.id)
-                                      ? [1, 1.3, 1]
-                                      : 1,
-                                    rotate: data?.favorites.includes(product.id)
-                                      ? [0, 15, -15, 0]
-                                      : 0
-                                  }}
-                                  transition={{ duration: 0.4, type: "spring" }}
-                                >
-                                  <Heart
-                                    className={`h-4 w-4 transition-colors ${
-                                      data?.favorites.includes(product.id)
-                                        ? "fill-current text-red-500"
-                                        : "text-muted-foreground"
+                            <div className="flex gap-2">
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className={`h-8 w-8 relative overflow-hidden ${
+                                      compareProducts.some((p) => p.id === product.id)
+                                        ? "bg-[var(--theme-color)]/10"
+                                        : ""
                                     }`}
-                                  />
-                                </motion.div>
-                              </Button>
-                            </motion.div>
+                                    onClick={() => toggleCompare(product)}
+                                  >
+                                    <Scale className={`h-4 w-4 ${
+                                      compareProducts.some((p) => p.id === product.id)
+                                        ? "text-[var(--theme-color)]"
+                                        : "text-muted-foreground"
+                                    }`} />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    {compareProducts.some((p) => p.id === product.id)
+                                      ? "Remover da comparação"
+                                      : "Adicionar à comparação"}
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                              <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8 relative overflow-hidden"
+                                  onClick={(e) => {
+                                    createRipple(e);
+                                    toggleFavorite(product.id);
+                                  }}
+                                >
+                                  <motion.div
+                                    initial={{ scale: 1 }}
+                                    animate={{
+                                      scale: data?.favorites.includes(product.id)
+                                        ? [1, 1.3, 1]
+                                        : 1,
+                                      rotate: data?.favorites.includes(product.id)
+                                        ? [0, 15, -15, 0]
+                                        : 0,
+                                    }}
+                                    transition={{ duration: 0.4, type: "spring" }}
+                                  >
+                                    <Heart
+                                      className={`h-4 w-4 transition-colors ${
+                                        data?.favorites.includes(product.id)
+                                          ? "fill-current text-red-500"
+                                          : "text-muted-foreground"
+                                      }`}
+                                    />
+                                  </motion.div>
+                                </Button>
+                              </motion.div>
+                            </div>
                           </div>
                         </CardContent>
                       </div>
