@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   businessName: text("business_name").notNull(),
   phone: text("phone").notNull(),
   bannerImageUrl: text("banner_image_url"),
+  themeColor: text("theme_color").default("#7c3aed"), // Cor padrão - roxo
 });
 
 export const categories = pgTable("categories", {
@@ -41,6 +42,7 @@ export const insertUserSchema = createInsertSchema(users)
     businessName: true,
     phone: true,
     bannerImageUrl: true,
+    themeColor: true,
   })
   .extend({
     confirmPassword: z.string(),

@@ -177,8 +177,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const userId = req.user!.id;
 
     try {
-      const { businessName, phone } = req.body;
-      const user = await storage.updateUserProfile(userId, { businessName, phone });
+      const { businessName, phone, themeColor } = req.body;
+      const user = await storage.updateUserProfile(userId, { 
+        businessName, 
+        phone,
+        themeColor
+      });
       res.json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });

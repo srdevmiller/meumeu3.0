@@ -16,7 +16,11 @@ export interface IStorage {
   updateProduct(id: number, userId: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: number, userId: number): Promise<void>;
   updateUserBanner(userId: number, bannerImageUrl: string): Promise<User>;
-  updateUserProfile(userId: number, data: { businessName?: string; phone?: string }): Promise<User>;
+  updateUserProfile(userId: number, data: { 
+    businessName?: string; 
+    phone?: string;
+    themeColor?: string;
+  }): Promise<User>;
   getAllUsers(): Promise<User[]>;
   getProductsCount(): Promise<number>;
   sessionStore: session.Store;
@@ -140,7 +144,7 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUserProfile(userId: number, data: { businessName?: string; phone?: string }): Promise<User> {
+  async updateUserProfile(userId: number, data: { businessName?: string; phone?: string; themeColor?: string; }): Promise<User> {
     const [user] = await db
       .update(users)
       .set(data)

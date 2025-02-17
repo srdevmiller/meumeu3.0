@@ -31,6 +31,7 @@ type MenuData = {
   businessName: string;
   bannerImageUrl?: string;
   favorites: number[]; // IDs of favorited products
+  themeColor?: string; // Added themeColor to MenuData
 };
 
 const container = {
@@ -38,21 +39,21 @@ const container = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
+      staggerChildren: 0.1,
+    },
+  },
 };
 
 const item = {
   hidden: { opacity: 0, scale: 0.9 },
-  show: { 
-    opacity: 1, 
+  show: {
+    opacity: 1,
     scale: 1,
     transition: {
       type: "spring",
-      duration: 0.5
-    }
-  }
+      duration: 0.5,
+    },
+  },
 };
 
 export default function MenuPage() {
@@ -138,6 +139,11 @@ export default function MenuPage() {
     });
   }, [data?.products, search, selectedCategories, priceRange]);
 
+  // Estilo dinâmico baseado no tema do usuário
+  const themeStyles = {
+    "--theme-color": data?.themeColor || "#7c3aed",
+  } as React.CSSProperties;
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -157,8 +163,8 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Hero Section */}
+    <div className="min-h-screen bg-background" style={themeStyles}>
+      {/* Hero Section com gradiente usando a cor do tema */}
       <div className="relative h-48 bg-black/50 flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           {data.bannerImageUrl && (
@@ -168,7 +174,7 @@ export default function MenuPage() {
               className="w-full h-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-primary/40 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[var(--theme-color)]/20 to-[var(--theme-color)]/40 backdrop-blur-[2px]" />
         </div>
         <div className="z-10 flex flex-col items-center gap-4">
           <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
@@ -209,7 +215,7 @@ export default function MenuPage() {
             </Card>
 
             {/* Botão Filtrar Produtos */}
-            <Button 
+            <Button
               onClick={() => setShowFilters(!showFilters)}
               className="w-full flex items-center gap-2"
             >
