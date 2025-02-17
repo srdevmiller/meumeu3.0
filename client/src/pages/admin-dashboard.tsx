@@ -34,28 +34,29 @@ export default function AdminDashboard() {
   const { user, logout } = useAuth();
 
   // Adicionando logs para debug
-  console.log("Current user:", user);
+  console.log("AdminDashboard - Current user:", user);
 
   // Verificação mais robusta do usuário admin
   if (!user) {
-    console.log("No user found, redirecting to auth");
+    console.log("AdminDashboard - No user found, redirecting to auth");
     return <Redirect to="/auth" />;
   }
 
   if (user.username !== "admin-miller@gmail.com") {
-    console.log("User is not admin, redirecting to home");
+    console.log("AdminDashboard - User is not admin:", user.username);
     return <Redirect to="/" />;
   }
 
   const { data, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/stats"],
-    retry: false, // Não tentar novamente em caso de erro
+    retry: false,
+    onError: (error) => {
+      console.error("AdminDashboard - Query error:", error);
+      if ((error as any).status === 401) {
+        logout();
+      }
+    }
   });
-
-  // Log de erro da query
-  if (error) {
-    console.error("Error fetching admin stats:", error);
-  }
 
   if (isLoading) {
     return (
@@ -65,8 +66,21 @@ export default function AdminDashboard() {
     );
   }
 
+  if (error) {
+    console.error("AdminDashboard - Rendering error:", error);
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">Erro ao carregar dados</h1>
+        <p className="text-gray-600">Tente fazer login novamente</p>
+        <Button onClick={logout} className="mt-4">
+          Fazer login novamente
+        </Button>
+      </div>
+    );
+  }
+
   if (!data) {
-    console.log("No data available");
+    console.log("AdminDashboard - No data available");
     return null;
   }
 

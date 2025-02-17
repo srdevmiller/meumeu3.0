@@ -30,8 +30,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Rota para estatísticas do admin
   app.get("/api/admin/stats", async (req, res) => {
-    if (!req.isAuthenticated() || req.user?.username !== "admin-miller@gmail.com") {
-      return res.sendStatus(401);
+    // Log para debug
+    console.log("Admin stats request:", {
+      isAuthenticated: req.isAuthenticated(),
+      user: req.user
+    });
+
+    if (!req.isAuthenticated()) {
+      console.log("User not authenticated");
+      return res.status(401).json({ message: "Não autorizado" });
+    }
+
+    if (req.user?.username !== "admin-miller@gmail.com") {
+      console.log("User not admin:", req.user?.username);
+      return res.status(403).json({ message: "Acesso negado" });
     }
 
     try {
