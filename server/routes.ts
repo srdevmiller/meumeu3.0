@@ -130,7 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Você não tem permissão para excluir este produto" });
       }
 
-      await storage.deleteProduct(productId);
+      await storage.deleteProduct(productId, userId);
       res.sendStatus(200);
     } catch (error) {
       console.error('Error deleting product:', error);
