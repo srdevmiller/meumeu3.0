@@ -510,7 +510,7 @@ export default function HomePage() {
                     )}
                   />
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mt-8">
                     <Button
                       type="submit"
                       className="flex-1"
