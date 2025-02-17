@@ -114,8 +114,27 @@ export default function MenuPage() {
         </div>
       </div>
 
+      {/* Counter */}
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-[300px_1fr] gap-8">
+          <div className="md:col-span-2 mb-4">
+            <Card>
+              <CardContent className="py-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-lg font-semibold">R$ {priceRange[0]}</span>
+                    <span className="mx-2">-</span>
+                    <span className="text-lg font-semibold">R$ {priceRange[1]}</span>
+                  </div>
+                  <div className="text-lg">
+                    Qtd Produtos{" "}
+                    <span className="font-bold">{filteredProducts.length}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           {/* Sidebar with filters */}
           <div className="space-y-6">
             <Card>
