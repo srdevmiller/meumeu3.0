@@ -234,7 +234,7 @@ export default function HomePage() {
   };
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: { businessName: string; phone: string }) => {
+    mutationFn: async (data: { businessName: string; phone: string; themeColor: string }) => {
       const res = await apiRequest("PATCH", "/api/user/profile", data);
       return res.json();
     },
@@ -258,6 +258,7 @@ export default function HomePage() {
     defaultValues: {
       businessName: user?.businessName || "",
       phone: user?.phone || "",
+      themeColor: user?.themeColor || "#7c3aed",
     },
   });
 
@@ -266,9 +267,21 @@ export default function HomePage() {
       profileForm.reset({
         businessName: user.businessName,
         phone: user.phone,
+        themeColor: user.themeColor || "#7c3aed",
       });
     }
   }, [user]);
+
+  // Array de cores predefinidas
+  const predefinedColors = [
+    "#7c3aed", // Roxo
+    "#ef4444", // Vermelho
+    "#f97316", // Laranja
+    "#84cc16", // Verde
+    "#06b6d4", // Ciano
+    "#3b82f6", // Azul
+    "#ec4899", // Rosa
+  ];
 
   return (
     <div className="min-h-screen bg-background p-8">
@@ -330,6 +343,36 @@ export default function HomePage() {
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={profileForm.control}
+                    name="themeColor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cor do Tema</FormLabel>
+                        <div className="flex flex-wrap gap-2">
+                          {predefinedColors.map((color) => (
+                            <Button
+                              key={color}
+                              type="button"
+                              variant="outline"
+                              className={`w-8 h-8 rounded-full p-0 relative ${
+                                field.value === color ? 'ring-2 ring-offset-2 ring-primary' : ''
+                              }`}
+                              style={{ backgroundColor: color }}
+                              onClick={() => field.onChange(color)}
+                            >
+                              {field.value === color && (
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-2 h-2 bg-white rounded-full" />
+                                </div>
+                              )}
+                            </Button>
+                          ))}
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
