@@ -14,10 +14,10 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
-import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter } from "lucide-react";
+import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -30,8 +30,8 @@ type MenuData = {
   products: Product[];
   businessName: string;
   bannerImageUrl?: string;
-  favorites: number[]; // IDs of favorited products
-  themeColor?: string; // Added themeColor to MenuData
+  favorites: number[];
+  themeColor?: string;
 };
 
 const container = {
@@ -139,10 +139,25 @@ export default function MenuPage() {
     });
   }, [data?.products, search, selectedCategories, priceRange]);
 
-  // Estilo dinâmico baseado no tema do usuário
   const themeStyles = {
     "--theme-color": data?.themeColor || "#7c3aed",
   } as React.CSSProperties;
+
+  const copyMenuLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link copiado!",
+        description: "O link do cardápio foi copiado para a área de transferência.",
+      });
+    } catch (err) {
+      toast({
+        title: "Erro ao copiar",
+        description: "Não foi possível copiar o link do cardápio.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -164,7 +179,6 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-background" style={themeStyles}>
-      {/* Hero Section com gradiente usando a cor do tema */}
       <div className="relative h-48 bg-black/50 flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           {data.bannerImageUrl && (
@@ -178,24 +192,33 @@ export default function MenuPage() {
         </div>
         <div className="z-10 flex flex-col items-center gap-4">
           <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
-          <Button
-            variant="outline"
-            size="icon"
-            className="bg-background/80 backdrop-blur-sm"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              className="bg-background/80 backdrop-blur-sm"
+              onClick={copyMenuLink}
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              className="bg-background/80 backdrop-blur-sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-[300px_1fr] gap-8">
-          {/* Sidebar with filters */}
           <div className="space-y-6">
             <Card>
               <CardHeader>
@@ -214,7 +237,6 @@ export default function MenuPage() {
               </CardContent>
             </Card>
 
-            {/* Botão Filtrar Produtos */}
             <Button
               onClick={() => setShowFilters(!showFilters)}
               className="w-full flex items-center gap-2"
@@ -232,7 +254,6 @@ export default function MenuPage() {
                   transition={{ duration: 0.2 }}
                   className="space-y-6"
                 >
-                  {/* Categorias */}
                   <Card>
                     <CardHeader>
                       <CardTitle>Categorias</CardTitle>
@@ -260,7 +281,6 @@ export default function MenuPage() {
                     </CardContent>
                   </Card>
 
-                  {/* Faixa de Preço */}
                   <Card>
                     <CardHeader>
                       <CardTitle>Faixa de Preço</CardTitle>
@@ -285,7 +305,6 @@ export default function MenuPage() {
             </AnimatePresence>
           </div>
 
-          {/* Products Grid */}
           <div>
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm">
