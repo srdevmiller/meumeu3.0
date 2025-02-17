@@ -19,6 +19,7 @@ import { Users, Package, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import { useSessionTimeout } from "@/hooks/use-session-timeout";
 
 type DashboardStats = {
   totalUsers: number;
@@ -35,6 +36,7 @@ type DashboardStats = {
 export default function AdminDashboard() {
   const { user, logout, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  useSessionTimeout(); // Adiciona o timeout da sessão
 
   // Debug logs para acompanhar o estado da autenticação
   useEffect(() => {
