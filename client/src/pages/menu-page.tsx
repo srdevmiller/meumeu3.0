@@ -225,7 +225,7 @@ export default function MenuPage() {
             <img
               src={data.bannerImageUrl}
               alt={data.businessName}
-              className="w-full h-full object-cover filter blur-[2px] scale-110"
+              className="w-full h-full object-cover filter blur-[1px] scale-105" // Modified className
             />
           )}
           <div className="absolute inset-0 bg-[var(--theme-color)]/90" />
