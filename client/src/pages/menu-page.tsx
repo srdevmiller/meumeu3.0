@@ -410,6 +410,13 @@ export default function MenuPage() {
                               </span>
                             </CardDescription>
                           </div>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="p-3 pt-0">
+                        <div className="flex justify-between items-center">
+                          <p className="text-lg sm:text-xl font-bold text-[var(--theme-color)]">
+                            R$ {Number(product.price).toFixed(2)}
+                          </p>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -436,11 +443,6 @@ export default function MenuPage() {
                             </motion.div>
                           </Button>
                         </div>
-                      </CardHeader>
-                      <CardContent className="p-3 pt-0">
-                        <p className="text-lg sm:text-xl font-bold text-[var(--theme-color)]">
-                          R$ {Number(product.price).toFixed(2)}
-                        </p>
                       </CardContent>
                     </div>
                   </Card>
