@@ -409,136 +409,141 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <Form {...form}>
-                  <div className="flex justify-center mb-6">
-                    <div className="relative">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                        id="image-upload"
-                      />
-                      <label
-                        htmlFor="image-upload"
-                        className="cursor-pointer flex flex-col items-center"
-                      >
-                        {imagePreview ? (
-                          <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="w-32 h-32 object-cover rounded-lg"
-                          />
-                        ) : (
-                          <div className="w-32 h-32 border-2 border-dashed rounded-lg flex items-center justify-center">
-                            <Upload className="w-8 h-8 text-muted-foreground" />
-                          </div>
-                        )}
-                        <span className="mt-2 text-sm text-muted-foreground">
-                          Clique para upload
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nome do Produto</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Digite o nome do produto" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="price"
-                    render={({ field: { onChange, ...field } }) => (
-                      <FormItem>
-                        <FormLabel>Preço</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            onChange={(e) => onChange(Number(e.target.value))}
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="categoryId"
-                    render={() => (
-                      <FormItem>
-                        <FormLabel>Categoria</FormLabel>
-                        <div className="grid grid-cols-3 gap-4">
-                          {categories.map((category) => (
-                            <FormField
-                              key={category.id}
-                              control={form.control}
-                              name="categoryId"
-                              render={({ field }) => (
-                                <FormItem className="flex items-center space-x-2">
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value === category.id}
-                                      onCheckedChange={() =>
-                                        field.onChange(category.id)
-                                      }
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="font-normal">
-                                    {category.name}
-                                  </FormLabel>
-                                </FormItem>
-                              )}
+                  <form
+                    onSubmit={form.handleSubmit(handleSubmit)}
+                    className="space-y-4"
+                  >
+                    <div className="flex justify-center mb-6">
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                          id="image-upload"
+                        />
+                        <label
+                          htmlFor="image-upload"
+                          className="cursor-pointer flex flex-col items-center"
+                        >
+                          {imagePreview ? (
+                            <img
+                              src={imagePreview}
+                              alt="Preview"
+                              className="w-32 h-32 object-cover rounded-lg"
                             />
-                          ))}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                          ) : (
+                            <div className="w-32 h-32 border-2 border-dashed rounded-lg flex items-center justify-center">
+                              <Upload className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                          )}
+                          <span className="mt-2 text-sm text-muted-foreground">
+                            Clique para upload
+                          </span>
+                        </label>
+                      </div>
+                    </div>
 
-                  <div className="flex gap-2 mt-8">
-                    <Button
-                      type="submit"
-                      className="flex-1"
-                      disabled={
-                        createProductMutation.isPending ||
-                        updateProductMutation.isPending
-                      }
-                    >
-                      {(createProductMutation.isPending ||
-                        updateProductMutation.isPending) && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome do Produto</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Digite o nome do produto" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
                       )}
-                      {editingProduct ? "Atualizar" : "Publicar"} Produto
-                    </Button>
-                    {editingProduct && (
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="price"
+                      render={({ field: { onChange, ...field } }) => (
+                        <FormItem>
+                          <FormLabel>Preço</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              min="0"
+                              placeholder="0.00"
+                              onChange={(e) => onChange(Number(e.target.value))}
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="categoryId"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Categoria</FormLabel>
+                          <div className="grid grid-cols-3 gap-4">
+                            {categories.map((category) => (
+                              <FormField
+                                key={category.id}
+                                control={form.control}
+                                name="categoryId"
+                                render={({ field }) => (
+                                  <FormItem className="flex items-center space-x-2">
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value === category.id}
+                                        onCheckedChange={() =>
+                                          field.onChange(category.id)
+                                        }
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {category.name}
+                                    </FormLabel>
+                                  </FormItem>
+                                )}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="flex gap-2 mt-8">
                       <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => {
-                          setEditingProduct(null);
-                          form.reset();
-                          setImagePreview(null);
-                        }}
+                        type="submit"
+                        className="flex-1"
+                        disabled={
+                          createProductMutation.isPending ||
+                          updateProductMutation.isPending
+                        }
                       >
-                        Cancelar
+                        {(createProductMutation.isPending ||
+                          updateProductMutation.isPending) && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        {editingProduct ? "Atualizar" : "Publicar"} Produto
                       </Button>
-                    )}
-                  </div>
+                      {editingProduct && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setEditingProduct(null);
+                            form.reset();
+                            setImagePreview(null);
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      )}
+                    </div>
+                  </form>
                 </Form>
               </CardContent>
             </Card>
