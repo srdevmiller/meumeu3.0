@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table";
 import { Users, Package, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 type DashboardStats = {
   totalUsers: number;
@@ -32,9 +33,7 @@ type DashboardStats = {
 
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
-
-  // Adicionando logs para debug
-  console.log("AdminDashboard - Current user:", user);
+  const { toast } = useToast();
 
   // Verificação mais robusta do usuário admin
   if (!user) {
@@ -44,16 +43,40 @@ export default function AdminDashboard() {
 
   if (user.username !== "admin-miller@gmail.com") {
     console.log("AdminDashboard - User is not admin:", user.username);
+    toast({
+      title: "Acesso negado",
+      description: "Você não tem permissão para acessar esta página.",
+      variant: "destructive",
+    });
     return <Redirect to="/" />;
   }
 
   const { data, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/stats"],
     retry: false,
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("AdminDashboard - Query error:", error);
-      if ((error as any).status === 401) {
+
+      // Se receber erro de autenticação, fazer logout
+      if (error.status === 401) {
+        toast({
+          title: "Sessão expirada",
+          description: "Por favor, faça login novamente.",
+          variant: "destructive",
+        });
         logout();
+      } else if (error.status === 403) {
+        toast({
+          title: "Acesso negado",
+          description: "Você não tem permissão para acessar esta página.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Erro",
+          description: "Ocorreu um erro ao carregar os dados.",
+          variant: "destructive",
+        });
       }
     }
   });
@@ -66,22 +89,18 @@ export default function AdminDashboard() {
     );
   }
 
-  if (error) {
-    console.error("AdminDashboard - Rendering error:", error);
+  if (error || !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Erro ao carregar dados</h1>
-        <p className="text-gray-600">Tente fazer login novamente</p>
-        <Button onClick={logout} className="mt-4">
-          Fazer login novamente
-        </Button>
+        <h1 className="text-2xl font-bold text-red-600 mb-4">
+          Erro ao carregar dados
+        </h1>
+        <p className="text-gray-600 mb-4">
+          {error instanceof Error ? error.message : "Tente fazer login novamente"}
+        </p>
+        <Button onClick={logout}>Fazer login novamente</Button>
       </div>
     );
-  }
-
-  if (!data) {
-    console.log("AdminDashboard - No data available");
-    return null;
   }
 
   return (

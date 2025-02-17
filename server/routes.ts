@@ -33,23 +33,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Log para debug
     console.log("Admin stats request:", {
       isAuthenticated: req.isAuthenticated(),
-      user: req.user
+      user: req.user,
+      headers: req.headers,
+      session: req.session
     });
 
     if (!req.isAuthenticated()) {
       console.log("User not authenticated");
-      return res.status(401).json({ message: "Não autorizado" });
+      return res.status(401).json({ 
+        error: "AUTH_ERROR",
+        message: "Não autorizado" 
+      });
     }
 
-    if (req.user?.username !== "admin-miller@gmail.com") {
+    if (!req.user || req.user.username !== "admin-miller@gmail.com") {
       console.log("User not admin:", req.user?.username);
-      return res.status(403).json({ message: "Acesso negado" });
+      return res.status(403).json({ 
+        error: "FORBIDDEN",
+        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+      });
     }
 
     try {
       const usersWithProducts = await db
         .select({
-          ...users,
+          id: users.id,
+          username: users.username,
+          businessName: users.businessName,
+          phone: users.phone,
           product_count: sql<number>`count(${products.id})::integer`
         })
         .from(users)
@@ -62,14 +73,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         totalUsers: usersWithProducts.length,
         totalProducts: productsCount,
-        users: usersWithProducts.map((user) => ({
-          ...user,
-          password: undefined,
-        }))
+        users: usersWithProducts
       });
     } catch (error) {
       console.error('Error in admin stats:', error);
-      res.status(500).json({ message: (error as Error).message });
+      res.status(500).json({ 
+        error: "SERVER_ERROR",
+        message: "Erro ao buscar estatísticas" 
+      });
     }
   });
 
