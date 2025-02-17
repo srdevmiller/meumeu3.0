@@ -1,8 +1,10 @@
 import { Link } from "wouter";
-import mockupDesktop from "../assets/mockup-desktop-2.jpg";
-import mockupMobile1 from "../assets/mockup-mobile-1.png";
-import mockupMobile2 from "../assets/mockup-mobile-2.png";
-import mockupMobile3 from "../assets/mockup-mobile-3.png";
+import mockupDesktop from "../assets/04.jpg";
+import img1 from "../assets/img1.png";
+import img3 from "../assets/img3.png";
+import img4 from "../assets/img4.png";
+import img5 from "../assets/img5.png";
+import img6 from "../assets/img6.jpg";
 
 export default function LandingPage() {
   return (
@@ -45,9 +47,9 @@ export default function LandingPage() {
         </div>
 
         <img 
-          src={mockupMobile1}
-          alt="Interface do aplicativo"
-          className="max-w-sm mx-auto transform hover:scale-105 transition-all duration-500"
+          src={mockupDesktop}
+          alt="Interface do sistema"
+          className="max-w-4xl mx-auto rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-500"
         />
       </section>
 
@@ -105,7 +107,7 @@ export default function LandingPage() {
               </div>
             </div>
             <img 
-              src={mockupMobile2}
+              src={img3}
               alt="Recursos do aplicativo"
               className="mx-auto transform hover:scale-105 transition-all duration-500"
             />
@@ -118,7 +120,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <img 
-              src={mockupMobile3}
+              src={img4}
               alt="Interface de gerenciamento"
               className="mx-auto transform hover:scale-105 transition-all duration-500"
             />
