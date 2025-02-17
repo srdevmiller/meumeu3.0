@@ -756,19 +756,20 @@ export default function MenuPage() {
 
         {/* Footer with CTA */}
         <motion.div
-          className="py-8 bg-muted mt-12"
+          className="py-8 bg-[var(--theme-color)] mt-12"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
           <div className="container mx-auto px-4 text-center">
-            <h3 className="text-2xl font-bold mb-4">Quer ter um cardápio digital como este?</h3>
+            <h3 className="text-2xl font-bold mb-4 text-white">Quer ter um cardápio digital como este?</h3>
             <Link href="/">
               <Button
-                className="bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 text-white px-8 py-6 h-auto text-lg font-semibold relative overflow-hidden"
-                onClick={createRipple}
+                variant="outline"
+                size="lg"
+                className="bg-white hover:bg-gray-100 text-black font-semibold"
               >
-                Crie seu menu gratuitamente
+                Crie seu cardápio gratuitamente
               </Button>
             </Link>
           </div>
