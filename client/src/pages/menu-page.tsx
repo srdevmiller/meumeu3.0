@@ -31,7 +31,9 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { motion, AnimatePresence } from "framer-motion";
+//import { motion, AnimatePresence } from "framer-motion"; //Removed as per intention
+import { AnimatePresence } from "framer-motion";
+
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -283,52 +285,48 @@ export default function MenuPage() {
               <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
             </div>
             <div className="flex gap-2">
-              <motion.div whileTap={{ scale: 0.95 }}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
-                      onClick={(e) => {
-                        createRipple(e);
-                        copyMenuLink();
-                      }}
-                    >
-                      <div className="relative w-4 h-4">
-                        <Share2 className={`h-4 w-4 absolute transition-opacity ${copied ? 'opacity-0' : 'opacity-100'}`} />
-                        <CheckCheck className={`h-4 w-4 absolute text-green-500 transition-opacity ${copied ? 'opacity-100' : 'opacity-0'}`} />
-                      </div>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Copiar link do cardápio</p>
-                  </TooltipContent>
-                </Tooltip>
-              </motion.div>
-              <motion.div whileTap={{ scale: 0.95 }}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
-                      onClick={(e) => {
-                        createRipple(e);
-                        setTheme(theme === "dark" ? "light" : "dark");
-                      }}
-                    >
-                      <div className="relative w-4 h-4">
-                        <Sun className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`} />
-                        <Moon className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`} />
-                      </div>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Alternar tema</p>
-                  </TooltipContent>
-                </Tooltip>
-              </motion.div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
+                    onClick={(e) => {
+                      createRipple(e);
+                      copyMenuLink();
+                    }}
+                  >
+                    <div className="relative w-4 h-4">
+                      <Share2 className={`h-4 w-4 absolute transition-opacity ${copied ? 'opacity-0' : 'opacity-100'}`} />
+                      <CheckCheck className={`h-4 w-4 absolute text-green-500 transition-opacity ${copied ? 'opacity-100' : 'opacity-0'}`} />
+                    </div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Copiar link do cardápio</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
+                    onClick={(e) => {
+                      createRipple(e);
+                      setTheme(theme === "dark" ? "light" : "dark");
+                    }}
+                  >
+                    <div className="relative w-4 h-4">
+                      <Sun className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`} />
+                      <Moon className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`} />
+                    </div>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Alternar tema</p>
+                </TooltipContent>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -380,12 +378,13 @@ export default function MenuPage() {
 
               <AnimatePresence>
                 {showFilters && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
+                  <div
                     className="space-y-6"
+                    style={{
+                      opacity: 1,
+                      height: "auto",
+                      transition: "opacity 0.2s, height 0.2s",
+                    }}
                   >
                     <Card>
                       <CardHeader>
@@ -458,7 +457,7 @@ export default function MenuPage() {
                         </div>
                       </CardContent>
                     </Card>
-                  </motion.div>
+                  </div>
                 )}
               </AnimatePresence>
             </div>
@@ -572,10 +571,11 @@ export default function MenuPage() {
                 </div>
               </div>
 
-              <motion.div
-                variants={container}
-                initial="hidden"
-                animate="show"
+              <div
+                style={{
+                  opacity: 1,
+                  transition: "opacity 0.1s",
+                }}
                 className={
                   viewMode === "grid"
                     ? "grid grid-cols-2 md:grid-cols-3 gap-4"
@@ -583,32 +583,26 @@ export default function MenuPage() {
                 }
               >
                 {filteredProducts.map((product) => (
-                  <motion.div
+                  <div
                     key={product.id}
-                    variants={item}
-                    whileHover={{
-                      scale: 1.03,
-                      transition: { type: "spring", stiffness: 400, damping: 17 },
+                    style={{
+                      opacity: 1,
+                      y: 0,
+                      transition: "opacity 0.3s, y 0.3s",
                     }}
-                    whileTap={{ scale: 0.98 }}
-                    layout
-                    initial="hidden"
-                    animate="show"
-                    exit="hidden"
                   >
                     <Card
                       className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
-                      <motion.div
+                      <div
                         className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
-                        layoutId={`image-${product.id}`}
                       >
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         />
-                      </motion.div>
+                      </div>
                       <div className="flex-1">
                         <CardHeader className="p-3">
                           <div className="flex justify-between items-start">
@@ -617,25 +611,22 @@ export default function MenuPage() {
                                 {product.name}
                               </CardTitle>
                               <CardDescription className="text-xs sm:text-sm">
-                                <motion.span
+                                <span
                                   className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]"
-                                  whileHover={{ scale: 1.05 }}
-                                  whileTap={{ scale: 0.95 }}
                                 >
                                   {categories.find((c) => c.id === product.categoryId)?.name}
-                                </motion.span>
+                                </span>
                               </CardDescription>
                             </div>
                           </div>
                         </CardHeader>
                         <CardContent className="p-3 pt-0">
                           <div className="flex justify-between items-center">
-                            <motion.p
+                            <p
                               className="text-lg sm:text-xl font-bold"
-                              layoutId={`price-${product.id}`}
                             >
                               {formatPrice(product.price)}
-                            </motion.p>
+                            </p>
                             <div className="flex gap-2">
                               <Tooltip>
                                 <TooltipTrigger asChild>
@@ -664,10 +655,7 @@ export default function MenuPage() {
                                   </p>
                                 </TooltipContent>
                               </Tooltip>
-                              <motion.div
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                              >
+                              <div>
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -677,17 +665,12 @@ export default function MenuPage() {
                                     toggleFavorite(product.id);
                                   }}
                                 >
-                                  <motion.div
-                                    initial={{ scale: 1 }}
-                                    animate={{
-                                      scale: data?.favorites.includes(product.id)
-                                        ? [1, 1.3, 1]
-                                        : 1,
-                                      rotate: data?.favorites.includes(product.id)
-                                        ? [0, 15, -15, 0]
-                                        : 0,
+                                  <div
+                                    style={{
+                                      scale: data?.favorites.includes(product.id) ? 1 : 1,
+                                      rotate: data?.favorites.includes(product.id) ? 0 : 0,
+                                      transition: "scale 0.4s ease, rotate 0.4s ease",
                                     }}
-                                    transition={{ duration: 0.4, type: "spring" }}
                                   >
                                     <Heart
                                       className={`h-4 w-4 transition-colors ${
@@ -696,17 +679,17 @@ export default function MenuPage() {
                                           : "text-muted-foreground"
                                       }`}
                                     />
-                                  </motion.div>
+                                  </div>
                                 </Button>
-                              </motion.div>
+                              </div>
                             </div>
                           </div>
                         </CardContent>
                       </div>
                     </Card>
-                  </motion.div>
+                  </div>
                 ))}
-              </motion.div>
+              </div>
 
               {filteredProducts.length === 0 && (
                 <div className="text-center py-12">
