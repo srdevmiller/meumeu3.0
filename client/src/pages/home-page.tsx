@@ -325,6 +325,11 @@ export default function HomePage() {
     },
   };
 
+  const handleLogout = async () => {
+    await logoutMutation.mutateAsync();
+    setLocation("/auth");
+  };
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
