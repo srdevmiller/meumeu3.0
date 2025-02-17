@@ -17,7 +17,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertProductSchema, type InsertProduct, type Product } from "@shared/schema";
@@ -50,6 +56,14 @@ const categories = [
   { id: 1, name: "Bebidas" },
   { id: 2, name: "Alimentos" },
   { id: 3, name: "Tabacaria" },
+  { id: 4, name: "Destilados" },
+  { id: 5, name: "Cervejas" },
+  { id: 6, name: "Vinhos" },
+  { id: 7, name: "Petiscos" },
+  { id: 8, name: "Porções" },
+  { id: 9, name: "Drinks" },
+  { id: 10, name: "Sobremesas" },
+  { id: 11, name: "Outros" },
 ];
 
 const MAX_IMAGE_SIZE = 800; // pixels
@@ -650,33 +664,29 @@ export default function HomePage() {
                     <FormField
                       control={form.control}
                       name="categoryId"
-                      render={() => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Categoria</FormLabel>
-                          <div className="grid grid-cols-3 gap-4">
-                            {categories.map((category) => (
-                              <FormField
-                                key={category.id}
-                                control={form.control}
-                                name="categoryId"
-                                render={({ field }) => (
-                                  <FormItem className="flex items-center space-x-2">
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value === category.id}
-                                        onCheckedChange={() =>
-                                          field.onChange(category.id)
-                                        }
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="font-normal">
-                                      {category.name}
-                                    </FormLabel>
-                                  </FormItem>
-                                )}
-                              />
-                            ))}
-                          </div>
+                          <Select
+                            onValueChange={(value) => field.onChange(Number(value))}
+                            defaultValue={field.value?.toString()}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione uma categoria" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {categories.map((category) => (
+                                <SelectItem
+                                  key={category.id}
+                                  value={category.id.toString()}
+                                >
+                                  {category.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}

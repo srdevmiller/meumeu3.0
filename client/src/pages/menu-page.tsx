@@ -30,6 +30,7 @@ const categories = [
   { id: 8, name: "Porções" },
   { id: 9, name: "Drinks" },
   { id: 10, name: "Sobremesas" },
+  { id: 11, name: "Outros" },
 ];
 
 type MenuData = {
@@ -215,17 +216,17 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--theme-color-90)]" style={themeStyles}>
+    <div className="min-h-screen bg-background" style={themeStyles}>
       <div className="relative h-48 flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           {data.bannerImageUrl && (
             <img
               src={data.bannerImageUrl}
               alt={data.businessName}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover filter blur-sm"
             />
           )}
-          <div className="absolute inset-0 bg-[var(--theme-color)]/90" /> {/* Changed opacity here */}
+          <div className="absolute inset-0 bg-[var(--theme-color)]/90" />
         </div>
         <div className="z-10 flex flex-col items-center gap-4">
           <div className="flex items-center gap-4">
