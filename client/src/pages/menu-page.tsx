@@ -262,13 +262,16 @@ export default function MenuPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="bg-background/80 backdrop-blur-sm relative overflow-hidden"
+                      className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
                       onClick={(e) => {
                         createRipple(e);
                         copyMenuLink();
                       }}
                     >
-                      {copied ? <CheckCheck className="h-4 w-4 text-green-500" /> : <Share2 className="h-4 w-4" />}
+                      <div className="relative w-4 h-4">
+                        <Share2 className={`h-4 w-4 absolute transition-opacity ${copied ? 'opacity-0' : 'opacity-100'}`} />
+                        <CheckCheck className={`h-4 w-4 absolute text-green-500 transition-opacity ${copied ? 'opacity-100' : 'opacity-0'}`} />
+                      </div>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -282,17 +285,16 @@ export default function MenuPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      className="bg-background/80 backdrop-blur-sm relative overflow-hidden"
+                      className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
                       onClick={(e) => {
                         createRipple(e);
                         setTheme(theme === "dark" ? "light" : "dark");
                       }}
                     >
-                      {theme === "dark" ? (
-                        <Sun className="h-4 w-4" />
-                      ) : (
-                        <Moon className="h-4 w-4" />
-                      )}
+                      <div className="relative w-4 h-4">
+                        <Sun className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`} />
+                        <Moon className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`} />
+                      </div>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
