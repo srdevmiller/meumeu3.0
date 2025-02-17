@@ -49,12 +49,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (user: SelectUser) => {
       console.log("Login successful, updating user data:", user);
       queryClient.setQueryData(["/api/user"], user);
-      refetch(); // Força uma nova busca do usuário após o login
+      refetch();
     },
     onError: (error: Error) => {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      console.log("Attempting logout");
+      await apiRequest("POST", "/api/logout");
+    },
+    onSuccess: () => {
+      console.log("Logout successful, clearing all cache data");
+      // Clear all query cache to ensure no data persists between users
+      queryClient.clear();
+      queryClient.setQueryData(["/api/user"], null);
+      refetch();
+    },
+    onError: (error: Error) => {
+      console.error("Logout error:", error);
+      toast({
+        title: "Logout failed",
         description: error.message,
         variant: "destructive",
       });
@@ -72,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onSuccess: (user: SelectUser) => {
       console.log("Registration successful, updating user data:", user);
       queryClient.setQueryData(["/api/user"], user);
-      refetch(); // Força uma nova busca do usuário após o registro
+      refetch(); 
     },
     onError: (error: Error) => {
       console.error("Registration error:", error);
@@ -84,31 +106,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
   });
 
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      console.log("Attempting logout");
-      await apiRequest("POST", "/api/logout");
-    },
-    onSuccess: () => {
-      console.log("Logout successful, clearing user data");
-      queryClient.setQueryData(["/api/user"], null);
-      refetch(); // Força uma nova busca do usuário após o logout
-    },
-    onError: (error: Error) => {
-      console.error("Logout error:", error);
-      toast({
-        title: "Logout failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   const logout = () => {
     logoutMutation.mutate();
   };
 
-  // Log o estado atual do usuário sempre que mudar
   useEffect(() => {
     console.log("Current auth state:", {
       user,
