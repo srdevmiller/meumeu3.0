@@ -616,7 +616,7 @@ export default function MenuPage() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    className={`h-8 w-8 relative overflow-hidden ${
+                                    className={`h-8 w-8 ${
                                       compareProducts.some((p) => p.id === product.id)
                                         ? "bg-[var(--theme-color)]/10"
                                         : ""
@@ -641,18 +641,14 @@ export default function MenuPage() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 relative overflow-hidden"
-                                onClick={(e) => {
-                                  createRipple(e);
-                                  toggleFavorite(product.id);
-                                }}
+                                className="h-8 w-8"
+                                onClick={() => toggleFavorite(product.id)}
                               >
                                 <Heart
-                                  className={`h-4 w-4 ${
-                                    data?.favorites.includes(product.id)
-                                      ? "fill-current text-red-500"
-                                      : "text-muted-foreground"
-                                  }`}
+                                  className={data?.favorites.includes(product.id)
+                                    ? "h-4 w-4 fill-current text-red-500"
+                                    : "h-4 w-4 text-muted-foreground"
+                                  }
                                 />
                               </Button>
                             </div>
