@@ -158,7 +158,8 @@ export default function HomePage() {
       const { id, ...product } = data;
       const res = await apiRequest("PATCH", `/api/products/${id}`, product);
       if (!res.ok) {
-        throw new Error('Falha ao atualizar produto');
+        const error = await res.text();
+        throw new Error(error || 'Falha ao atualizar produto');
       }
       return res.json();
     },
@@ -217,7 +218,11 @@ export default function HomePage() {
 
   const handleSubmit = (data: InsertProduct) => {
     if (editingProduct) {
-      updateProductMutation.mutate({ ...data, id: editingProduct.id });
+      // Garantir que o ID do produto está sendo passado corretamente
+      updateProductMutation.mutate({ 
+        ...data, 
+        id: editingProduct.id 
+      });
     } else {
       createProductMutation.mutate(data);
     }
