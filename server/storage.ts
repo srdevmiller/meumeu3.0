@@ -36,8 +36,6 @@ export class DatabaseStorage implements IStorage {
     });
   }
 
-  // ... outros métodos permanecem iguais ...
-
   async createFavorite(favorite: InsertFavorite): Promise<Favorite> {
     const [newFavorite] = await db
       .insert(favorites)
@@ -63,8 +61,6 @@ export class DatabaseStorage implements IStorage {
         )
       );
   }
-
-  // ... métodos existentes continuam aqui ...
 
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));
@@ -99,10 +95,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProducts(userId: number): Promise<Product[]> {
+    // Atualizado para garantir que só retorne produtos do usuário específico
     return db
       .select()
       .from(products)
-      .where(eq(products.userId, userId));
+      .where(eq(products.userId, userId))
+      .orderBy(products.id);
   }
 
   async updateProduct(id: number, userId: number, product: Partial<InsertProduct>): Promise<Product | undefined> {

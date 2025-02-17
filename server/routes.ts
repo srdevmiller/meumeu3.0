@@ -80,8 +80,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/products", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
-    const products = await storage.getProducts(req.user!.id);
-    res.json(products);
+    const userId = req.user!.id;
+    try {
+      // Garantindo que só retorne produtos do usuário logado
+      const products = await storage.getProducts(userId);
+      res.json(products);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
   });
 
   // Novas rotas para favoritos
