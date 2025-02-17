@@ -31,7 +31,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -154,10 +154,10 @@ export default function MenuPage() {
     "--theme-color-90": data?.themeColor ? `${data.themeColor}E6` : "#7c3aedE6",
   } as React.CSSProperties;
 
-  const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const button = event.currentTarget;
+  const createRipple = (event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+    const element = event.currentTarget;
     const ripple = document.createElement("span");
-    const rect = button.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
 
     const diameter = Math.max(rect.width, rect.height);
     const radius = diameter / 2;
@@ -167,12 +167,12 @@ export default function MenuPage() {
     ripple.style.top = `${event.clientY - rect.top - radius}px`;
     ripple.className = "ripple";
 
-    const existingRipple = button.getElementsByClassName("ripple")[0];
+    const existingRipple = element.getElementsByClassName("ripple")[0];
     if (existingRipple) {
       existingRipple.remove();
     }
 
-    button.appendChild(ripple);
+    element.appendChild(ripple);
 
     setTimeout(() => {
       ripple.remove();
@@ -235,8 +235,19 @@ export default function MenuPage() {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background" style={themeStyles}>
-        <div className="relative h-48 flex items-center justify-center overflow-hidden">
+      <motion.div
+        className="min-h-screen bg-background"
+        style={themeStyles}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <motion.div
+          className="relative h-48 flex items-center justify-center overflow-hidden"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <div className="absolute inset-0 z-0 overflow-hidden">
             {data.bannerImageUrl && (
               <img
@@ -303,11 +314,16 @@ export default function MenuPage() {
               </Tooltip>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         <div className="container mx-auto px-4 py-8">
           <div className="grid md:grid-cols-[300px_1fr] gap-8">
-            <div className="space-y-6">
+            <motion.div
+              className="space-y-6"
+              initial={{ x: -20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle>Buscar</CardTitle>
@@ -438,9 +454,13 @@ export default function MenuPage() {
                   </div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
 
-            <div>
+            <motion.div
+              initial={{ x: 20, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
               <div className="flex items-center justify-between mb-4">
                 <div className="text-sm">
                   {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])} •{" "}
@@ -552,9 +572,9 @@ export default function MenuPage() {
                     </TooltipContent>
                   </Tooltip>
                 </div>
-              </div>
+              </motion.div>
 
-              <div
+              <motion.div
                 style={{
                   opacity: 1,
                   transition: "opacity 0.1s",
@@ -565,27 +585,30 @@ export default function MenuPage() {
                     : "flex flex-col gap-4"
                 }
               >
-                {filteredProducts.map((product) => (
-                  <div
+                {filteredProducts.map((product, index) => (
+                  <motion.div
                     key={product.id}
-                    style={{
-                      opacity: 1,
-                      y: 0,
-                      transition: "opacity 0.3s, y 0.3s",
-                    }}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     <Card
-                      className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]`}
+                      className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                      onClick={(e) => createRipple(e)}
                     >
-                      <div
+                      <motion.div
                         className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.3 }}
                       >
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          className="w-full h-full object-cover"
                         />
-                      </div>
+                      </motion.div>
                       <div className="flex-1">
                         <CardHeader className="p-3">
                           <div className="flex justify-between items-start">
@@ -656,21 +679,47 @@ export default function MenuPage() {
                         </CardContent>
                       </div>
                     </Card>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
 
-              {filteredProducts.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">
-                    Nenhum produto encontrado com os filtros selecionados.
-                  </p>
-                </div>
-              )}
-            </div>
+              <AnimatePresence>
+                {filteredProducts.length === 0 && (
+                  <motion.div
+                    className="text-center py-12"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <p className="text-muted-foreground">
+                      Nenhum produto encontrado com os filtros selecionados.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
+      <style>
+        {`
+        .ripple {
+          position: absolute;
+          border-radius: 50%;
+          transform: scale(0);
+          animation: ripple 0.6s linear;
+          background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes ripple {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+      `}
+      </style>
     </TooltipProvider>
   );
 }
