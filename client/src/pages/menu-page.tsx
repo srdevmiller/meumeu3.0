@@ -149,6 +149,7 @@ export default function MenuPage() {
 
   const themeStyles = {
     "--theme-color": data?.themeColor || "#7c3aed",
+    "--theme-color-90": data?.themeColor ? `${data.themeColor}E6` : "#7c3aedE6", // E6 is hex for 90% opacity
   } as React.CSSProperties;
 
   const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -214,7 +215,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background" style={themeStyles}>
+    <div className="min-h-screen bg-[var(--theme-color-90)]" style={themeStyles}>
       <div className="relative h-48 bg-black/50 flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           {data.bannerImageUrl && (
