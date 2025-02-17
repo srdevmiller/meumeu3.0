@@ -201,6 +201,7 @@ export default function HomePage() {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
+    setShowPublishForm(true); // Mostra o formulário quando editar
     form.reset({
       name: product.name,
       price: Number(product.price),
@@ -581,8 +582,8 @@ export default function HomePage() {
                 </p>
               ) : (
                 <div className={`grid gap-4 ${
-                  viewMode === "grid" 
-                    ? "grid-cols-3" 
+                  viewMode === "grid"
+                    ? "grid-cols-3"
                     : "grid-cols-1"
                 }`}>
                   {products.map((product) => (
@@ -594,8 +595,8 @@ export default function HomePage() {
                         src={product.imageUrl}
                         alt={product.name}
                         className={`${
-                          viewMode === "list" 
-                            ? "w-16 h-16" 
+                          viewMode === "list"
+                            ? "w-16 h-16"
                             : "w-full aspect-square"
                         } object-cover rounded`}
                       />
