@@ -1,6 +1,6 @@
 import { users, products, type User, type InsertUser, type Product, type InsertProduct } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, count } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
@@ -17,6 +17,8 @@ export interface IStorage {
   deleteProduct(id: number, userId: number): Promise<void>;
   updateUserBanner(userId: number, bannerImageUrl: string): Promise<User>;
   updateUserProfile(userId: number, data: { businessName?: string; phone?: string }): Promise<User>;
+  getAllUsers(): Promise<User[]>;
+  getProductsCount(): Promise<number>;
   sessionStore: session.Store;
 }
 
@@ -113,6 +115,17 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     return user;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return db.select().from(users);
+  }
+
+  async getProductsCount(): Promise<number> {
+    const [result] = await db
+      .select({ value: count() })
+      .from(products);
+    return Number(result.value);
   }
 }
 
