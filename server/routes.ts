@@ -130,7 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update the menu route to include themeColor
+  // Update the menu route to include themeColor and logoUrl
   app.get("/api/menu/:userId", async (req, res) => {
     const userId = parseInt(req.params.userId);
     try {
@@ -152,6 +152,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         businessName: user.businessName,
         bannerImageUrl: user.bannerImageUrl,
         themeColor: user.themeColor || "#7c3aed", // Garantir um valor padrão
+        logoUrl: user.logoUrl, // Incluir o logoUrl na resposta
         favorites: favorites.map(f => f.productId)
       });
     } catch (error) {
@@ -178,11 +179,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const userId = req.user!.id;
 
     try {
-      const { businessName, phone, themeColor } = req.body;
+      const { businessName, phone, themeColor, logoUrl } = req.body;
       const user = await storage.updateUserProfile(userId, { 
         businessName, 
         phone,
-        themeColor
+        themeColor,
+        logoUrl
       });
       res.json(user);
     } catch (error) {
