@@ -215,10 +215,22 @@ export default function MenuPage() {
     });
   };
 
+  const LoadingSkeleton = () => (
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div key={i} className="animate-pulse">
+          <div className="bg-muted rounded-lg aspect-square mb-2"></div>
+          <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+          <div className="h-3 bg-muted rounded w-1/2"></div>
+        </div>
+      ))}
+    </div>
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+        <LoadingSkeleton />
       </div>
     );
   }
@@ -234,7 +246,7 @@ export default function MenuPage() {
   }
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={150}>
       <motion.div
         className="min-h-screen bg-background motion-safe"
         style={themeStyles}
@@ -372,7 +384,7 @@ export default function MenuPage() {
               <AnimatePresence>
                 {showFilters && (
                   <div
-                    className="space-y-6"
+                    className="space-y-6 filter-transition"
                     style={{
                       opacity: 1,
                       height: "auto",
@@ -389,7 +401,7 @@ export default function MenuPage() {
                             <Tooltip key={category.id}>
                               <TooltipTrigger asChild>
                                 <button
-                                  className="flex items-center space-x-2 min-w-[120px] hover:bg-accent/50 p-1 rounded-md"
+                                  className="flex items-center space-x-2 min-w-[120px] hover:bg-accent/50 p-1 rounded-md category-pill"
                                   onClick={() => {
                                     setSelectedCategories(
                                       selectedCategories.includes(category.id)
@@ -573,111 +585,115 @@ export default function MenuPage() {
                 </div>
               </div>
 
-              <motion.div
-                style={{
-                  opacity: 1,
-                  transition: "opacity 0.1s",
-                }}
-                className={`grid-container ${
-                  viewMode === "grid"
-                    ? "grid grid-cols-2 md:grid-cols-3 gap-4"
-                    : "flex flex-col gap-4"
-                }`}
-              >
-                {filteredProducts.map((product, index) => (
-                  <motion.div
-                    key={product.id}
-                    className="card-interactive"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Card
-                      className={`relative overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
-                      onClick={(e) => createRipple(e)}
+              {isLoading ? (
+                <LoadingSkeleton />
+              ) : (
+                <motion.div
+                  style={{
+                    opacity: 1,
+                    transition: "opacity 0.1s",
+                  }}
+                  className={`grid-container ${
+                    viewMode === "grid"
+                      ? "grid grid-cols-2 md:grid-cols-3 gap-4"
+                      : "flex flex-col gap-4"
+                  }`}
+                >
+                  {filteredProducts.map((product, index) => (
+                    <motion.div
+                      key={product.id}
+                      className="card-interactive scroll-reveal"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      <motion.div
-                        className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.3 }}
+                      <Card
+                        className={`relative overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                        onClick={(e) => createRipple(e)}
                       >
-                        <img
-                          src={product.imageUrl}
-                          alt={product.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </motion.div>
-                      <div className="flex-1">
-                        <CardHeader className="p-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <CardTitle className="text-sm sm:text-base truncate">
-                                {product.name}
-                              </CardTitle>
-                              <CardDescription className="text-xs sm:text-sm">
-                                <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
-                                  {categories.find((c) => c.id === product.categoryId)?.name}
-                                </span>
-                              </CardDescription>
+                        <motion.div
+                          className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </motion.div>
+                        <div className="flex-1">
+                          <CardHeader className="p-3">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <CardTitle className="text-sm sm:text-base truncate">
+                                  {product.name}
+                                </CardTitle>
+                                <CardDescription className="text-xs sm:text-sm">
+                                  <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                                    {categories.find((c) => c.id === product.categoryId)?.name}
+                                  </span>
+                                </CardDescription>
+                              </div>
                             </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="p-3 pt-0">
-                          <div className="flex justify-between items-center">
-                            <p className="text-lg sm:text-xl font-bold">
-                              {formatPrice(product.price)}
-                            </p>
-                            <div className="flex gap-2">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className={`h-8 w-8 ${
-                                      compareProducts.some((p) => p.id === product.id)
-                                        ? "bg-[var(--theme-color)]/10"
-                                        : ""
-                                    }`}
-                                    onClick={() => toggleCompare(product)}
-                                  >
-                                    <Scale className={`h-4 w-4 ${
-                                      compareProducts.some((p) => p.id === product.id)
-                                        ? "text-[var(--theme-color)]"
-                                        : "text-muted-foreground"
-                                    }`} />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <p>
-                                    {compareProducts.some((p) => p.id === product.id)
-                                      ? "Remover da comparação"
-                                      : "Adicionar à comparação"}
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => toggleFavorite(product.id)}
-                              >
-                                <Heart
-                                  className={data?.favorites.includes(product.id)
-                                    ? "h-4 w-4 fill-current text-red-500"
-                                    : "h-4 w-4 text-muted-foreground"
-                                  }
-                                />
-                              </Button>
+                          </CardHeader>
+                          <CardContent className="p-3 pt-0">
+                            <div className="flex justify-between items-center">
+                              <p className="text-lg sm:text-xl font-bold">
+                                {formatPrice(product.price)}
+                              </p>
+                              <div className="flex gap-2">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className={`h-8 w-8 ${
+                                        compareProducts.some((p) => p.id === product.id)
+                                          ? "bg-[var(--theme-color)]/10"
+                                          : ""
+                                      }`}
+                                      onClick={() => toggleCompare(product)}
+                                    >
+                                      <Scale className={`h-4 w-4 ${
+                                        compareProducts.some((p) => p.id === product.id)
+                                          ? "text-[var(--theme-color)]"
+                                          : "text-muted-foreground"
+                                      }`} />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>
+                                      {compareProducts.some((p) => p.id === product.id)
+                                        ? "Remover da comparação"
+                                        : "Adicionar à comparação"}
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-8 w-8"
+                                  onClick={() => toggleFavorite(product.id)}
+                                >
+                                  <Heart
+                                    className={data?.favorites.includes(product.id)
+                                      ? "h-4 w-4 fill-current text-red-500"
+                                      : "h-4 w-4 text-muted-foreground"
+                                    }
+                                  />
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                        </CardContent>
-                      </div>
-                    </Card>
-                  </motion.div>
-                ))}
-              </motion.div>
+                          </CardContent>
+                        </div>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
 
               <AnimatePresence>
                 {filteredProducts.length === 0 && (
@@ -704,7 +720,7 @@ export default function MenuPage() {
             position: absolute;
             border-radius: 50%;
             transform: scale(0);
-            animation: ripple 0.6s linear;
+            animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             background-color: rgba(255, 255, 255, 0.7);
             pointer-events: none;
             z-index: 50;
@@ -720,11 +736,10 @@ export default function MenuPage() {
           /* Ensure proper stacking context for animations */
           .relative {
             position: relative;
-            overflow: hidden;
           }
 
           /* Smooth transitions for interactive elements */
-          button, 
+          button,
           .card-interactive {
             transition: all 0.2s ease-in-out;
             transform: translateZ(0);
@@ -761,6 +776,134 @@ export default function MenuPage() {
           /* Prevent layout shifts during animations */
           .grid-container {
             contain: layout style paint;
+          }
+
+          /* Enhanced hover effects */
+          .card-interactive {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          .card-interactive:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+          }
+
+          /* Smooth transitions for filters */
+          .filter-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          /* Interactive tooltips */
+          .tooltip-content {
+            transform-origin: var(--radix-tooltip-content-transform-origin);
+            animation: tooltip-slide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+
+          @keyframes tooltip-slide {
+            from {
+              opacity: 0;
+              transform: scale(0.96);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+
+          /* Filter highlight effect */
+          .filter-active {
+            background: var(--theme-color);
+            color: white;
+            transform: scale(1.05);
+          }
+
+          /* Scroll reveal animation */
+          .scroll-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+          }
+
+          /* Loading skeleton pulse animation */
+          @keyframes skeleton-pulse {
+            0% {
+              opacity: 0.6;
+            }
+            50% {
+              opacity: 0.8;
+            }
+            100% {
+              opacity: 0.6;
+            }
+          }
+
+          .animate-pulse {
+            animation: skeleton-pulse 1.5s ease-in-out infinite;
+          }
+
+          /* Smooth slider transitions */
+          [role="slider"] {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          [role="slider"]:hover {
+            transform: scale(1.2);
+          }
+
+          [role="slider"]:active {
+            transform: scale(0.95);
+          }
+
+          /* Range track styling */
+          .range {
+            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          /* Add spring effect to buttons */
+          button:active {
+            transform: scale(0.95);
+            transition: transform 0.1s;
+          }
+
+          /* Enhance ripple effect */
+          .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+            z-index: 50;
+          }
+
+          @keyframes ripple {
+            to {              transform: scale(4);
+              opacity: 0;
+            }
+          }
+
+          /* Checkbox animations */
+          [role="checkbox"] {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          [role="checkbox"]:hover {
+            background-color: var(--theme-color-90);
+          }
+
+          /* Category pill animations */
+          .category-pill {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          .category-pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
           }
         `}
       </style>
