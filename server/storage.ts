@@ -1,6 +1,6 @@
 import { users, products, type User, type InsertUser, type Product, type InsertProduct } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
@@ -76,8 +76,12 @@ export class DatabaseStorage implements IStorage {
         ...product,
         price: product.price?.toString(),
       })
-      .where(eq(products.id, id))
-      .where(eq(products.userId, userId))
+      .where(
+        and(
+          eq(products.id, id),
+          eq(products.userId, userId)
+        )
+      )
       .returning();
     return updatedProduct;
   }
@@ -85,8 +89,12 @@ export class DatabaseStorage implements IStorage {
   async deleteProduct(id: number, userId: number): Promise<void> {
     await db
       .delete(products)
-      .where(eq(products.id, id))
-      .where(eq(products.userId, userId));
+      .where(
+        and(
+          eq(products.id, id),
+          eq(products.userId, userId)
+        )
+      );
   }
 
   async updateUserBanner(userId: number, bannerImageUrl: string): Promise<User> {
