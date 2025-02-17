@@ -3,9 +3,35 @@ import { createServer, type Server } from "http";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { insertProductSchema } from "@shared/schema";
+import { eq, and, count } from "drizzle-orm";
+import { products, users } from "@shared/schema";
+import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
+
+  // Rota para estatísticas do admin
+  app.get("/api/admin/stats", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.username !== "admin-miller@gmail.com") {
+      return res.sendStatus(401);
+    }
+
+    try {
+      const allUsers = await storage.getAllUsers(); // Corrected: Use storage
+      const productsCount = await storage.getProductsCount(); // Corrected: Use storage
+
+      res.json({
+        totalUsers: allUsers.length,
+        totalProducts: productsCount,
+        users: allUsers.map((user) => ({
+          ...user,
+          password: undefined // Remove senha dos dados retornados
+        }))
+      });
+    } catch (error) {
+      res.status(500).json({ message: (error as Error).message });
+    }
+  });
 
   // Product routes
   app.post("/api/products", async (req, res) => {
@@ -41,7 +67,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Estabelecimento não encontrado" });
       }
 
-      res.json({ 
+      res.json({
         products,
         businessName: user.businessName,
         bannerImageUrl: user.bannerImageUrl
