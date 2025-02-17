@@ -236,14 +236,14 @@ export default function MenuPage() {
   return (
     <TooltipProvider>
       <motion.div
-        className="min-h-screen bg-background"
+        className="min-h-screen bg-background motion-safe"
         style={themeStyles}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
         <motion.div
-          className="relative h-48 flex items-center justify-center overflow-hidden"
+          className="relative h-48 flex items-center justify-center overflow-hidden motion-safe"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -318,9 +318,9 @@ export default function MenuPage() {
         </motion.div>
 
         <div className="container mx-auto px-4 py-8">
-          <div className="grid md:grid-cols-[300px_1fr] gap-8">
+          <div className="grid md:grid-cols-[300px_1fr] gap-8 grid-container">
             <motion.div
-              className="space-y-6"
+              className="space-y-6 motion-safe"
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -458,6 +458,7 @@ export default function MenuPage() {
             </motion.div>
 
             <motion.div
+              className="motion-safe"
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -577,15 +578,16 @@ export default function MenuPage() {
                   opacity: 1,
                   transition: "opacity 0.1s",
                 }}
-                className={
+                className={`grid-container ${
                   viewMode === "grid"
                     ? "grid grid-cols-2 md:grid-cols-3 gap-4"
                     : "flex flex-col gap-4"
-                }
+                }`}
               >
                 {filteredProducts.map((product, index) => (
                   <motion.div
                     key={product.id}
+                    className="card-interactive"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -593,7 +595,7 @@ export default function MenuPage() {
                     whileTap={{ scale: 0.98 }}
                   >
                     <Card
-                      className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                      className={`relative overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                       onClick={(e) => createRipple(e)}
                     >
                       <motion.div
@@ -680,7 +682,7 @@ export default function MenuPage() {
               <AnimatePresence>
                 {filteredProducts.length === 0 && (
                   <motion.div
-                    className="text-center py-12"
+                    className="text-center py-12 animate-presence"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
@@ -704,6 +706,8 @@ export default function MenuPage() {
             transform: scale(0);
             animation: ripple 0.6s linear;
             background-color: rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+            z-index: 50;
           }
 
           @keyframes ripple {
@@ -711,6 +715,52 @@ export default function MenuPage() {
               transform: scale(4);
               opacity: 0;
             }
+          }
+
+          /* Ensure proper stacking context for animations */
+          .relative {
+            position: relative;
+            overflow: hidden;
+          }
+
+          /* Smooth transitions for interactive elements */
+          button, 
+          .card-interactive {
+            transition: all 0.2s ease-in-out;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+          }
+
+          /* Prevent animation flicker */
+          .motion-safe:transform {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            perspective: 1000px;
+          }
+
+          /* Ensure proper z-index stacking for tooltips */
+          .tooltip-trigger {
+            position: relative;
+            z-index: 30;
+          }
+
+          /* Fix for Safari animation performance */
+          .animate-presence {
+            will-change: transform, opacity;
+          }
+
+          /* Smoother hover transitions */
+          .hover-scale {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          .hover-scale:hover {
+            transform: scale(1.02);
+          }
+
+          /* Prevent layout shifts during animations */
+          .grid-container {
+            contain: layout style paint;
           }
         `}
       </style>
