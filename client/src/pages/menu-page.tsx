@@ -649,24 +649,21 @@ export default function MenuPage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <Card
                         className={`relative overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                         onClick={(e) => createRipple(e)}
                       >
-                        <motion.div
+                        <div
                           className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
-                          whileHover={{ scale: 1.05 }}
-                          transition={{ duration: 0.3 }}
                         >
                           <img
                             src={product.imageUrl}
                             alt={product.name}
                             className="w-full h-full object-cover"
                           />
-                        </motion.div>
+                        </div>
                         <div className="flex-1">
                           <CardHeader className="p-3">
                             <div className="flex justify-between items-start">
