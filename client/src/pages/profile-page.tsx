@@ -11,10 +11,10 @@ import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
 const themeColors = [
-  { name: "Grapefruit", hex: "#DD5465" },
-  { name: "Bittersweet", hex: "#FE5E3F" },
-  { name: "Sunflower", hex: "#FDE584" },
-  { name: "Grass", hex: "#8BC152" },
+  { name: "Grapefruit", hex: "#F01414" }, // rgb(240, 20, 20)
+  { name: "Bittersweet", hex: "#14F07E" }, // rgb(20, 240, 126)
+  { name: "Sunflower", hex: "#1432F0" }, // rgb(20, 50, 240)
+  { name: "Grass", hex: "#9914F0" }, // rgb(153, 20, 240)
   { name: "Mint", hex: "#48CEAD" },
   { name: "Aqua", hex: "#3BC1E9" },
   { name: "Blue Jeans", hex: "#5D96CC" },
