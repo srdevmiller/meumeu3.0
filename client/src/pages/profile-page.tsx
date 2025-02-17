@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
-// 12 cores diferentes que combinam bem entre si
 const themeColors = [
   { name: "Roxo Imperial", hex: "#7c3aed" },
   { name: "Verde Oceano", hex: "#10b981" },
@@ -124,78 +123,102 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Imagens</CardTitle>
-            <CardDescription>
-              Personalize a aparência do seu estabelecimento
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle>Informações do Estabelecimento</CardTitle>
+          <CardDescription>
+            Personalize a aparência do seu estabelecimento
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Logo do Estabelecimento */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Logo do Estabelecimento
+            </label>
+            <p className="text-sm text-muted-foreground mb-2">
+              Envie um arquivo PNG com fundo transparente para melhor apresentação
+            </p>
+            {previewLogo && (
+              <div className="relative w-32 h-32 mb-4 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 grid place-items-center">
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI2UyZThlYyIgZD0iTTAgMGgxMHYxMEgwek0xMCAxMGgxMHYxMEgxMHoiLz48L3N2Zz4=')] opacity-30"></div>
+                <img
+                  src={previewLogo}
+                  alt="Logo Preview"
+                  className="max-w-full max-h-full object-contain relative z-10"
+                />
+              </div>
+            )}
+            <Input
+              type="file"
+              accept="image/png"
+              onChange={(e) => handleImageUpload(e, 'logo')}
+              className="cursor-pointer"
+            />
+            <p className="text-sm text-muted-foreground mt-1">
+              Apenas arquivos PNG com transparência
+            </p>
+          </div>
+
+          {/* Imagem de Fundo */}
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Imagem de Fundo
+            </label>
+            {previewBanner && (
+              <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden">
+                <img
+                  src={previewBanner}
+                  alt="Banner Preview"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleImageUpload(e, 'banner')}
+              className="cursor-pointer"
+            />
+            <p className="text-sm text-muted-foreground mt-1">
+              Recomendado: 1920x1080px ou maior
+            </p>
+          </div>
+
+          {/* Nome do Estabelecimento e Telefone */}
+          <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-2">
-                Imagem de Fundo
+                Nome do Estabelecimento
               </label>
-              {previewBanner && (
-                <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden">
-                  <img
-                    src={previewBanner}
-                    alt="Banner Preview"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
               <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(e, 'banner')}
-                className="cursor-pointer"
+                placeholder="Nome do seu estabelecimento"
+                defaultValue={user?.businessName}
+                onChange={(e) => {
+                  updateProfileMutation.mutate({ businessName: e.target.value });
+                }}
               />
-              <p className="text-sm text-muted-foreground mt-1">
-                Recomendado: 1920x1080px ou maior
-              </p>
             </div>
-
             <div>
               <label className="block text-sm font-medium mb-2">
-                Logo do Estabelecimento
+                Telefone
               </label>
-              <p className="text-sm text-muted-foreground mb-2">
-                Envie um arquivo PNG com fundo transparente para melhor apresentação
-              </p>
-              {previewLogo && (
-                <div className="relative w-32 h-32 mb-4 rounded-lg overflow-hidden bg-gray-100 dark:bg-gray-800 grid place-items-center">
-                  <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbD0iI2UyZThlYyIgZD0iTTAgMGgxMHYxMEgwek0xMCAxMGgxMHYxMEgxMHoiLz48L3N2Zz4=')] opacity-30"></div>
-                  <img
-                    src={previewLogo}
-                    alt="Logo Preview"
-                    className="max-w-full max-h-full object-contain relative z-10"
-                  />
-                </div>
-              )}
               <Input
-                type="file"
-                accept="image/png"
-                onChange={(e) => handleImageUpload(e, 'logo')}
-                className="cursor-pointer"
+                placeholder="Seu telefone de contato"
+                defaultValue={user?.phone}
+                onChange={(e) => {
+                  updateProfileMutation.mutate({ phone: e.target.value });
+                }}
               />
-              <p className="text-sm text-muted-foreground mt-1">
-                Apenas arquivos PNG com transparência
-              </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Tema</CardTitle>
-            <CardDescription>
-              Escolha a cor principal do seu estabelecimento
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-4">
+          {/* Tema */}
+          <div>
+            <label className="block text-sm font-medium mb-4">
+              Tema
+            </label>
+            <div className="grid grid-cols-4 gap-4">
               {themeColors.map((color) => (
                 <motion.button
                   key={color.hex}
@@ -228,9 +251,9 @@ export default function ProfilePage() {
                 Salvar Alterações
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
