@@ -219,13 +219,13 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-background" style={themeStyles}>
-      <div className="relative h-48 flex items-center justify-center">
-        <div className="absolute inset-0 z-0">
+      <div className="relative h-48 flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 z-0 overflow-hidden">
           {data.bannerImageUrl && (
             <img
               src={data.bannerImageUrl}
               alt={data.businessName}
-              className="w-full h-full object-cover filter blur-[1px] scale-105" // Modified className
+              className="w-full h-full object-cover filter blur-[1px] scale-105"
             />
           )}
           <div className="absolute inset-0 bg-[var(--theme-color)]/90" />
