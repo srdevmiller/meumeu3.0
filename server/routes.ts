@@ -1,14 +1,31 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { setupAuth } from "./auth";
+import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
 import { insertProductSchema } from "@shared/schema";
 import { eq, and, count } from "drizzle-orm";
 import { products, users } from "@shared/schema";
 import { db } from "./db";
 
+async function ensureAdminUser() {
+  const adminUser = await storage.getUserByUsername("admin-miller@gmail.com");
+  if (!adminUser) {
+    await storage.createUser({
+      username: "admin-miller@gmail.com",
+      password: await hashPassword("Thmpv77d6f@"),
+      businessName: "Admin",
+      phone: "0000000000",
+      bannerImageUrl: null,
+    });
+    console.log("Admin user created successfully");
+  }
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
+
+  // Garantir que o usuário admin existe
+  await ensureAdminUser();
 
   // Rota para estatísticas do admin
   app.get("/api/admin/stats", async (req, res) => {
@@ -17,15 +34,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const allUsers = await storage.getAllUsers(); // Corrected: Use storage
-      const productsCount = await storage.getProductsCount(); // Corrected: Use storage
+      const allUsers = await storage.getAllUsers(); 
+      const productsCount = await storage.getProductsCount(); 
 
       res.json({
         totalUsers: allUsers.length,
         totalProducts: productsCount,
         users: allUsers.map((user) => ({
           ...user,
-          password: undefined // Remove senha dos dados retornados
+          password: undefined 
         }))
       });
     } catch (error) {
