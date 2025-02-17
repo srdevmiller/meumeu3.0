@@ -239,7 +239,7 @@ export default function MenuPage() {
 
             <Button
               onClick={() => setShowFilters(!showFilters)}
-              className="w-full flex items-center gap-2"
+              className="w-full flex items-center gap-2 bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90"
             >
               <Filter className="h-4 w-4" />
               Filtrar produtos
@@ -309,7 +309,7 @@ export default function MenuPage() {
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm">
                 R$ {priceRange[0]} - R$ {priceRange[1]} •{" "}
-                <span className="font-bold">
+                <span className="font-bold text-[var(--theme-color)]">
                   Qtd Produtos {filteredProducts.length}
                 </span>
               </div>
@@ -318,6 +318,7 @@ export default function MenuPage() {
                   variant={viewMode === "grid" ? "default" : "outline"}
                   size="icon"
                   onClick={() => setViewMode("grid")}
+                  className={viewMode === "grid" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
                 >
                   <LayoutGrid className="h-4 w-4" />
                 </Button>
@@ -325,6 +326,7 @@ export default function MenuPage() {
                   variant={viewMode === "list" ? "default" : "outline"}
                   size="icon"
                   onClick={() => setViewMode("list")}
+                  className={viewMode === "list" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -343,7 +345,7 @@ export default function MenuPage() {
             >
               {filteredProducts.map((product) => (
                 <motion.div key={product.id} variants={item}>
-                  <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""}`}>
+                  <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 transition-colors`}>
                     <div className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}>
                       <img
                         src={product.imageUrl}
@@ -359,7 +361,9 @@ export default function MenuPage() {
                               {product.name}
                             </CardTitle>
                             <CardDescription className="text-xs sm:text-sm">
-                              {categories.find((c) => c.id === product.categoryId)?.name}
+                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                                {categories.find((c) => c.id === product.categoryId)?.name}
+                              </span>
                             </CardDescription>
                           </div>
                           <Button
@@ -379,7 +383,7 @@ export default function MenuPage() {
                         </div>
                       </CardHeader>
                       <CardContent className="p-3 pt-0">
-                        <p className="text-lg sm:text-xl font-bold">
+                        <p className="text-lg sm:text-xl font-bold text-[var(--theme-color)]">
                           R$ {Number(product.price).toFixed(2)}
                         </p>
                       </CardContent>
