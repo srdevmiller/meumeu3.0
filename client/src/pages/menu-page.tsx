@@ -297,7 +297,10 @@ export default function MenuPage() {
                     placeholder="Buscar produtos..."
                     className="pl-8"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => {
+                      setSearch(e.target.value);
+                      if (showFilters) setShowFilters(false);
+                    }}
                   />
                 </div>
               </CardContent>
