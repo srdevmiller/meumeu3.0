@@ -78,10 +78,15 @@ function resizeImage(file: File): Promise<string> {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d')!;
+
+        // Configurar o canvas para preservar transparência
+        ctx.clearRect(0, 0, width, height);
+
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Converter para JPEG com qualidade reduzida
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+        // Verificar se é PNG para manter a transparência
+        const isPNG = file.type === 'image/png';
+        const dataUrl = canvas.toDataURL(isPNG ? 'image/png' : 'image/jpeg', 0.9);
         resolve(dataUrl);
       };
       img.src = e.target?.result as string;
