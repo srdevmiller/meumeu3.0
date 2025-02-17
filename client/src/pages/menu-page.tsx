@@ -19,6 +19,7 @@ const categories = [
   { id: 1, name: "Bebidas" },
   { id: 2, name: "Alimentos" },
   { id: 3, name: "Tabacaria" },
+  { id: 4, name: "Outros" },
 ];
 
 type MenuData = {
@@ -73,7 +74,6 @@ export default function MenuPage() {
     );
   }
 
-
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -116,24 +116,26 @@ export default function MenuPage() {
               <CardHeader>
                 <CardTitle>Categorias</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                {categories.map((category) => (
-                  <div key={category.id} className="flex items-center space-x-2">
-                    <Checkbox
-                      checked={selectedCategories.includes(category.id)}
-                      onCheckedChange={(checked) => {
-                        setSelectedCategories(
-                          checked
-                            ? [...selectedCategories, category.id]
-                            : selectedCategories.filter((id) => id !== category.id)
-                        );
-                      }}
-                    />
-                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      {category.name}
-                    </label>
-                  </div>
-                ))}
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <div key={category.id} className="flex items-center space-x-2 min-w-[120px]">
+                      <Checkbox
+                        checked={selectedCategories.includes(category.id)}
+                        onCheckedChange={(checked) => {
+                          setSelectedCategories(
+                            checked
+                              ? [...selectedCategories, category.id]
+                              : selectedCategories.filter((id) => id !== category.id)
+                          );
+                        }}
+                      />
+                      <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        {category.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
