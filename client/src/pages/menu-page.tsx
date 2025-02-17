@@ -72,7 +72,7 @@ export default function MenuPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(false); // Inicialmente false para começar oculto
   const { user } = useAuth();
   const { toast } = useToast();
   const [theme, setTheme] = useState<"light" | "dark">(
@@ -308,7 +308,7 @@ export default function MenuPage() {
               className="w-full flex items-center gap-2 bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90"
             >
               <Filter className="h-4 w-4" />
-              Filtrar produtos
+              {showFilters ? "Ocultar filtros" : "Filtrar produtos"}
             </Button>
 
             <AnimatePresence>
