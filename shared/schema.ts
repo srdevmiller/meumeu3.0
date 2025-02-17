@@ -9,8 +9,8 @@ export const users = pgTable("users", {
   businessName: text("business_name").notNull(),
   phone: text("phone").notNull(),
   bannerImageUrl: text("banner_image_url"),
-  themeColor: text("theme_color").default("#7c3aed"), // Cor padrão - roxo
-  logoUrl: text("logo_url"), // Added logo URL field
+  themeColor: text("theme_color").default("#7c3aed"), 
+  logoUrl: text("logo_url"), 
 });
 
 export const categories = pgTable("categories", {
@@ -27,7 +27,6 @@ export const products = pgTable("products", {
   categoryId: integer("category_id").notNull().references(() => categories.id),
 });
 
-// Novo modelo para favoritos
 export const favorites = pgTable("favorites", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
@@ -35,7 +34,6 @@ export const favorites = pgTable("favorites", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// User schemas
 export const insertUserSchema = createInsertSchema(users)
   .pick({
     username: true,
@@ -44,7 +42,7 @@ export const insertUserSchema = createInsertSchema(users)
     phone: true,
     bannerImageUrl: true,
     themeColor: true,
-    logoUrl: true, // Added to insert schema
+    logoUrl: true,
   })
   .extend({
     confirmPassword: z.string(),
@@ -54,7 +52,6 @@ export const insertUserSchema = createInsertSchema(users)
     path: ["confirmPassword"],
   });
 
-// Product schemas
 export const insertProductSchema = createInsertSchema(products)
   .pick({
     name: true,
@@ -65,13 +62,22 @@ export const insertProductSchema = createInsertSchema(products)
     price: z.number().min(0, "O preço deve ser maior que zero"),
   });
 
-// Favorite schema
+export const updateProductSchema = createInsertSchema(products)
+  .pick({
+    name: true,
+    imageUrl: true,
+    categoryId: true,
+  })
+  .extend({
+    price: z.number().min(0, "O preço deve ser maior que zero"),
+  })
+  .partial();
+
 export const insertFavoriteSchema = createInsertSchema(favorites).pick({
   userId: true,
   productId: true,
 });
 
-// Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Product = typeof products.$inferSelect;

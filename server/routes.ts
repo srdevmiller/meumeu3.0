@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
-import { insertProductSchema, insertFavoriteSchema } from "@shared/schema";
+import { insertProductSchema, insertFavoriteSchema, updateProductSchema } from "@shared/schema";
 import { eq, and, count, sql } from "drizzle-orm";
 import { products, users, favorites } from "@shared/schema";
 import { db } from "./db";
@@ -86,6 +86,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const products = await storage.getProducts(userId);
       res.json(products);
     } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
+  app.patch("/api/products/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+    const productId = parseInt(req.params.id);
+
+    try {
+      // Primeiro, verifica se o produto existe e pertence ao usuário
+      const existingProduct = await storage.getProduct(productId);
+      if (!existingProduct) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      if (existingProduct.userId !== userId) {
+        return res.status(403).json({ message: "Você não tem permissão para editar este produto" });
+      }
+
+      // Valida e atualiza o produto
+      const productData = updateProductSchema.parse(req.body);
+      const updatedProduct = await storage.updateProduct(productId, productData);
+      res.json(updatedProduct);
+    } catch (error) {
+      console.error('Error updating product:', error);
       res.status(400).json({ message: (error as Error).message });
     }
   });
@@ -180,8 +205,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const { businessName, phone, themeColor, logoUrl } = req.body;
-      const user = await storage.updateUserProfile(userId, { 
-        businessName, 
+      const user = await storage.updateUserProfile(userId, {
+        businessName,
         phone,
         themeColor,
         logoUrl

@@ -13,18 +13,19 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   createProduct(product: InsertProduct & { userId: number }): Promise<Product>;
   getProducts(userId: number): Promise<Product[]>;
-  updateProduct(id: number, userId: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
+  getProduct(id: number): Promise<Product | undefined>;
+  updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined>;
   deleteProduct(id: number, userId: number): Promise<void>;
   updateUserBanner(userId: number, bannerImageUrl: string): Promise<User>;
   updateUserProfile(userId: number, data: { 
     businessName?: string; 
     phone?: string;
     themeColor?: string;
+    logoUrl?: string;
   }): Promise<User>;
   getAllUsers(): Promise<User[]>;
   getProductsCount(): Promise<number>;
   sessionStore: session.Store;
-  // Novos métodos para favoritos
   createFavorite(favorite: InsertFavorite): Promise<Favorite>;
   getFavorites(userId: number): Promise<Favorite[]>;
   removeFavorite(userId: number, productId: number): Promise<void>;
@@ -99,7 +100,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getProducts(userId: number): Promise<Product[]> {
-    // Atualizado para garantir que só retorne produtos do usuário específico
     return db
       .select()
       .from(products)
@@ -107,19 +107,24 @@ export class DatabaseStorage implements IStorage {
       .orderBy(products.id);
   }
 
-  async updateProduct(id: number, userId: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
+  async getProduct(id: number): Promise<Product | undefined> {
+    const [product] = await db
+      .select()
+      .from(products)
+      .where(eq(products.id, id));
+    return product;
+  }
+
+  async updateProduct(id: number, product: Partial<InsertProduct>): Promise<Product | undefined> {
     const [updatedProduct] = await db
       .update(products)
       .set({
-        ...product,
-        price: product.price?.toString(),
+        ...(product.name && { name: product.name }),
+        ...(product.price && { price: product.price.toString() }),
+        ...(product.imageUrl && { imageUrl: product.imageUrl }),
+        ...(product.categoryId && { categoryId: product.categoryId })
       })
-      .where(
-        and(
-          eq(products.id, id),
-          eq(products.userId, userId)
-        )
-      )
+      .where(eq(products.id, id))
       .returning();
     return updatedProduct;
   }
@@ -144,7 +149,7 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
-  async updateUserProfile(userId: number, data: { businessName?: string; phone?: string; themeColor?: string; }): Promise<User> {
+  async updateUserProfile(userId: number, data: { businessName?: string; phone?: string; themeColor?: string; logoUrl?: string; }): Promise<User> {
     const [user] = await db
       .update(users)
       .set(data)
