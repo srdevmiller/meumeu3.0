@@ -44,6 +44,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { motion } from 'framer-motion'; // Import motion
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -283,6 +284,51 @@ export default function HomePage() {
     "#ec4899", // Rosa
   ];
 
+  const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const button = event.currentTarget;
+    const ripple = document.createElement("span");
+    const rect = button.getBoundingClientRect();
+
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
+
+    ripple.style.width = ripple.style.height = `${diameter}px`;
+    ripple.style.left = `${event.clientX - rect.left - radius}px`;
+    ripple.style.top = `${event.clientY - rect.top - radius}px`;
+    ripple.className = "ripple";
+
+    const existingRipple = button.getElementsByClassName("ripple")[0];
+    if (existingRipple) {
+      existingRipple.remove();
+    }
+
+    button.appendChild(ripple);
+
+    setTimeout(() => {
+      ripple.remove();
+    }, 600);
+  };
+
+
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };
+
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: {
+      y: 0,
+      opacity: 1,
+    },
+  };
+
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
@@ -300,141 +346,157 @@ export default function HomePage() {
         </div>
 
         <div className="flex gap-2 mb-8">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Settings className="w-4 h-4 mr-2" />
-                Editar Perfil
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeaderDialog>
-                <DialogTitle>Editar Perfil</DialogTitle>
-                <DialogDescriptionDialog>
-                  Atualize as informações do seu estabelecimento
-                </DialogDescriptionDialog>
-              </DialogHeaderDialog>
-              <Form {...profileForm}>
-                <form
-                  onSubmit={profileForm.handleSubmit((data) =>
-                    updateProfileMutation.mutate(data)
-                  )}
-                  className="space-y-4"
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="relative overflow-hidden"
+                  onClick={createRipple}
                 >
-                  <FormField
-                    control={profileForm.control}
-                    name="businessName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nome do Estabelecimento</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                  <Settings className="w-4 h-4 mr-2" />
+                  Editar Perfil
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeaderDialog>
+                  <DialogTitle>Editar Perfil</DialogTitle>
+                  <DialogDescriptionDialog>
+                    Atualize as informações do seu estabelecimento
+                  </DialogDescriptionDialog>
+                </DialogHeaderDialog>
+                <Form {...profileForm}>
+                  <form
+                    onSubmit={profileForm.handleSubmit((data) =>
+                      updateProfileMutation.mutate(data)
                     )}
-                  />
-                  <FormField
-                    control={profileForm.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Telefone</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={profileForm.control}
-                    name="themeColor"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Cor do Tema</FormLabel>
-                        <div className="flex flex-wrap gap-2">
-                          {predefinedColors.map((color) => (
-                            <Button
-                              key={color}
-                              type="button"
-                              variant="outline"
-                              className={`w-8 h-8 rounded-full p-0 relative ${
-                                field.value === color ? 'ring-2 ring-offset-2 ring-primary' : ''
-                              }`}
-                              style={{ backgroundColor: color }}
-                              onClick={() => field.onChange(color)}
-                            >
-                              {field.value === color && (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                  <div className="w-2 h-2 bg-white rounded-full" />
-                                </div>
-                              )}
-                            </Button>
-                          ))}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button
-                    type="submit"
-                    disabled={updateProfileMutation.isPending}
-                    className="w-full"
+                    className="space-y-4"
                   >
-                    {updateProfileMutation.isPending && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Salvar Alterações
-                  </Button>
-                </form>
-              </Form>
-            </DialogContent>
-          </Dialog>
+                    <FormField
+                      control={profileForm.control}
+                      name="businessName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nome do Estabelecimento</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={profileForm.control}
+                      name="phone"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Telefone</FormLabel>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={profileForm.control}
+                      name="themeColor"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Cor do Tema</FormLabel>
+                          <div className="flex flex-wrap gap-2">
+                            {predefinedColors.map((color) => (
+                              <Button
+                                key={color}
+                                type="button"
+                                variant="outline"
+                                className={`w-8 h-8 rounded-full p-0 relative ${
+                                  field.value === color ? 'ring-2 ring-offset-2 ring-primary' : ''
+                                }`}
+                                style={{ backgroundColor: color }}
+                                onClick={() => field.onChange(color)}
+                              >
+                                {field.value === color && (
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <div className="w-2 h-2 bg-white rounded-full" />
+                                  </div>
+                                )}
+                              </Button>
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      disabled={updateProfileMutation.isPending}
+                      className="w-full"
+                    >
+                      {updateProfileMutation.isPending && (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      )}
+                      Salvar Alterações
+                    </Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          </motion.div>
 
-          <Button
-            variant="outline"
-            onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = 'image/*';
-              input.onchange = async (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (file) {
-                  try {
-                    const optimizedImageUrl = await resizeImage(file);
-                    const res = await apiRequest("PATCH", "/api/user/banner", {
-                      bannerImageUrl: optimizedImageUrl,
-                    });
-                    if (res.ok) {
-                      toast({
-                        title: "Banner atualizado",
-                        description: "A imagem de fundo do seu cardápio foi atualizada com sucesso!",
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Button
+              variant="outline"
+              className="relative overflow-hidden"
+              onClick={(e) => {
+                createRipple(e);
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'image/*';
+                input.onchange = async (e) => {
+                  const file = (e.target as HTMLInputElement).files?.[0];
+                  if (file) {
+                    try {
+                      const optimizedImageUrl = await resizeImage(file);
+                      const res = await apiRequest("PATCH", "/api/user/banner", {
+                        bannerImageUrl: optimizedImageUrl,
                       });
-                      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+                      if (res.ok) {
+                        toast({
+                          title: "Banner atualizado",
+                          description: "A imagem de fundo do seu cardápio foi atualizada com sucesso!",
+                        });
+                        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+                      }
+                    } catch (error) {
+                      toast({
+                        title: "Erro ao atualizar banner",
+                        description: "Não foi possível atualizar a imagem de fundo",
+                        variant: "destructive",
+                      });
                     }
-                  } catch (error) {
-                    toast({
-                      title: "Erro ao atualizar banner",
-                      description: "Não foi possível atualizar a imagem de fundo",
-                      variant: "destructive",
-                    });
                   }
-                }
-              };
-              input.click();
-            }}
-          >
-            <Image className="w-4 h-4 mr-2" />
-            Imagem de Fundo
-          </Button>
-
-          <Link href={`/menu/${encodeURIComponent(user?.businessName || '')}/${user?.id}`}>
-            <Button variant="outline">
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Ver Cardápio Público
+                };
+                input.click();
+              }}
+            >
+              <Image className="w-4 h-4 mr-2" />
+              Imagem de Fundo
             </Button>
-          </Link>
+          </motion.div>
+
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Link href={`/menu/${encodeURIComponent(user?.businessName || '')}/${user?.id}`}>
+              <Button
+                variant="outline"
+                className="relative overflow-hidden"
+                onClick={createRipple}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Ver Cardápio Público
+              </Button>
+            </Link>
+          </motion.div>
         </div>
 
         <Button
@@ -638,14 +700,22 @@ export default function HomePage() {
                   Nenhum produto publicado ainda.
                 </p>
               ) : (
-                <div className={`grid gap-4 ${
-                  viewMode === "grid"
-                    ? "grid-cols-3"
-                    : "grid-cols-1"
-                }`}>
+                <motion.div
+                  variants={container}
+                  initial="hidden"
+                  animate="show"
+                  className={`grid gap-4 ${
+                    viewMode === "grid"
+                      ? "grid-cols-3"
+                      : "grid-cols-1"
+                  }`}
+                >
                   {products.map((product) => (
-                    <div
+                    <motion.div
                       key={product.id}
+                      variants={item}
+                      whileHover={{ scale: 1.02 }}
+                      transition={{ type: "spring", stiffness: 300 }}
                       className={`flex ${viewMode === "list" ? "items-center" : "flex-col"} gap-4 p-4 border rounded-lg`}
                     >
                       <img
@@ -682,9 +752,9 @@ export default function HomePage() {
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
-                </div>
+                </motion.div>
               )}
             </CardContent>
           </Card>
@@ -728,3 +798,28 @@ export default function HomePage() {
     </div>
   );
 }
+
+<style jsx global>{`
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 600ms linear;
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+
+  @keyframes ripple {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  .button-hover {
+    transition: transform 0.2s ease;
+  }
+
+  .button-hover:hover {
+    transform: translateY(-2px);
+  }
+`}</style>

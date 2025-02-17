@@ -14,7 +14,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
-import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2 } from "lucide-react";
+import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
@@ -68,6 +68,7 @@ export default function MenuPage() {
   const [theme, setTheme] = useState<"light" | "dark">(
     () => (localStorage.getItem("menu-theme") as "light" | "dark") || "light"
   );
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -143,9 +144,37 @@ export default function MenuPage() {
     "--theme-color": data?.themeColor || "#7c3aed",
   } as React.CSSProperties;
 
+  const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const button = event.currentTarget;
+    const ripple = document.createElement("span");
+    const rect = button.getBoundingClientRect();
+
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
+
+    ripple.style.width = ripple.style.height = `${diameter}px`;
+    ripple.style.left = `${event.clientX - rect.left - radius}px`;
+    ripple.style.top = `${event.clientY - rect.top - radius}px`;
+    ripple.className = "ripple";
+
+    const existingRipple = button.getElementsByClassName("ripple")[0];
+    if (existingRipple) {
+      existingRipple.remove();
+    }
+
+    button.appendChild(ripple);
+
+    setTimeout(() => {
+      ripple.remove();
+    }, 600);
+  };
+
+
   const copyMenuLink = async () => {
     try {
       await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
       toast({
         title: "Link copiado!",
         description: "O link do cardápio foi copiado para a área de transferência.",
@@ -193,26 +222,36 @@ export default function MenuPage() {
         <div className="z-10 flex flex-col items-center gap-4">
           <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="bg-background/80 backdrop-blur-sm"
-              onClick={copyMenuLink}
-            >
-              <Share2 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="bg-background/80 backdrop-blur-sm"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              {theme === "dark" ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </Button>
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="bg-background/80 backdrop-blur-sm relative overflow-hidden"
+                onClick={(e) => {
+                  createRipple(e);
+                  copyMenuLink();
+                }}
+              >
+                {copied ? <CheckCheck className="h-4 w-4 text-green-500" /> : <Share2 className="h-4 w-4" />}
+              </Button>
+            </motion.div>
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="outline"
+                size="icon"
+                className="bg-background/80 backdrop-blur-sm relative overflow-hidden"
+                onClick={(e) => {
+                  createRipple(e);
+                  setTheme(theme === "dark" ? "light" : "dark");
+                }}
+              >
+                {theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                )}
+              </Button>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -344,7 +383,12 @@ export default function MenuPage() {
               }
             >
               {filteredProducts.map((product) => (
-                <motion.div key={product.id} variants={item}>
+                <motion.div
+                  key={product.id}
+                  variants={item}
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 transition-colors`}>
                     <div className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}>
                       <img
@@ -369,16 +413,27 @@ export default function MenuPage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
-                            onClick={() => toggleFavorite(product.id)}
+                            className="h-8 w-8 relative overflow-hidden"
+                            onClick={(e) => {
+                              createRipple(e);
+                              toggleFavorite(product.id);
+                            }}
                           >
-                            <Heart
-                              className={`h-4 w-4 ${
-                                data?.favorites.includes(product.id)
-                                  ? "fill-current text-red-500"
-                                  : "text-muted-foreground"
-                              }`}
-                            />
+                            <motion.div
+                              initial={{ scale: 1 }}
+                              animate={{
+                                scale: data?.favorites.includes(product.id) ? [1, 1.3, 1] : 1
+                              }}
+                              transition={{ duration: 0.3 }}
+                            >
+                              <Heart
+                                className={`h-4 w-4 ${
+                                  data?.favorites.includes(product.id)
+                                    ? "fill-current text-red-500"
+                                    : "text-muted-foreground"
+                                }`}
+                              />
+                            </motion.div>
                           </Button>
                         </div>
                       </CardHeader>
@@ -403,6 +458,30 @@ export default function MenuPage() {
           </div>
         </div>
       </div>
+      <style jsx global>{`
+        .ripple {
+          position: absolute;
+          border-radius: 50%;
+          transform: scale(0);
+          animation: ripple 600ms linear;
+          background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        @keyframes ripple {
+          to {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+
+        .button-hover {
+          transition: transform 0.2s ease;
+        }
+
+        .button-hover:hover {
+          transform: translateY(-2px);
+        }
+      `}</style>
     </div>
   );
 }
