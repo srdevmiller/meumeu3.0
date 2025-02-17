@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/table";
 import { Users, Package, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 type DashboardStats = {
   totalUsers: number;
@@ -31,15 +33,60 @@ type DashboardStats = {
 };
 
 export default function AdminDashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout, isLoading: authLoading } = useAuth();
+  const { toast } = useToast();
 
-  // Redireciona se não for admin
-  if (user?.username !== "admin@admin.com") {
+  // Debug logs para acompanhar o estado da autenticação
+  useEffect(() => {
+    console.log("AdminDashboard - Auth state:", {
+      user,
+      authLoading,
+      isAdmin: user?.username === "admin@admin.com"
+    });
+  }, [user, authLoading]);
+
+  // Aguarda o carregamento da autenticação
+  if (authLoading) {
+    console.log("AdminDashboard - Loading auth state");
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Redireciona se não estiver autenticado
+  if (!user) {
+    console.log("AdminDashboard - No user, redirecting to auth");
     return <Redirect to="/auth" />;
   }
 
-  const { data, isLoading } = useQuery<DashboardStats>({
+  // Verifica se é admin
+  if (user.username !== "admin@admin.com") {
+    console.log("AdminDashboard - Not admin user:", user.username);
+    toast({
+      title: "Acesso negado",
+      description: "Você não tem permissão para acessar esta página.",
+      variant: "destructive",
+    });
+    return <Redirect to="/" />;
+  }
+
+  const { data, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/stats"],
+    retry: false,
+    refetchOnWindowFocus: false,
+    onError: (error: any) => {
+      console.error("AdminDashboard - Query error:", error);
+      toast({
+        title: "Erro",
+        description: error?.message || "Erro ao carregar dados do painel admin",
+        variant: "destructive",
+      });
+      if (error?.status === 401 || error?.status === 403) {
+        logout();
+      }
+    },
   });
 
   if (isLoading) {
@@ -50,7 +97,19 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!data) return null;
+  if (error || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen">
+        <h1 className="text-2xl font-bold text-red-600 mb-4">
+          Erro ao carregar dados
+        </h1>
+        <p className="text-gray-600 mb-4">
+          {error instanceof Error ? error.message : "Tente fazer login novamente"}
+        </p>
+        <Button onClick={logout}>Fazer login novamente</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
