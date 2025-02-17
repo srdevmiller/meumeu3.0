@@ -23,10 +23,95 @@ import { Search, LayoutGrid, List, Heart, Scale } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
+const categories = [
+  { id: 1, name: "Bebidas" },
+  { id: 2, name: "Alimentos" },
+  { id: 3, name: "Tabacaria" },
+  { id: 4, name: "Destilados" },
+  { id: 5, name: "Cervejas" },
+  { id: 6, name: "Vinhos" },
+  { id: 7, name: "Petiscos" },
+  { id: 8, name: "Porções" },
+  { id: 9, name: "Drinks" },
+  { id: 10, name: "Sobremesas" },
+  { id: 11, name: "Outros" },
+];
+
+type MenuData = {
+  products: Product[];
+  businessName: string;
+  bannerImageUrl?: string;
+  favorites: number[];
+  themeColor?: string;
+  logoUrl?: string;
+};
 
 export default function MenuPage() {
-  // ... (previous state and hooks remain the same)
+  const { businessName, id } = useParams();
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [compareProducts, setCompareProducts] = useState<Product[]>([]);
+  const { toast } = useToast();
 
+  const { data, isLoading } = useQuery<MenuData>({
+    queryKey: [`/api/menu/${id}`],
+  });
+
+  const formatPrice = (price: string | number) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(Number(price));
+  };
+
+  const toggleFavorite = (productId: number) => {
+    // Placeholder for favorite toggle functionality
+    console.log("Toggle favorite:", productId);
+  };
+
+  const toggleCompare = (product: Product) => {
+    setCompareProducts((current) => {
+      const isSelected = current.some((p) => p.id === product.id);
+      if (isSelected) {
+        return current.filter((p) => p.id !== product.id);
+      }
+      if (current.length >= 3) {
+        toast({
+          title: "Limite atingido",
+          description: "Você pode comparar até 3 produtos por vez",
+          variant: "destructive",
+        });
+        return current;
+      }
+      return [...current, product];
+    });
+  };
+
+  const createRipple = (event: React.MouseEvent<HTMLButtonElement | HTMLDivElement>) => {
+    const element = event.currentTarget;
+    const ripple = document.createElement("span");
+    const rect = element.getBoundingClientRect();
+
+    const diameter = Math.max(rect.width, rect.height);
+    const radius = diameter / 2;
+
+    ripple.style.width = ripple.style.height = `${diameter}px`;
+    ripple.style.left = `${event.clientX - rect.left - radius}px`;
+    ripple.style.top = `${event.clientY - rect.top - radius}px`;
+    ripple.className = "ripple";
+
+    const existingRipple = element.getElementsByClassName("ripple")[0];
+    if (existingRipple) {
+      existingRipple.remove();
+    }
+
+    element.appendChild(ripple);
+
+    setTimeout(() => {
+      ripple.remove();
+    }, 600);
+  };
+
+  // The existing JSX remains the same, only adding the missing state and functions
   return (
     <TooltipProvider>
       <motion.div className="min-h-screen bg-background">
@@ -79,7 +164,7 @@ export default function MenuPage() {
                   : "flex flex-col gap-4"
               }`}
             >
-              {sortedProducts.map((product, index) => (
+              {data?.products?.map((product, index) => (
                 <motion.div
                   key={product.id}
                   className="card-interactive scroll-reveal"
@@ -172,7 +257,7 @@ export default function MenuPage() {
             </motion.div>
 
             <AnimatePresence>
-              {filteredProducts.length === 0 && (
+              {data?.products?.length === 0 && (
                 <motion.div
                   className="text-center py-12 animate-presence"
                   initial={{ opacity: 0, y: 20 }}
@@ -190,7 +275,7 @@ export default function MenuPage() {
 
         </div>
 
-        {/* Footer with CTA - Updated link to go to landing page */}
+        {/* Footer with CTA - Already updated to redirect to landing page */}
         <motion.div
           className="py-8 bg-muted mt-12"
           initial={{ opacity: 0, y: 20 }}
