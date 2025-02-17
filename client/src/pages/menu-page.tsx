@@ -336,37 +336,6 @@ export default function MenuPage() {
                   <p>Alternar tema</p>
                 </TooltipContent>
               </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={sortOrder === "asc" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setSortOrder(sortOrder === "asc" ? null : "asc")}
-                    className={sortOrder === "asc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
-                  >
-                    <ArrowUp01 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Ordenar por preço crescente</p>
-                </TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={sortOrder === "desc" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setSortOrder(sortOrder === "desc" ? null : "desc")}
-                    className={sortOrder === "desc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
-                  >
-                    <ArrowDown01 className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Ordenar por preço decrescente</p>
-                </TooltipContent>
-              </Tooltip>
             </div>
           </div>
         </motion.div>
@@ -526,6 +495,38 @@ export default function MenuPage() {
                 </div>
 
                 <div className="flex gap-2">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={sortOrder === "asc" ? "default" : "outline"}
+                        size="icon"
+                        onClick={() => setSortOrder(sortOrder === "asc" ? null : "asc")}
+                        className={sortOrder === "asc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
+                      >
+                        <ArrowUp01 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Ordenar por preço crescente</p>
+                    </TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant={sortOrder === "desc" ? "default" : "outline"}
+                        size="icon"
+                        onClick={() => setSortOrder(sortOrder === "desc" ? null : "desc")}
+                        className={sortOrder === "desc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
+                      >
+                        <ArrowDown01 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Ordenar por preço decrescente</p>
+                    </TooltipContent>
+                  </Tooltip>
+
                   {compareProducts.length > 0 && (
                     <Sheet open={showCompareSheet} onOpenChange={setShowCompareSheet}>
                       <Tooltip>
@@ -923,7 +924,8 @@ export default function MenuPage() {
           }
 
           @keyframes ripple {
-            to {              transform: scale(4);
+            to {
+              transform: scale(4);
               opacity: 0;
             }
           }
