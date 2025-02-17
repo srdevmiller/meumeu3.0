@@ -232,7 +232,7 @@ export default function MenuPage() {
               <img
                 src={data.logoUrl}
                 alt={`Logo ${data.businessName}`}
-                className="w-16 h-16 rounded-full object-cover"
+                className="w-16 h-16 object-contain bg-transparent"
               />
             )}
             <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
