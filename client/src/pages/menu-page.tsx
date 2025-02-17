@@ -31,7 +31,6 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-//import { motion, AnimatePresence } from "framer-motion"; //Removed as per intention
 import { AnimatePresence } from "framer-motion";
 
 
@@ -56,30 +55,6 @@ type MenuData = {
   favorites: number[];
   themeColor?: string;
   logoUrl?: string;
-};
-
-const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
-    },
-  },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 25,
-    },
-  },
 };
 
 export default function MenuPage() {
@@ -290,15 +265,15 @@ export default function MenuPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
+                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10"
                     onClick={(e) => {
                       createRipple(e);
                       copyMenuLink();
                     }}
                   >
-                    <div className="relative w-4 h-4">
-                      <Share2 className={`h-4 w-4 absolute transition-opacity ${copied ? 'opacity-0' : 'opacity-100'}`} />
-                      <CheckCheck className={`h-4 w-4 absolute text-green-500 transition-opacity ${copied ? 'opacity-100' : 'opacity-0'}`} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Share2 className={`h-4 w-4 absolute transition-opacity duration-200 ${copied ? 'opacity-0' : 'opacity-100'}`} />
+                      <CheckCheck className={`h-4 w-4 absolute text-green-500 transition-opacity duration-200 ${copied ? 'opacity-100' : 'opacity-0'}`} />
                     </div>
                   </Button>
                 </TooltipTrigger>
@@ -311,15 +286,15 @@ export default function MenuPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10 flex items-center justify-center"
+                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10"
                     onClick={(e) => {
                       createRipple(e);
                       setTheme(theme === "dark" ? "light" : "dark");
                     }}
                   >
-                    <div className="relative w-4 h-4">
-                      <Sun className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`} />
-                      <Moon className={`h-4 w-4 absolute transition-opacity ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Sun className={`h-4 w-4 absolute transition-opacity duration-200 ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`} />
+                      <Moon className={`h-4 w-4 absolute transition-opacity duration-200 ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`} />
                     </div>
                   </Button>
                 </TooltipTrigger>
