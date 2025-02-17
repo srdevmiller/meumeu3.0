@@ -17,6 +17,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Search, LayoutGrid, List, Moon, Sun, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { motion, AnimatePresence } from "framer-motion";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -30,6 +31,28 @@ type MenuData = {
   businessName: string;
   bannerImageUrl?: string;
   favorites: number[]; // IDs of favorited products
+};
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, scale: 0.9 },
+  show: { 
+    opacity: 1, 
+    scale: 1,
+    transition: {
+      type: "spring",
+      duration: 0.5
+    }
+  }
 };
 
 export default function MenuPage() {
@@ -268,58 +291,65 @@ export default function MenuPage() {
               </Button>
             </div>
 
-            <div
-              className={
-                viewMode === "grid"
-                  ? "grid grid-cols-2 md:grid-cols-3 gap-4"
-                  : "flex flex-col gap-4"
-              }
-            >
-              {filteredProducts.map((product) => (
-                <Card key={product.id} className={`overflow-hidden ${viewMode === "list" ? "flex" : ""}`}>
-                  <div className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}>
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <CardHeader className="p-3">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <CardTitle className="text-sm sm:text-base truncate">
-                            {product.name}
-                          </CardTitle>
-                          <CardDescription className="text-xs sm:text-sm">
-                            {categories.find((c) => c.id === product.categoryId)?.name}
-                          </CardDescription>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => toggleFavorite(product.id)}
-                        >
-                          <Heart
-                            className={`h-4 w-4 ${
-                              data?.favorites.includes(product.id)
-                                ? "fill-current text-red-500"
-                                : "text-muted-foreground"
-                            }`}
-                          />
-                        </Button>
+            <AnimatePresence mode="wait">
+              <motion.div
+                variants={container}
+                initial="hidden"
+                animate="show"
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-2 md:grid-cols-3 gap-4"
+                    : "flex flex-col gap-4"
+                }
+              >
+                {filteredProducts.map((product) => (
+                  <motion.div key={product.id} variants={item} layout>
+                    <Card className={`overflow-hidden ${viewMode === "list" ? "flex" : ""}`}>
+                      <div className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}>
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    </CardHeader>
-                    <CardContent className="p-3 pt-0">
-                      <p className="text-lg sm:text-xl font-bold">
-                        R$ {Number(product.price).toFixed(2)}
-                      </p>
-                    </CardContent>
-                  </div>
-                </Card>
-              ))}
-            </div>
+                      <div className="flex-1">
+                        <CardHeader className="p-3">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <CardTitle className="text-sm sm:text-base truncate">
+                                {product.name}
+                              </CardTitle>
+                              <CardDescription className="text-xs sm:text-sm">
+                                {categories.find((c) => c.id === product.categoryId)?.name}
+                              </CardDescription>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => toggleFavorite(product.id)}
+                            >
+                              <Heart
+                                className={`h-4 w-4 ${
+                                  data?.favorites.includes(product.id)
+                                    ? "fill-current text-red-500"
+                                    : "text-muted-foreground"
+                                }`}
+                              />
+                            </Button>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="p-3 pt-0">
+                          <p className="text-lg sm:text-xl font-bold">
+                            R$ {Number(product.price).toFixed(2)}
+                          </p>
+                        </CardContent>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
 
             {filteredProducts.length === 0 && (
               <div className="text-center py-12">
