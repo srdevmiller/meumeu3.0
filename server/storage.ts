@@ -1,4 +1,4 @@
-import { users, products, type User, type InsertUser, type Product, type InsertProduct } from "@shared/schema";
+import { users, products, favorites, type User, type InsertUser, type Product, type InsertProduct, type Favorite, type InsertFavorite } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, count } from "drizzle-orm";
 import session from "express-session";
@@ -20,6 +20,10 @@ export interface IStorage {
   getAllUsers(): Promise<User[]>;
   getProductsCount(): Promise<number>;
   sessionStore: session.Store;
+  // Novos métodos para favoritos
+  createFavorite(favorite: InsertFavorite): Promise<Favorite>;
+  getFavorites(userId: number): Promise<Favorite[]>;
+  removeFavorite(userId: number, productId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -31,6 +35,36 @@ export class DatabaseStorage implements IStorage {
       createTableIfMissing: true,
     });
   }
+
+  // ... outros métodos permanecem iguais ...
+
+  async createFavorite(favorite: InsertFavorite): Promise<Favorite> {
+    const [newFavorite] = await db
+      .insert(favorites)
+      .values(favorite)
+      .returning();
+    return newFavorite;
+  }
+
+  async getFavorites(userId: number): Promise<Favorite[]> {
+    return db
+      .select()
+      .from(favorites)
+      .where(eq(favorites.userId, userId));
+  }
+
+  async removeFavorite(userId: number, productId: number): Promise<void> {
+    await db
+      .delete(favorites)
+      .where(
+        and(
+          eq(favorites.userId, userId),
+          eq(favorites.productId, productId)
+        )
+      );
+  }
+
+  // ... métodos existentes continuam aqui ...
 
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));

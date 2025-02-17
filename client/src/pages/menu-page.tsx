@@ -1,7 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { type Product } from "@shared/schema";
 import { useParams } from "wouter";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import {
   Card,
   CardContent,
@@ -12,8 +14,9 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
-import { Search, LayoutGrid, List, Moon, Sun } from "lucide-react";
+import { Search, LayoutGrid, List, Moon, Sun, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -26,6 +29,7 @@ type MenuData = {
   products: Product[];
   businessName: string;
   bannerImageUrl?: string;
+  favorites: number[]; // IDs of favorited products
 };
 
 export default function MenuPage() {
@@ -34,6 +38,8 @@ export default function MenuPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [theme, setTheme] = useState<"light" | "dark">(
     () => (localStorage.getItem("menu-theme") as "light" | "dark") || "light"
   );
@@ -47,6 +53,49 @@ export default function MenuPage() {
   const { data, isLoading } = useQuery<MenuData>({
     queryKey: [`/api/menu/${id}`],
   });
+
+  const addFavoriteMutation = useMutation({
+    mutationFn: async (productId: number) => {
+      await apiRequest("POST", "/api/favorites", { productId });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/menu/${id}`] });
+      toast({
+        title: "Produto favoritado",
+        description: "O produto foi adicionado aos seus favoritos!",
+      });
+    },
+  });
+
+  const removeFavoriteMutation = useMutation({
+    mutationFn: async (productId: number) => {
+      await apiRequest("DELETE", `/api/favorites/${productId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/menu/${id}`] });
+      toast({
+        title: "Produto removido",
+        description: "O produto foi removido dos seus favoritos!",
+      });
+    },
+  });
+
+  const toggleFavorite = (productId: number) => {
+    if (!user) {
+      toast({
+        title: "Necessário fazer login",
+        description: "Faça login para favoritar produtos!",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (data?.favorites.includes(productId)) {
+      removeFavoriteMutation.mutate(productId);
+    } else {
+      addFavoriteMutation.mutate(productId);
+    }
+  };
 
   const filteredProducts = useMemo(() => {
     if (!data?.products) return [];
@@ -242,10 +291,28 @@ export default function MenuPage() {
                     </div>
                     <div className="flex-1">
                       <CardHeader className="p-3">
-                        <CardTitle className="text-sm sm:text-base truncate">{product.name}</CardTitle>
-                        <CardDescription className="text-xs sm:text-sm">
-                          {categories.find((c) => c.id === product.categoryId)?.name}
-                        </CardDescription>
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <CardTitle className="text-sm sm:text-base truncate">{product.name}</CardTitle>
+                            <CardDescription className="text-xs sm:text-sm">
+                              {categories.find((c) => c.id === product.categoryId)?.name}
+                            </CardDescription>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => toggleFavorite(product.id)}
+                          >
+                            <Heart
+                              className={`h-4 w-4 ${
+                                data?.favorites.includes(product.id)
+                                  ? "fill-current text-red-500"
+                                  : "text-muted-foreground"
+                              }`}
+                            />
+                          </Button>
+                        </div>
                       </CardHeader>
                       <CardContent className="p-3 pt-0">
                         <p className="text-lg sm:text-xl font-bold">

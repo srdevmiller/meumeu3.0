@@ -2,9 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
-import { insertProductSchema } from "@shared/schema";
+import { insertProductSchema, insertFavoriteSchema } from "@shared/schema";
 import { eq, and, count, sql } from "drizzle-orm";
-import { products, users } from "@shared/schema";
+import { products, users, favorites } from "@shared/schema";
 import { db } from "./db";
 
 async function ensureAdminUser() {
@@ -84,7 +84,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(products);
   });
 
-  // Update the menu route to use businessName and userId
+  // Novas rotas para favoritos
+  app.post("/api/favorites", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+
+    try {
+      const favoriteData = insertFavoriteSchema.parse({
+        ...req.body,
+        userId,
+      });
+      const favorite = await storage.createFavorite(favoriteData);
+      res.status(201).json(favorite);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
+  app.get("/api/favorites", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    try {
+      const favorites = await storage.getFavorites(req.user!.id);
+      res.json(favorites);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
+  app.delete("/api/favorites/:productId", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+    const productId = parseInt(req.params.productId);
+
+    try {
+      await storage.removeFavorite(userId, productId);
+      res.sendStatus(200);
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
+  // Update the menu route to include favorites information
   app.get("/api/menu/:userId", async (req, res) => {
     const userId = parseInt(req.params.userId);
     try {
@@ -95,45 +135,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Estabelecimento não encontrado" });
       }
 
-      // The businessName from the URL will be used for SEO/routing purposes
-      // but we still return the actual business name from the database
+      // Get favorites if user is authenticated
+      let favorites = [];
+      if (req.isAuthenticated()) {
+        favorites = await storage.getFavorites(req.user!.id);
+      }
+
       res.json({
         products,
         businessName: user.businessName,
-        bannerImageUrl: user.bannerImageUrl
+        bannerImageUrl: user.bannerImageUrl,
+        favorites: favorites.map(f => f.productId)
       });
-    } catch (error) {
-      res.status(400).json({ message: (error as Error).message });
-    }
-  });
-
-  app.patch("/api/products/:id", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = req.user!.id;
-    const productId = parseInt(req.params.id);
-
-    try {
-      const productData = insertProductSchema.partial().parse(req.body);
-      const product = await storage.updateProduct(productId, userId, productData);
-
-      if (!product) {
-        return res.status(404).json({ message: "Produto não encontrado" });
-      }
-
-      res.json(product);
-    } catch (error) {
-      res.status(400).json({ message: (error as Error).message });
-    }
-  });
-
-  app.delete("/api/products/:id", async (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
-    const userId = req.user!.id;
-    const productId = parseInt(req.params.id);
-
-    try {
-      await storage.deleteProduct(productId, userId);
-      res.sendStatus(200);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
     }
@@ -153,7 +166,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Add this route before the last return statement
   app.patch("/api/user/profile", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = req.user!.id;
