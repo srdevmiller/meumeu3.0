@@ -408,10 +408,10 @@ export default function HomePage() {
                             <img
                               src={profileForm.watch("logoUrl")}
                               alt="Logo Preview"
-                              className="w-24 h-24 object-cover rounded-full"
+                              className="w-24 h-24 object-contain"
                             />
                           ) : (
-                            <div className="w-24 h-24 border-2 border-dashed rounded-full flex items-center justify-center">
+                            <div className="w-24 h-24 flex items-center justify-center border border-dashed border-gray-300 rounded-lg">
                               <Upload className="w-8 h-8 text-muted-foreground" />
                             </div>
                           )}
