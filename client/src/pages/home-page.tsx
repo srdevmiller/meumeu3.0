@@ -219,9 +219,9 @@ export default function HomePage() {
   const handleSubmit = (data: InsertProduct) => {
     if (editingProduct) {
       // Garantir que o ID do produto está sendo passado corretamente
-      updateProductMutation.mutate({ 
-        ...data, 
-        id: editingProduct.id 
+      updateProductMutation.mutate({
+        ...data,
+        id: editingProduct.id
       });
     } else {
       createProductMutation.mutate(data);
@@ -386,7 +386,7 @@ export default function HomePage() {
             Imagem de Fundo
           </Button>
 
-          <Link href={`/menu/${user?.id}`}>
+          <Link href={`/menu/${encodeURIComponent(user?.businessName || '')}/${user?.id}`}>
             <Button variant="outline">
               <ExternalLink className="w-4 h-4 mr-2" />
               Ver Cardápio Público

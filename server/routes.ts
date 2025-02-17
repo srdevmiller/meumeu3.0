@@ -84,7 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(products);
   });
 
-  // Nova rota para buscar produtos públicos por userId
+  // Update the menu route to use businessName and userId
   app.get("/api/menu/:userId", async (req, res) => {
     const userId = parseInt(req.params.userId);
     try {
@@ -95,6 +95,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Estabelecimento não encontrado" });
       }
 
+      // The businessName from the URL will be used for SEO/routing purposes
+      // but we still return the actual business name from the database
       res.json({
         products,
         businessName: user.businessName,

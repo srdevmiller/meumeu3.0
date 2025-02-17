@@ -29,14 +29,14 @@ type MenuData = {
 };
 
 export default function MenuPage() {
-  const { userId } = useParams();
+  const { businessName, id } = useParams();
   const [search, setSearch] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { data, isLoading } = useQuery<MenuData>({
-    queryKey: [`/api/menu/${userId}`],
+    queryKey: [`/api/menu/${id}`],
   });
 
   const filteredProducts = useMemo(() => {
