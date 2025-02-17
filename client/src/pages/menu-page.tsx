@@ -489,7 +489,6 @@ export default function MenuPage() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="text-sm">
-                  {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])} •{" "}
                   <span className="font-bold text-[var(--theme-color)]">
                     Qtd Produtos {filteredProducts.length}
                   </span>
