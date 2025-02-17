@@ -13,10 +13,15 @@ export default function LandingPage() {
             <p className="mt-3 max-w-md mx-auto text-base text-white sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
               Dê adeus aos cardápios físicos e complicados! Com nossa plataforma, você cria um cardápio digital profissional em poucos minutos.
             </p>
-            <div className="mt-10">
+            <div className="mt-10 space-x-4">
               <Link href="/auth">
                 <button className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
                   Registre-se gratuitamente
+                </button>
+              </Link>
+              <Link href="/pricing">
+                <button className="inline-flex items-center justify-center px-8 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-white/10 md:py-4 md:text-lg md:px-10">
+                  Ver planos e preços
                 </button>
               </Link>
             </div>

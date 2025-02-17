@@ -9,6 +9,7 @@ import MenuPage from "@/pages/menu-page";
 import AdminDashboard from "@/pages/admin-dashboard";
 import ProfilePage from "@/pages/profile-page";
 import LandingPage from "@/pages/landing-page";
+import PricingPage from "@/pages/pricing-page";
 import { AuthProvider, useAuth } from "./hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/" component={RootRoute} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/menu/:businessName/:id" component={MenuPage} />
+      <Route path="/pricing" component={PricingPage} />
       <ProtectedRoute path="/admin" component={AdminDashboard} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <Route component={NotFound} />
