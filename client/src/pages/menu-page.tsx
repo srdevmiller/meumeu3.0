@@ -258,6 +258,7 @@ export default function MenuPage() {
             )}
             <div className="absolute inset-0 bg-[var(--theme-color)]/90" />
           </div>
+
           <div className="z-10 flex flex-col items-center gap-4">
             <div className="flex items-center gap-4">
               {data.logoUrl && (
@@ -468,6 +469,7 @@ export default function MenuPage() {
                     Qtd Produtos {filteredProducts.length}
                   </span>
                 </div>
+
                 <div className="flex gap-2">
                   {compareProducts.length > 0 && (
                     <Sheet open={showCompareSheet} onOpenChange={setShowCompareSheet}>
@@ -488,11 +490,9 @@ export default function MenuPage() {
                         </TooltipTrigger>
                         <TooltipContent>
                           <p>Ver produtos selecionados para comparação</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {compareProducts.length} {compareProducts.length === 1 ? 'produto selecionado' : 'produtos selecionados'}
-                          </p>
                         </TooltipContent>
                       </Tooltip>
+
                       <SheetContent side="right" className="w-[90vw] sm:w-[600px]">
                         <SheetHeader>
                           <SheetTitle>Comparação de Produtos</SheetTitle>
@@ -501,7 +501,7 @@ export default function MenuPage() {
                           </SheetDescription>
                         </SheetHeader>
                         <div className="mt-6">
-                          <div className="grid grid-cols-{compareProducts.length} gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {compareProducts.map((product) => (
                               <Card key={product.id}>
                                 <CardHeader>
@@ -552,7 +552,6 @@ export default function MenuPage() {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Visualizar produtos em grade</p>
-                      <p className="text-xs text-muted-foreground mt-1">Ideal para ver mais produtos de uma vez</p>
                     </TooltipContent>
                   </Tooltip>
                   <Tooltip>
@@ -568,11 +567,10 @@ export default function MenuPage() {
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Visualizar produtos em lista</p>
-                      <p className="text-xs text-muted-foreground mt-1">Ideal para ver mais detalhes de cada produto</p>
                     </TooltipContent>
                   </Tooltip>
                 </div>
-              </motion.div>
+              </div>
 
               <motion.div
                 style={{
@@ -617,9 +615,7 @@ export default function MenuPage() {
                                 {product.name}
                               </CardTitle>
                               <CardDescription className="text-xs sm:text-sm">
-                                <span
-                                  className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]"
-                                >
+                                <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
                                   {categories.find((c) => c.id === product.categoryId)?.name}
                                 </span>
                               </CardDescription>
@@ -628,9 +624,7 @@ export default function MenuPage() {
                         </CardHeader>
                         <CardContent className="p-3 pt-0">
                           <div className="flex justify-between items-center">
-                            <p
-                              className="text-lg sm:text-xl font-bold"
-                            >
+                            <p className="text-lg sm:text-xl font-bold">
                               {formatPrice(product.price)}
                             </p>
                             <div className="flex gap-2">
@@ -704,21 +698,21 @@ export default function MenuPage() {
       </motion.div>
       <style>
         {`
-        .ripple {
-          position: absolute;
-          border-radius: 50%;
-          transform: scale(0);
-          animation: ripple 0.6s linear;
-          background-color: rgba(255, 255, 255, 0.7);
-        }
-
-        @keyframes ripple {
-          to {
-            transform: scale(4);
-            opacity: 0;
+          .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            background-color: rgba(255, 255, 255, 0.7);
           }
-        }
-      `}
+
+          @keyframes ripple {
+            to {
+              transform: scale(4);
+              opacity: 0;
+            }
+          }
+        `}
       </style>
     </TooltipProvider>
   );
