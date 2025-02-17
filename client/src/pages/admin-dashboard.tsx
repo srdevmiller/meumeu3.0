@@ -53,32 +53,19 @@ export default function AdminDashboard() {
 
   const { data, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/stats"],
-    retry: false,
+    retry: false, // Não tentar novamente em caso de erro
+    staleTime: 0, // Sempre buscar dados novos
     onError: (error: any) => {
       console.error("AdminDashboard - Query error:", error);
-
-      // Se receber erro de autenticação, fazer logout
-      if (error.status === 401) {
-        toast({
-          title: "Sessão expirada",
-          description: "Por favor, faça login novamente.",
-          variant: "destructive",
-        });
+      toast({
+        title: "Erro",
+        description: error?.message || "Erro ao carregar dados do painel admin",
+        variant: "destructive",
+      });
+      if (error?.status === 401 || error?.status === 403) {
         logout();
-      } else if (error.status === 403) {
-        toast({
-          title: "Acesso negado",
-          description: "Você não tem permissão para acessar esta página.",
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Erro",
-          description: "Ocorreu um erro ao carregar os dados.",
-          variant: "destructive",
-        });
       }
-    }
+    },
   });
 
   if (isLoading) {
