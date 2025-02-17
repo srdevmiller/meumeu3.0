@@ -8,15 +8,15 @@ import { products, users, favorites } from "@shared/schema";
 import { db } from "./db";
 
 async function ensureAdminUser() {
-  const adminUser = await storage.getUserByUsername("admin-miller@gmail.com");
+  const adminUser = await storage.getUserByUsername("admin@admin.com");
   if (!adminUser) {
     await storage.createUser({
-      username: "admin-miller@gmail.com",
-      password: await hashPassword("Thmpv77d6f@"),
-      businessName: "Admin",
+      username: "admin@admin.com",
+      password: await hashPassword("Admin@123"),
+      businessName: "Administrador",
       phone: "0000000000",
       bannerImageUrl: null,
-      confirmPassword: "Thmpv77d6f@",
+      confirmPassword: "Admin@123",
     });
     console.log("Admin user created successfully");
   }
@@ -46,7 +46,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
 
-    if (!req.user || req.user.username !== "admin-miller@gmail.com") {
+    if (!req.user || req.user.username !== "admin@admin.com") {
       console.log("User not admin:", req.user?.username);
       return res.status(403).json({ 
         error: "FORBIDDEN",

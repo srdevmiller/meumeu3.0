@@ -34,7 +34,7 @@ export default function AdminDashboard() {
   const { user, logout } = useAuth();
 
   // Redireciona se não for admin
-  if (user?.username !== "admin-miller@gmail.com") {
+  if (user?.username !== "admin@admin.com") {
     return <Redirect to="/auth" />;
   }
 

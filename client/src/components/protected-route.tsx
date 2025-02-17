@@ -25,7 +25,7 @@ export function ProtectedRoute({
         }
 
         // Se a rota for apenas para admin, verifica se é admin
-        if (adminOnly && user.username !== "admin-miller@gmail.com") {
+        if (adminOnly && user.username !== "admin@admin.com") {
           console.log("Protected route: user is not admin, redirecting to home");
           return <Redirect to="/" />;
         }
