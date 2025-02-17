@@ -33,14 +33,29 @@ type DashboardStats = {
 export default function AdminDashboard() {
   const { user, logout } = useAuth();
 
-  // Redireciona se não for admin
-  if (user?.username !== "admin-miller@gmail.com") {
+  // Adicionando logs para debug
+  console.log("Current user:", user);
+
+  // Verificação mais robusta do usuário admin
+  if (!user) {
+    console.log("No user found, redirecting to auth");
     return <Redirect to="/auth" />;
   }
 
-  const { data, isLoading } = useQuery<DashboardStats>({
+  if (user.username !== "admin-miller@gmail.com") {
+    console.log("User is not admin, redirecting to home");
+    return <Redirect to="/" />;
+  }
+
+  const { data, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/stats"],
+    retry: false, // Não tentar novamente em caso de erro
   });
+
+  // Log de erro da query
+  if (error) {
+    console.error("Error fetching admin stats:", error);
+  }
 
   if (isLoading) {
     return (
@@ -50,7 +65,10 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!data) return null;
+  if (!data) {
+    console.log("No data available");
+    return null;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
