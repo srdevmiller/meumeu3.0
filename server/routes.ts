@@ -115,6 +115,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/products/:id", async (req, res) => {
+    if (!req.isAuthenticated()) return res.sendStatus(401);
+    const userId = req.user!.id;
+    const productId = parseInt(req.params.id);
+
+    try {
+      // Primeiro, verifica se o produto existe e pertence ao usuário
+      const existingProduct = await storage.getProduct(productId);
+      if (!existingProduct) {
+        return res.status(404).json({ message: "Produto não encontrado" });
+      }
+      if (existingProduct.userId !== userId) {
+        return res.status(403).json({ message: "Você não tem permissão para excluir este produto" });
+      }
+
+      await storage.deleteProduct(productId);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      res.status(400).json({ message: (error as Error).message });
+    }
+  });
+
   // Novas rotas para favoritos
   app.post("/api/favorites", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
