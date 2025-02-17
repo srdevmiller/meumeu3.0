@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
+import { Link } from "wouter";
 
 // 12 cores diferentes que combinam bem entre si
 const themeColors = [
@@ -117,6 +118,11 @@ export default function ProfilePage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">Editar Perfil</h1>
         <div className="flex gap-2">
+          <Link href="/">
+            <Button variant="outline">
+              Voltar
+            </Button>
+          </Link>
           <Button
             variant="outline"
             onClick={() => window.location.href = `/menu/${user?.businessName}/${user?.id}`}
