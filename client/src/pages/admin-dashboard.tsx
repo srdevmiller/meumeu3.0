@@ -15,7 +15,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Package } from "lucide-react";
+import { Users, Package, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type DashboardStats = {
   totalUsers: number;
@@ -25,11 +26,12 @@ type DashboardStats = {
     username: string;
     businessName: string;
     phone: string;
+    product_count: number;
   }[];
 };
 
 export default function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   // Redireciona se não for admin
   if (user?.username !== "admin-miller@gmail.com") {
@@ -52,7 +54,13 @@ export default function AdminDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Painel de controle</h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Painel de controle</h1>
+        <Button variant="outline" onClick={logout} className="flex items-center gap-2">
+          <LogOut className="h-4 w-4" />
+          Sair
+        </Button>
+      </div>
 
       <div className="grid gap-4 md:grid-cols-2 mb-8">
         <Card className="bg-purple-500 text-white">
@@ -92,13 +100,13 @@ export default function AdminDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data.users.map((user, index) => (
+              {data.users.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.businessName}</TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>{user.username}</TableCell>
                   <TableCell>{user.id}</TableCell>
-                  <TableCell className="text-right">0</TableCell>
+                  <TableCell className="text-right">{user.product_count}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
