@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 // 12 cores diferentes que combinam bem entre si
 const themeColors = [
@@ -34,7 +35,7 @@ export default function ProfilePage() {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: { businessName?: string; phone?: string; themeColor?: string; logoUrl?: string; }) => {
       const response = await apiRequest("PATCH", "/api/user/profile", data);
-      return await response.json(); // Corrected to use response
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
@@ -48,7 +49,7 @@ export default function ProfilePage() {
   const updateBannerMutation = useMutation({
     mutationFn: async (bannerImageUrl: string) => {
       const response = await apiRequest("PATCH", "/api/user/banner", { bannerImageUrl });
-      return await response.json(); //Corrected to use response
+      return await response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/user"] });
@@ -104,17 +105,34 @@ export default function ProfilePage() {
     }
   };
 
+  const handleSave = () => {
+    updateProfileMutation.mutate({
+      themeColor: selectedColor,
+      // Add other fields if needed
+    });
+  };
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">Editar Perfil</h1>
-        <Button
-          variant="outline"
-          onClick={() => window.location.href = `/menu/${user?.businessName}/${user?.id}`}
-          className="flex items-center gap-2"
-        >
-          Ver Cardápio Público
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => window.location.href = `/menu/${user?.businessName}/${user?.id}`}
+          >
+            Ver Cardápio Público
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={updateProfileMutation.isPending || updateBannerMutation.isPending}
+          >
+            {(updateProfileMutation.isPending || updateBannerMutation.isPending) && (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            )}
+            Salvar Alterações
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-8 md:grid-cols-2">
@@ -196,7 +214,6 @@ export default function ProfilePage() {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     setSelectedColor(color.hex);
-                    updateProfileMutation.mutate({ themeColor: color.hex });
                   }}
                   className={`w-full aspect-square rounded-lg border-2 transition-all ${
                     selectedColor === color.hex
