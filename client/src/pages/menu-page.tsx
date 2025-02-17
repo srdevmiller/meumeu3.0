@@ -567,7 +567,7 @@ export default function MenuPage() {
                     }}
                   >
                     <Card
-                      className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                      className={`overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]`}
                     >
                       <div
                         className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
@@ -640,21 +640,13 @@ export default function MenuPage() {
                                     toggleFavorite(product.id);
                                   }}
                                 >
-                                  <div
-                                    style={{
-                                      scale: data?.favorites.includes(product.id) ? 1 : 1,
-                                      rotate: data?.favorites.includes(product.id) ? 0 : 0,
-                                      transition: "scale 0.4s ease, rotate 0.4s ease",
-                                    }}
-                                  >
-                                    <Heart
-                                      className={`h-4 w-4 transition-colors ${
-                                        data?.favorites.includes(product.id)
-                                          ? "fill-current text-red-500"
-                                          : "text-muted-foreground"
-                                      }`}
-                                    />
-                                  </div>
+                                  <Heart
+                                    className={`h-4 w-4 transition-colors ${
+                                      data?.favorites.includes(product.id)
+                                        ? "fill-current text-red-500"
+                                        : "text-muted-foreground"
+                                    }`}
+                                  />
                                 </Button>
                               </div>
                             </div>
