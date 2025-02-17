@@ -216,7 +216,7 @@ export default function MenuPage() {
 
   return (
     <div className="min-h-screen bg-[var(--theme-color-90)]" style={themeStyles}>
-      <div className="relative h-48 bg-black/50 flex items-center justify-center">
+      <div className="relative h-48 flex items-center justify-center">
         <div className="absolute inset-0 z-0">
           {data.bannerImageUrl && (
             <img
@@ -225,7 +225,7 @@ export default function MenuPage() {
               className="w-full h-full object-cover"
             />
           )}
-          <div className="absolute inset-0 bg-[var(--theme-color)]/50" />
+          <div className="absolute inset-0 bg-[var(--theme-color)]/90" /> {/* Changed opacity here */}
         </div>
         <div className="z-10 flex flex-col items-center gap-4">
           <div className="flex items-center gap-4">
