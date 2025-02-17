@@ -150,6 +150,13 @@ export default function MenuPage() {
     });
   }, [data?.products, search, selectedCategories, priceRange]);
 
+  const formatPrice = (price: string | number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(Number(price));
+  };
+
   const themeStyles = {
     "--theme-color": data?.themeColor || "#7c3aed",
     "--theme-color-90": data?.themeColor ? `${data.themeColor}E6` : "#7c3aedE6", // E6 is hex for 90% opacity
@@ -364,8 +371,8 @@ export default function MenuPage() {
                         className="my-6 [&_[role=slider]]:bg-[var(--theme-color)] [&_[role=slider]]:border-[var(--theme-color)] [&_[role=slider]]:focus:ring-[var(--theme-color)]/50 [&_.track]:bg-[var(--theme-color)]"
                       />
                       <div className="flex justify-between text-sm">
-                        <span>R$ {priceRange[0]}</span>
-                        <span>R$ {priceRange[1]}</span>
+                        <span>{formatPrice(priceRange[0])}</span>
+                        <span>{formatPrice(priceRange[1])}</span>
                       </div>
                     </CardContent>
                   </Card>
@@ -377,7 +384,7 @@ export default function MenuPage() {
           <div>
             <div className="flex items-center justify-between mb-4">
               <div className="text-sm">
-                R$ {priceRange[0]} - R$ {priceRange[1]} •{" "}
+                {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])} •{" "}
                 <span className="font-bold text-[var(--theme-color)]">
                   Qtd Produtos {filteredProducts.length}
                 </span>
@@ -462,7 +469,7 @@ export default function MenuPage() {
                             className="text-lg sm:text-xl font-bold"
                             layoutId={`price-${product.id}`}
                           >
-                            R$ {Number(product.price).toFixed(2)}
+                            {formatPrice(product.price)}
                           </motion.p>
                           <motion.div
                             whileHover={{ scale: 1.1 }}
