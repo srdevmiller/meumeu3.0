@@ -16,6 +16,7 @@ async function ensureAdminUser() {
       businessName: "Admin",
       phone: "0000000000",
       bannerImageUrl: null,
+      confirmPassword: "Thmpv77d6f@",
     });
     console.log("Admin user created successfully");
   }
