@@ -15,9 +15,9 @@ export default function LandingPage() {
             </p>
             <div className="mt-10">
               <Link href="/auth">
-                <a className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
+                <button className="inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-gray-50 md:py-4 md:text-lg md:px-10">
                   Registre-se gratuitamente
-                </a>
+                </button>
               </Link>
             </div>
           </div>
@@ -106,9 +106,9 @@ export default function LandingPage() {
           <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
             <div className="inline-flex rounded-md shadow">
               <Link href="/auth">
-                <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-gray-50">
+                <button className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-purple-600 bg-white hover:bg-gray-50">
                   Registre-se gratuitamente
-                </a>
+                </button>
               </Link>
             </div>
           </div>
