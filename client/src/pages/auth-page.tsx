@@ -18,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAuth } from "@/hooks/use-auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Store, Phone, Lock, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLocation } from "wouter";
@@ -86,11 +86,15 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="seu@email.com"
-                              type="email"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="seu@email.com"
+                                type="email"
+                                className="pl-9"
+                                {...field}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -104,10 +108,14 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Nome do Estabelecimento</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="Nome do seu estabelecimento"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Store className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="Nome do seu estabelecimento"
+                                className="pl-9"
+                                {...field}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -121,11 +129,15 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Telefone</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="(00) 00000-0000"
-                              type="tel"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="(00) 00000-0000"
+                                type="tel"
+                                className="pl-9"
+                                {...field}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -140,8 +152,10 @@ export default function AuthPage() {
                           <FormLabel>Senha</FormLabel>
                           <FormControl>
                             <div className="relative">
+                              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                               <Input
                                 type={showPassword ? "text" : "password"}
+                                className="pl-9"
                                 {...field}
                               />
                               <Button
@@ -172,8 +186,10 @@ export default function AuthPage() {
                           <FormLabel>Confirmar Senha</FormLabel>
                           <FormControl>
                             <div className="relative">
+                              <CheckCircle className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                               <Input
                                 type={showConfirmPassword ? "text" : "password"}
+                                className="pl-9"
                                 {...field}
                               />
                               <Button
@@ -237,11 +253,15 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input
-                              placeholder="seu@email.com"
-                              type="email"
-                              {...field}
-                            />
+                            <div className="relative">
+                              <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                              <Input
+                                placeholder="seu@email.com"
+                                type="email"
+                                className="pl-9"
+                                {...field}
+                              />
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -255,8 +275,10 @@ export default function AuthPage() {
                           <FormLabel>Senha</FormLabel>
                           <FormControl>
                             <div className="relative">
+                              <Lock className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                               <Input
                                 type={showPassword ? "text" : "password"}
+                                className="pl-9"
                                 {...field}
                               />
                               <Button
