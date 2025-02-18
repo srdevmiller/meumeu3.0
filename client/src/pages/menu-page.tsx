@@ -536,14 +536,14 @@ export default function MenuPage() {
                     <Card
                       className={`overflow-hidden ${
                         viewMode === "list"
-                          ? "flex flex-col sm:flex-row"
+                          ? "flex flex-col sm:flex-row sm:h-48"
                           : ""
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
                       <div
                         className={
                           viewMode === "list"
-                            ? "w-full sm:w-72 h-48 sm:h-72 flex-shrink-0"
+                            ? "w-full sm:w-48 h-48 sm:h-full flex-shrink-0"
                             : "aspect-square"
                         }
                       >
@@ -553,7 +553,7 @@ export default function MenuPage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1" : ""}>
+                      <div className={viewMode === "list" ? "flex-1 flex flex-col justify-between" : ""}>
                         <CardHeader className="p-3 sm:p-4">
                           <div className="flex justify-between items-start mb-2">
                             <div>
@@ -574,7 +574,7 @@ export default function MenuPage() {
                             />
                           )}
                         </CardHeader>
-                        <CardContent className="p-3 sm:p-4 pt-0">
+                        <CardContent className="p-3 sm:p-4 pt-0 mt-auto">
                           <div className="flex justify-between items-center">
                             <p className="text-lg sm:text-xl font-bold">
                               {formatPrice(product.price)}
@@ -857,7 +857,7 @@ export default function MenuPage() {
 
             /* Smooth slider transitions */
             [role="slider"] {
-              transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+              transition: transform 0.2s cubic-bezier(0.4, 00, 0.2, 1);
             }
 
             [role="slider"]:hover {
