@@ -553,7 +553,7 @@ export default function MenuPage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : ""}>
+                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
                         <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start mb-2">
                             <div>
@@ -877,7 +877,7 @@ export default function MenuPage() {
             /* Enhance ripple effect */
             .ripple {
               position: absolute;
-              border-radius: 50%;
+              border-radius:50%;
               transform: scale(0);
               animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
               background-color: rgba(255, 255, 255, 0.7);
