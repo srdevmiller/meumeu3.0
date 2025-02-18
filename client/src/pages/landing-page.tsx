@@ -51,7 +51,7 @@ export default function LandingPage() {
           <img 
             src={mockupDesktop}
             alt="Interface do sistema"
-            className="w-full rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-500"
+            className="w-full rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-700"
           />
         </div>
       </section>
