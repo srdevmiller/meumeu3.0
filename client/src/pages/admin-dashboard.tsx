@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
 import { Redirect } from "wouter";
 import {
@@ -15,11 +15,31 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Package, LogOut } from "lucide-react";
+import { Users, Package, LogOut, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSessionTimeout } from "@/hooks/use-session-timeout";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 type DashboardStats = {
   totalUsers: number;
@@ -47,10 +67,18 @@ type LogsResponse = {
   total: number;
 };
 
+// Schema para validação do formulário de edição
+const editUserSchema = z.object({
+  username: z.string().email("Email inválido"),
+  businessName: z.string().min(1, "Nome do estabelecimento é obrigatório"),
+  phone: z.string().min(1, "Telefone é obrigatório"),
+});
+
 export default function AdminDashboard() {
   const { user, logout, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
-  useSessionTimeout(); // Adiciona o timeout da sessão
+  useSessionTimeout();
+  const [editingUser, setEditingUser] = useState<DashboardStats["users"][0] | null>(null);
 
   // Debug logs para acompanhar o estado da autenticação
   useEffect(() => {
@@ -118,6 +146,62 @@ export default function AdminDashboard() {
       });
     }
   });
+
+  // Mutation para atualizar usuário
+  const updateUserMutation = useMutation({
+    mutationFn: async (data: { id: number, username: string, businessName: string, phone: string }) => {
+      const { id, ...userData } = data;
+      const res = await apiRequest("PATCH", `/api/admin/users/${id}`, userData);
+      if (!res.ok) {
+        const error = await res.text();
+        throw new Error(error || 'Falha ao atualizar usuário');
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/stats"] });
+      toast({
+        title: "Sucesso",
+        description: "Usuário atualizado com sucesso",
+      });
+      setEditingUser(null);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao atualizar usuário",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const form = useForm({
+    resolver: zodResolver(editUserSchema),
+    defaultValues: {
+      username: "",
+      businessName: "",
+      phone: "",
+    },
+  });
+
+  useEffect(() => {
+    if (editingUser) {
+      form.reset({
+        username: editingUser.username,
+        businessName: editingUser.businessName,
+        phone: editingUser.phone,
+      });
+    }
+  }, [editingUser, form]);
+
+  const handleEditSubmit = (data: z.infer<typeof editUserSchema>) => {
+    if (editingUser) {
+      updateUserMutation.mutate({
+        id: editingUser.id,
+        ...data,
+      });
+    }
+  };
 
   if (isLoadingStats || isLoadingLogs) {
     return (
@@ -223,6 +307,7 @@ export default function AdminDashboard() {
                 <TableHead>email</TableHead>
                 <TableHead>id</TableHead>
                 <TableHead className="text-right">Qtd produtos</TableHead>
+                <TableHead className="w-[100px]">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -233,6 +318,86 @@ export default function AdminDashboard() {
                   <TableCell>{user.username}</TableCell>
                   <TableCell>{user.id}</TableCell>
                   <TableCell className="text-right">{user.product_count}</TableCell>
+                  <TableCell>
+                    <Dialog open={editingUser?.id === user.id} onOpenChange={(open) => !open && setEditingUser(null)}>
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setEditingUser(user)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Editar Cliente</DialogTitle>
+                        </DialogHeader>
+                        <Form {...form}>
+                          <form onSubmit={form.handleSubmit(handleEditSubmit)} className="space-y-4">
+                            <FormField
+                              control={form.control}
+                              name="businessName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Nome do Estabelecimento</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="phone"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Telefone</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <FormField
+                              control={form.control}
+                              name="username"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>Email</FormLabel>
+                                  <FormControl>
+                                    <Input {...field} type="email" />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                            <div className="flex justify-end gap-2 mt-4">
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setEditingUser(null)}
+                              >
+                                Cancelar
+                              </Button>
+                              <Button
+                                type="submit"
+                                disabled={updateUserMutation.isPending}
+                              >
+                                {updateUserMutation.isPending ? (
+                                  <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                                ) : (
+                                  "Salvar"
+                                )}
+                              </Button>
+                            </div>
+                          </form>
+                        </Form>
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

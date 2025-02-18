@@ -301,6 +301,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Nova rota para atualização de usuário pelo admin
+  app.patch("/api/admin/users/:userId", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
+      return res.status(403).json({ 
+        error: "FORBIDDEN",
+        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+      });
+    }
+
+    const userId = parseInt(req.params.userId);
+    const { username, businessName, phone } = req.body;
+
+    try {
+      const user = await storage.updateUserAsAdmin(userId, {
+        username,
+        businessName,
+        phone
+      });
+
+      await createAdminLog(req, "UPDATE_USER", `Usuário atualizado: ID ${userId}`);
+
+      res.json(user);
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ 
+        error: "SERVER_ERROR",
+        message: "Erro ao atualizar usuário" 
+      });
+    }
+  });
+
+
   const httpServer = createServer(app);
   return httpServer;
 }

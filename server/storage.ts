@@ -33,6 +33,11 @@ export interface IStorage {
   createAdminLog(log: InsertAdminLog): Promise<AdminLog>;
   getAdminLogs(page?: number, limit?: number): Promise<{ logs: AdminLog[], total: number }>;
   getAdminLogsByUser(userId: number, page?: number, limit?: number): Promise<{ logs: AdminLog[], total: number }>;
+  updateUserAsAdmin(userId: number, data: { 
+    username?: string;
+    businessName?: string;
+    phone?: string;
+  }): Promise<User>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -218,6 +223,14 @@ export class DatabaseStorage implements IStorage {
       logs,
       total: Number(result.value)
     };
+  }
+  async updateUserAsAdmin(userId: number, data: { username?: string; businessName?: string; phone?: string; }): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set(data)
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
   }
 }
 
