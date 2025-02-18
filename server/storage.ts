@@ -263,33 +263,38 @@ export class DatabaseStorage implements IStorage {
     return Number(result.value);
   }
   async getAnalyticsSummary(days: number = 30): Promise<AnalyticsSummary> {
+    // Primeiro, vamos buscar o total de visitas
     const [totalVisits] = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days} days'`);
+      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days.toString()} days'`);
 
+    // Depois, a duração média da sessão
     const [avgDuration] = await db
       .select({ 
-        avg: sql<number>`avg(${siteVisits.sessionDuration})::int` 
+        avg: sql<number>`COALESCE(avg(${siteVisits.sessionDuration}), 0)::int` 
       })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days} days'`);
+      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days.toString()} days'`);
 
+    // Estatísticas por dispositivo
     const deviceStats = await db
       .select({
         device: siteVisits.deviceType,
         count: sql<number>`count(*)::int`
       })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days} days'`)
+      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days.toString()} days'`)
       .groupBy(siteVisits.deviceType);
 
+    // Buscar páginas populares e visitas por dia
     const popularPages = await this.getPopularPages();
     const visitsByDay = await this.getVisitsByTimeRange(
       new Date(Date.now() - days * 24 * 60 * 60 * 1000),
       new Date()
     );
 
+    // Preparar a distribuição por dispositivo
     const deviceBreakdown = {
       desktop: 0,
       mobile: 0,
