@@ -53,7 +53,10 @@ function trackVisit(req: Request, res: Response, next: NextFunction) {
     '.css',
     '.png',
     '.jpg',
-    '.ico'
+    '.ico',
+    '/admin',  // Ignorar todas as páginas administrativas
+    '/auth',   // Ignorar páginas de autenticação
+    '/@'       // Ignorar rotas internas do Vite
   ];
 
   // Verifica se o caminho deve ser ignorado
@@ -61,8 +64,8 @@ function trackVisit(req: Request, res: Response, next: NextFunction) {
     req.path.startsWith(path) || req.path.includes(path)
   );
 
-  // Só rastreia se não for um caminho ignorado e for uma requisição GET
-  if (!shouldIgnorePath && req.method === 'GET') {
+  // Só rastreia se for uma página de menu e for uma requisição GET
+  if (!shouldIgnorePath && req.method === 'GET' && req.path.startsWith('/menu')) {
     const userAgent = req.get('user-agent') || 'unknown';
 
     // Detecção de dispositivo melhorada
