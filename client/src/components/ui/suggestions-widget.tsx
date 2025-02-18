@@ -89,16 +89,20 @@ export function SuggestionBadge({ type, className }: SuggestionBadgeProps) {
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-help transition-colors inline-flex items-center px-2 py-0.5 text-xs",
+              "cursor-help transition-all duration-200 inline-flex items-center px-2 py-0.5 text-xs hover:scale-110 hover:shadow-md",
               suggestion.color,
+              "hover:bg-white dark:hover:bg-gray-800",
+              "active:scale-95",
               className
             )}
           >
-            {suggestion.icon}
+            <span className="transition-transform duration-200 group-hover:rotate-12">
+              {suggestion.icon}
+            </span>
             <span className="ml-1 whitespace-nowrap">{suggestion.label}</span>
           </Badge>
         </TooltipTrigger>
-        <TooltipContent>
+        <TooltipContent sideOffset={5} className="animate-in fade-in-0 zoom-in-95">
           <p>{suggestion.description}</p>
         </TooltipContent>
       </Tooltip>
@@ -113,8 +117,8 @@ interface SuggestionsWidgetProps {
 
 export function SuggestionsWidget({ suggestions, className }: SuggestionsWidgetProps) {
   return (
-    <div className={cn("flex flex-wrap gap-1.5 items-center", className)}>
-      <Info size={16} className="text-muted-foreground flex-shrink-0" />
+    <div className={cn("flex flex-wrap gap-1.5 items-center group", className)}>
+      <Info size={16} className="text-muted-foreground flex-shrink-0 transition-transform duration-200 group-hover:rotate-12" />
       {suggestions.map((type) => (
         <SuggestionBadge key={type} type={type} />
       ))}
