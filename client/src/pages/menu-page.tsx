@@ -518,90 +518,86 @@ export default function MenuPage() {
                 </div>
               </div>
 
-              {isLoading ? (
-                <LoadingSkeleton />
-              ) : (
-                <div
-                  className={
-                    viewMode === "grid"
-                      ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
-                      : "flex flex-col gap-4"
-                  }
-                >
-                  {sortedProducts.map((product, index) => (
-                    <motion.div
-                      key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, delay: index * 0.1 }}
+              <div
+                className={
+                  viewMode === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[1400px] mx-auto"
+                    : "flex flex-col gap-4"
+                }
+              >
+                {sortedProducts.map((product, index) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    <Card
+                      className={`overflow-hidden ${
+                        viewMode === "list"
+                          ? "flex flex-row"
+                          : ""
+                      } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
-                      <Card
-                        className={`overflow-hidden ${
+                      <div
+                        className={
                           viewMode === "list"
-                            ? "flex flex-row"
-                            : ""
-                        } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                            ? "w-64 h-64 flex-shrink-0"
+                            : "aspect-square"
+                        }
                       >
-                        <div
-                          className={
-                            viewMode === "list"
-                              ? "w-64 h-64 flex-shrink-0"
-                              : "aspect-square"
-                          }
-                        >
-                          <img
-                            src={product.imageUrl}
-                            alt={product.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className={viewMode === "list" ? "flex-1" : ""}>
-                          <CardHeader className="p-4">
-                            <div className="flex justify-between items-start mb-2">
-                              <div>
-                                <CardTitle className="text-lg md:text-xl truncate">
-                                  {product.name}
-                                </CardTitle>
-                                <CardDescription className="text-sm">
-                                  <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
-                                    {categories.find((c) => c.id === product.categoryId)?.name}
-                                  </span>
-                                </CardDescription>
-                              </div>
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className={viewMode === "list" ? "flex-1" : ""}>
+                        <CardHeader className="p-4">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <CardTitle className="text-lg md:text-xl truncate">
+                                {product.name}
+                              </CardTitle>
+                              <CardDescription className="text-sm">
+                                <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                                  {categories.find((c) => c.id === product.categoryId)?.name}
+                                </span>
+                              </CardDescription>
                             </div>
-                            {product.suggestions && product.suggestions.length > 0 && (
-                              <SuggestionsWidget
-                                suggestions={product.suggestions as unknown as SuggestionType[]}
-                                className="mt-2"
+                          </div>
+                          {product.suggestions && product.suggestions.length > 0 && (
+                            <SuggestionsWidget
+                              suggestions={product.suggestions as unknown as SuggestionType[]}
+                              className="mt-2"
+                            />
+                          )}
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="flex justify-between items-center">
+                            <p className="text-xl font-bold">
+                              {formatPrice(product.price)}
+                            </p>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-10 w-10"
+                              onClick={() => toggleFavorite(product.id)}
+                            >
+                              <Heart
+                                className={data?.favorites.includes(product.id)
+                                  ? "h-5 w-5 fill-current text-red-500"
+                                  : "h-5 w-5 text-muted-foreground"
+                                }
                               />
-                            )}
-                          </CardHeader>
-                          <CardContent className="p-4 pt-0">
-                            <div className="flex justify-between items-center">
-                              <p className="text-xl font-bold">
-                                {formatPrice(product.price)}
-                              </p>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-10 w-10"
-                                onClick={() => toggleFavorite(product.id)}
-                              >
-                                <Heart
-                                  className={data?.favorites.includes(product.id)
-                                    ? "h-5 w-5 fill-current text-red-500"
-                                    : "h-5 w-5 text-muted-foreground"
-                                  }
-                                />
-                              </Button>
-                            </div>
-                          </CardContent>
-                        </div>
-                      </Card>
-                    </motion.div>
-                  ))}
-                </div>
-              )}
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
 
               {filteredProducts.length === 0 && (
                 <motion.div
