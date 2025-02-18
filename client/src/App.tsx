@@ -7,6 +7,7 @@ import AuthPage from "@/pages/auth-page";
 import HomePage from "@/pages/home-page";
 import MenuPage from "@/pages/menu-page";
 import AdminDashboard from "@/pages/admin-dashboard";
+import AnalyticsDashboard from "@/pages/analytics-dashboard";
 import ProfilePage from "@/pages/profile-page";
 import LandingPage from "@/pages/landing-page";
 import PricingPage from "@/pages/pricing-page";
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/menu/:businessName/:id" component={MenuPage} />
       <Route path="/pricing" component={PricingPage} />
       <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
+      <ProtectedRoute path="/admin/analytics" component={AnalyticsDashboard} adminOnly={true} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <Route component={NotFound} />
     </Switch>
