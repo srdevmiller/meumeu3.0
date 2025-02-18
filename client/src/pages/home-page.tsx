@@ -579,15 +579,13 @@ export default function HomePage() {
                   variants={container}
                   initial="hidden"
                   animate="show"
-                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-6"
                 >
                   {products.map((product) => (
                     <motion.div
                       key={product.id}
                       variants={item}
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className="relative group bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300"
+                      className="relative bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200"
                     >
                       <div className="aspect-w-4 aspect-h-3">
                         <img
@@ -609,7 +607,6 @@ export default function HomePage() {
                             variant="outline"
                             size="sm"
                             onClick={() => handleEdit(product)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             <Pencil className="h-4 w-4 mr-1" />
                             Editar
@@ -618,7 +615,7 @@ export default function HomePage() {
                             variant="outline"
                             size="sm"
                             onClick={() => setProductToDelete(product)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-600"
+                            className="text-red-500 hover:text-red-600"
                           >
                             <Trash2 className="h-4 w-4 mr-1" />
                             Excluir
