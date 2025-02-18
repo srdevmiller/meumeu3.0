@@ -263,6 +263,8 @@ export class DatabaseStorage implements IStorage {
     return Number(result.value);
   }
   async getAnalyticsSummary(days: number = 30): Promise<AnalyticsSummary> {
+    const daysInterval = `${days} days`;
+
     // Total de visitas
     const [totalVisits] = await db
       .select({ 
@@ -270,7 +272,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} days'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
       );
 
     // Duração média da sessão
@@ -280,7 +282,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} days'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
       );
 
     // Estatísticas por dispositivo
@@ -291,18 +293,36 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} days'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
       )
       .groupBy(siteVisits.deviceType);
 
     // Páginas populares
-    const popularPages = await this.getPopularPages();
+    const popularPages = await db
+      .select({
+        path: siteVisits.path,
+        visits: sql<number>`cast(count(*) as integer)`
+      })
+      .from(siteVisits)
+      .where(
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
+      )
+      .groupBy(siteVisits.path)
+      .orderBy(sql`count(*) desc`)
+      .limit(10);
 
     // Visitas por dia
-    const visitsByDay = await this.getVisitsByTimeRange(
-      new Date(Date.now() - days * 24 * 60 * 60 * 1000),
-      new Date()
-    );
+    const visitsByDay = await db
+      .select({
+        date: sql<string>`cast(date_trunc('day', ${siteVisits.timestamp}) as text)`,
+        visits: sql<number>`cast(count(*) as integer)`
+      })
+      .from(siteVisits)
+      .where(
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
+      )
+      .groupBy(sql`date_trunc('day', ${siteVisits.timestamp})`)
+      .orderBy(sql`date_trunc('day', ${siteVisits.timestamp})`);
 
     // Preparar a distribuição por dispositivo
     const deviceBreakdown = {
