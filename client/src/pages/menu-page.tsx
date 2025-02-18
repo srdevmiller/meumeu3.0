@@ -33,6 +33,9 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
+import { SuggestionsWidget } from "@/components/ui/suggestions-widget";
+import {SuggestionType} from "@/types/suggestion";
+
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -678,6 +681,12 @@ export default function MenuPage() {
                                 </CardDescription>
                               </div>
                             </div>
+                            {product.suggestions && product.suggestions.length > 0 && (
+                              <SuggestionsWidget
+                                suggestions={product.suggestions as unknown as SuggestionType[]}
+                                className="mt-2"
+                              />
+                            )}
                           </CardHeader>
                           <CardContent className="p-3 pt-0">
                             <div className="flex justify-between items-center">
@@ -845,7 +854,7 @@ export default function MenuPage() {
 
             .card-interactive:hover {
               transform: translateY(-4px);
-              box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 12px 24px -10px rgba(0, 0,0, 0, 0.1);
             }
 
             /* Smooth transitions for filters */
