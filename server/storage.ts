@@ -266,21 +266,21 @@ export class DatabaseStorage implements IStorage {
     // Total de visitas
     const [totalVisits] = await db
       .select({ 
-        count: sql<number>`count(*)::integer`
+        count: sql`count(*)::integer`
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
+        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
       );
 
     // Duração média da sessão
     const [avgDuration] = await db
       .select({ 
-        avg: sql<number>`COALESCE(AVG(session_duration)::integer, 0)`
+        avg: sql`COALESCE(AVG(session_duration)::integer, 0)`
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
+        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
       );
 
     // Estatísticas por dispositivo
@@ -291,7 +291,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
+        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
       )
       .groupBy(siteVisits.deviceType);
 
@@ -303,7 +303,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
+        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
       )
       .groupBy(siteVisits.path)
       .orderBy(sql`count(*) desc`)
@@ -317,7 +317,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
+        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
       )
       .groupBy(sql`DATE(timestamp)`)
       .orderBy(sql`DATE(timestamp)`);
