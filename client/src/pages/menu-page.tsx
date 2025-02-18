@@ -466,84 +466,88 @@ export default function MenuPage() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                <div className="text-sm order-1">
-                  <span className="font-bold text-[var(--theme-color)]">
+                <div className="flex-1 flex items-center justify-between">
+                  <span className="text-sm font-bold text-[var(--theme-color)]">
                     Qtd Produtos {filteredProducts.length}
                   </span>
-                </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant={sortOrder === "asc" ? "default" : "outline"}
+                      size="icon"
+                      onClick={() => setSortOrder(sortOrder === "asc" ? null : "asc")}
+                      className={`h-8 w-8 md:h-10 md:w-10 ${
+                        sortOrder === "asc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                      }`}
+                    >
+                      <ArrowUp01 className="h-3 w-3 md:h-4 md:w-4" />
+                    </Button>
 
-                <div className="flex gap-2 order-2 md:ml-auto">
-                  <Button
-                    variant={sortOrder === "asc" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setSortOrder(sortOrder === "asc" ? null : "asc")}
-                    className={`h-8 w-8 md:h-10 md:w-10 ${
-                      sortOrder === "asc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
-                    }`}
-                  >
-                    <ArrowUp01 className="h-3 w-3 md:h-4 md:w-4" />
-                  </Button>
+                    <Button
+                      variant={sortOrder === "desc" ? "default" : "outline"}
+                      size="icon"
+                      onClick={() => setSortOrder(sortOrder === "desc" ? null : "desc")}
+                      className={`h-8 w-8 md:h-10 md:w-10 ${
+                        sortOrder === "desc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                      }`}
+                    >
+                      <ArrowDown01 className="h-3 w-3 md:h-4 md:w-4" />
+                    </Button>
 
-                  <Button
-                    variant={sortOrder === "desc" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setSortOrder(sortOrder === "desc" ? null : "desc")}
-                    className={`h-8 w-8 md:h-10 md:w-10 ${
-                      sortOrder === "desc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
-                    }`}
-                  >
-                    <ArrowDown01 className="h-3 w-3 md:h-4 md:w-4" />
-                  </Button>
+                    <Button
+                      variant={viewMode === "grid" ? "default" : "outline"}
+                      size="icon"
+                      onClick={() => setViewMode("grid")}
+                      className={`h-8 w-8 md:h-10 md:w-10 ${
+                        viewMode === "grid" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                      }`}
+                    >
+                      <LayoutGrid className="h-3 w-3 md:h-4 md:w-4" />
+                    </Button>
 
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setViewMode("grid")}
-                    className={`h-8 w-8 md:h-10 md:w-10 ${
-                      viewMode === "grid" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
-                    }`}
-                  >
-                    <LayoutGrid className="h-3 w-3 md:h-4 md:w-4" />
-                  </Button>
-
-                  <Button
-                    variant={viewMode === "list" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setViewMode("list")}
-                    className={`h-8 w-8 md:h-10 md:w-10 ${
-                      viewMode === "list" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
-                    }`}
-                  >
-                    <List className="h-3 w-3 md:h-4 md:w-4" />
-                  </Button>
+                    <Button
+                      variant={viewMode === "list" ? "default" : "outline"}
+                      size="icon"
+                      onClick={() => setViewMode("list")}
+                      className={`h-8 w-8 md:h-10 md:h-10 ${
+                        viewMode === "list" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                      }`}
+                    >
+                      <List className="h-3 w-3 md:h-4 md:w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
 
               {isLoading ? (
                 <LoadingSkeleton />
               ) : (
-                <motion.div
-                  className={`grid-container ${
+                <div
+                  className={
                     viewMode === "grid"
-                      ? "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4"
-                      : "flex flex-col gap-3 md:gap-4"
-                  }`}
+                      ? "grid grid-cols-1 sm:grid-cols-2 gap-4"
+                      : "flex flex-col gap-4"
+                  }
                 >
                   {sortedProducts.map((product, index) => (
                     <motion.div
                       key={product.id}
-                      className="card-interactive"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                     >
                       <Card
-                        className={`relative overflow-hidden ${
-                          viewMode === "list" ? "flex" : ""
+                        className={`overflow-hidden ${
+                          viewMode === "list"
+                            ? "flex flex-row"
+                            : ""
                         } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                       >
                         <div
-                          className={viewMode === "list" ? "w-48 h-48 md:w-56 md:h-56" : "aspect-square"}
+                          className={
+                            viewMode === "list"
+                              ? "w-64 h-64 flex-shrink-0"
+                              : "aspect-square"
+                          }
                         >
                           <img
                             src={product.imageUrl}
@@ -551,14 +555,14 @@ export default function MenuPage() {
                             className="w-full h-full object-cover"
                           />
                         </div>
-                        <div className="flex-1">
-                          <CardHeader className="p-2 md:p-3">
+                        <div className={viewMode === "list" ? "flex-1" : ""}>
+                          <CardHeader className="p-4">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <CardTitle className="text-sm md:text-base truncate">
+                                <CardTitle className="text-lg md:text-xl truncate">
                                   {product.name}
                                 </CardTitle>
-                                <CardDescription className="text-xs md:text-sm">
+                                <CardDescription className="text-sm">
                                   <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
                                     {categories.find((c) => c.id === product.categoryId)?.name}
                                   </span>
@@ -568,37 +572,35 @@ export default function MenuPage() {
                             {product.suggestions && product.suggestions.length > 0 && (
                               <SuggestionsWidget
                                 suggestions={product.suggestions as unknown as SuggestionType[]}
-                                className="mt-1"
+                                className="mt-2"
                               />
                             )}
                           </CardHeader>
-                          <CardContent className="p-2 md:p-3 pt-0">
+                          <CardContent className="p-4 pt-0">
                             <div className="flex justify-between items-center">
-                              <p className="text-base md:text-xl font-bold">
+                              <p className="text-xl font-bold">
                                 {formatPrice(product.price)}
                               </p>
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8"
-                                  onClick={() => toggleFavorite(product.id)}
-                                >
-                                  <Heart
-                                    className={data?.favorites.includes(product.id)
-                                      ? "h-4 w-4 fill-current text-red-500"
-                                      : "h-4 w-4 text-muted-foreground"
-                                    }
-                                  />
-                                </Button>
-                              </div>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10"
+                                onClick={() => toggleFavorite(product.id)}
+                              >
+                                <Heart
+                                  className={data?.favorites.includes(product.id)
+                                    ? "h-5 w-5 fill-current text-red-500"
+                                    : "h-5 w-5 text-muted-foreground"
+                                  }
+                                />
+                              </Button>
                             </div>
                           </CardContent>
                         </div>
                       </Card>
                     </motion.div>
                   ))}
-                </motion.div>
+                </div>
               )}
 
               {filteredProducts.length === 0 && (
