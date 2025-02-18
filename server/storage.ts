@@ -263,8 +263,6 @@ export class DatabaseStorage implements IStorage {
     return Number(result.value);
   }
   async getAnalyticsSummary(days: number = 30): Promise<AnalyticsSummary> {
-    const daysInterval = `${days} days`;
-
     // Total de visitas
     const [totalVisits] = await db
       .select({ 
@@ -272,7 +270,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
       );
 
     // Duração média da sessão
@@ -282,7 +280,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
       );
 
     // Estatísticas por dispositivo
@@ -293,7 +291,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
       )
       .groupBy(siteVisits.deviceType);
 
@@ -305,7 +303,7 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
       )
       .groupBy(siteVisits.path)
       .orderBy(sql`count(*) desc`)
@@ -314,12 +312,12 @@ export class DatabaseStorage implements IStorage {
     // Visitas por dia
     const visitsByDay = await db
       .select({
-        date: sql<string>`cast(date_trunc('day', ${siteVisits.timestamp}) as text)`,
+        date: sql<string>`date_trunc('day', ${siteVisits.timestamp})::text`,
         visits: sql<number>`cast(count(*) as integer)`
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${daysInterval}'`
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
       )
       .groupBy(sql`date_trunc('day', ${siteVisits.timestamp})`)
       .orderBy(sql`date_trunc('day', ${siteVisits.timestamp})`);
