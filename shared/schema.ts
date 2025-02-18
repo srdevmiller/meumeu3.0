@@ -1,4 +1,4 @@
-import { pgTable, text, serial, decimal, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, decimal, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -34,7 +34,6 @@ export const favorites = pgTable("favorites", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Novo modelo para logs administrativos
 export const adminLogs = pgTable("admin_logs", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
@@ -44,13 +43,16 @@ export const adminLogs = pgTable("admin_logs", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
-// Nova tabela para rastrear acessos ao site
 export const siteVisits = pgTable("site_visits", {
   id: serial("id").primaryKey(),
   path: text("path").notNull(),
   timestamp: timestamp("timestamp").notNull().defaultNow(),
   ipAddress: text("ip_address").notNull(),
   userAgent: text("user_agent").notNull(),
+  referrer: text("referrer"),
+  deviceType: text("device_type"),
+  sessionDuration: integer("session_duration"),
+  pageInteractions: jsonb("page_interactions"),
 });
 
 export const insertUserSchema = createInsertSchema(users)
@@ -97,7 +99,6 @@ export const insertFavoriteSchema = createInsertSchema(favorites).pick({
   productId: true,
 });
 
-// Novo schema para inserção de logs
 export const insertAdminLogSchema = createInsertSchema(adminLogs).pick({
   userId: true,
   action: true,
@@ -105,11 +106,14 @@ export const insertAdminLogSchema = createInsertSchema(adminLogs).pick({
   ipAddress: true,
 });
 
-// Novo schema para inserção de visitas
 export const insertSiteVisitSchema = createInsertSchema(siteVisits).pick({
   path: true,
   ipAddress: true,
   userAgent: true,
+  referrer: true,
+  deviceType: true,
+  sessionDuration: true,
+  pageInteractions: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -123,3 +127,21 @@ export type AdminLog = typeof adminLogs.$inferSelect;
 export type InsertAdminLog = z.infer<typeof insertAdminLogSchema>;
 export type SiteVisit = typeof siteVisits.$inferSelect;
 export type InsertSiteVisit = z.infer<typeof insertSiteVisitSchema>;
+
+export type AnalyticsSummary = {
+  totalVisits: number;
+  averageSessionDuration: number;
+  deviceBreakdown: {
+    desktop: number;
+    mobile: number;
+    tablet: number;
+  };
+  popularPages: {
+    path: string;
+    visits: number;
+  }[];
+  visitsByDay: {
+    date: string;
+    visits: number;
+  }[];
+};

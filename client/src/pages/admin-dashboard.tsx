@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth";
-import { Redirect } from "wouter";
+import { Redirect, Link } from "wouter";
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Package, LogOut, Pencil, Search, Eye } from "lucide-react"; // Added Eye import
+import { Users, Package, LogOut, Pencil, Search, Eye, BarChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
@@ -44,7 +44,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 type DashboardStats = {
   totalUsers: number;
   totalProducts: number;
-  totalVisits: number;  // Add this line
+  totalVisits: number;
   users: {
     id: number;
     username: string;
@@ -220,13 +220,21 @@ export default function AdminDashboard() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-4xl font-bold">Painel de controle</h1>
-        <Button variant="outline" onClick={logout} className="flex items-center gap-2">
-          <LogOut className="h-4 w-4" />
-          Sair
-        </Button>
+        <div className="flex gap-4">
+          <Link href="/admin/analytics">
+            <Button variant="outline" className="flex items-center gap-2">
+              <BarChart className="h-4 w-4" />
+              Análise de Engajamento
+            </Button>
+          </Link>
+          <Button variant="outline" onClick={logout} className="flex items-center gap-2">
+            <LogOut className="h-4 w-4" />
+            Sair
+          </Button>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 mb-8"> {/* Changed to grid-cols-3 */}
+      <div className="grid gap-4 md:grid-cols-3 mb-8">
         <Card className="bg-purple-500 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl font-bold">Clientes</CardTitle>

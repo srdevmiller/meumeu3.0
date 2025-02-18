@@ -40,15 +40,27 @@ async function ensureAdminUser() {
 
 // Middleware para registrar visitas
 function trackVisit(req: Request, res: Response, next: NextFunction) {
-  if (!req.path.startsWith('/api/')) {  // Não rastrear chamadas de API
-    storage.createSiteVisit({
-      path: req.path,
-      ipAddress: req.ip,
-      userAgent: req.get('user-agent') || 'unknown'
-    }).catch(console.error);  // Non-blocking
+    if (!req.path.startsWith('/api/')) {
+      const userAgent = req.get('user-agent') || 'unknown';
+
+      // Simple device type detection
+      let deviceType = 'desktop';
+      if (/mobile/i.test(userAgent)) deviceType = 'mobile';
+      else if (/tablet/i.test(userAgent)) deviceType = 'tablet';
+
+      storage.createSiteVisit({
+        path: req.path,
+        ipAddress: req.ip,
+        userAgent,
+        referrer: req.get('referrer') || '',
+        deviceType,
+        sessionDuration: 0,
+        pageInteractions: {},
+      }).catch(console.error);
+    }
+    next();
   }
-  next();
-}
+
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
@@ -126,6 +138,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         error: "SERVER_ERROR",
         message: "Erro ao buscar estatísticas" 
+      });
+    }
+  });
+
+  // New analytics routes
+  app.get("/api/admin/analytics", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
+      return res.status(403).json({ 
+        error: "FORBIDDEN",
+        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+      });
+    }
+
+    try {
+      const days = req.query.days ? parseInt(req.query.days as string) : 30;
+      const analytics = await storage.getAnalyticsSummary(days);
+
+      await createAdminLog(req, "VIEW_ANALYTICS", "Visualização das análises de engajamento");
+
+      res.json(analytics);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+      res.status(500).json({ 
+        error: "SERVER_ERROR",
+        message: "Erro ao buscar análises" 
       });
     }
   });

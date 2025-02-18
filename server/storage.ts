@@ -5,6 +5,8 @@ import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
 import { siteVisits, type SiteVisit, type InsertSiteVisit } from "@shared/schema";
+import { sql } from "drizzle-orm";
+import type { AnalyticsSummary } from "@shared/schema";
 
 const PostgresSessionStore = connectPg(session);
 
@@ -30,7 +32,6 @@ export interface IStorage {
   createFavorite(favorite: InsertFavorite): Promise<Favorite>;
   getFavorites(userId: number): Promise<Favorite[]>;
   removeFavorite(userId: number, productId: number): Promise<void>;
-  // Novos métodos para gerenciamento de logs
   createAdminLog(log: InsertAdminLog): Promise<AdminLog>;
   getAdminLogs(page?: number, limit?: number): Promise<{ logs: AdminLog[], total: number }>;
   getAdminLogsByUser(userId: number, page?: number, limit?: number): Promise<{ logs: AdminLog[], total: number }>;
@@ -39,10 +40,12 @@ export interface IStorage {
     businessName?: string;
     phone?: string;
   }): Promise<User>;
-  // Novos métodos para visitas ao site
   createSiteVisit(visit: InsertSiteVisit): Promise<SiteVisit>;
   getSiteVisitsCount(): Promise<number>;
   getSiteVisitsByPage(path: string): Promise<number>;
+  getAnalyticsSummary(days: number): Promise<AnalyticsSummary>;
+  getPopularPages(): Promise<{ path: string; visits: number; }[]>;
+  getVisitsByTimeRange(startDate: Date, endDate: Date): Promise<{ date: string; visits: number; }[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -258,6 +261,86 @@ export class DatabaseStorage implements IStorage {
       .from(siteVisits)
       .where(eq(siteVisits.path, path));
     return Number(result.value);
+  }
+  async getAnalyticsSummary(days: number = 30): Promise<AnalyticsSummary> {
+    const [totalVisits] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(siteVisits)
+      .where(sql`${siteVisits.timestamp} >= now() - interval '${days} days'`);
+
+    const [avgDuration] = await db
+      .select({ 
+        avg: sql<number>`avg(${siteVisits.sessionDuration})::int` 
+      })
+      .from(siteVisits)
+      .where(sql`${siteVisits.timestamp} >= now() - interval '${days} days'`);
+
+    const deviceStats = await db
+      .select({
+        device: siteVisits.deviceType,
+        count: sql<number>`count(*)::int`
+      })
+      .from(siteVisits)
+      .where(sql`${siteVisits.timestamp} >= now() - interval '${days} days'`)
+      .groupBy(siteVisits.deviceType);
+
+    const popularPages = await this.getPopularPages();
+    const visitsByDay = await this.getVisitsByTimeRange(
+      new Date(Date.now() - days * 24 * 60 * 60 * 1000),
+      new Date()
+    );
+
+    const deviceBreakdown = {
+      desktop: 0,
+      mobile: 0,
+      tablet: 0,
+    };
+
+    deviceStats.forEach(stat => {
+      if (stat.device in deviceBreakdown) {
+        deviceBreakdown[stat.device as keyof typeof deviceBreakdown] = stat.count;
+      }
+    });
+
+    return {
+      totalVisits: totalVisits?.count || 0,
+      averageSessionDuration: avgDuration?.avg || 0,
+      deviceBreakdown,
+      popularPages,
+      visitsByDay,
+    };
+  }
+
+  async getPopularPages(): Promise<{ path: string; visits: number; }[]> {
+    return db
+      .select({
+        path: siteVisits.path,
+        visits: sql<number>`count(*)::int`
+      })
+      .from(siteVisits)
+      .groupBy(siteVisits.path)
+      .orderBy(sql`count(*) desc`)
+      .limit(10);
+  }
+
+  async getVisitsByTimeRange(
+    startDate: Date,
+    endDate: Date
+  ): Promise<{ date: string; visits: number; }[]> {
+    return db
+      .select({
+        date: sql<string>`date_trunc('day', ${siteVisits.timestamp})::text`,
+        visits: sql<number>`count(*)::int`
+      })
+      .from(siteVisits)
+      .where(
+        and(
+          sql`${siteVisits.timestamp} >= ${startDate}`,
+          sql`${siteVisits.timestamp} <= ${endDate}`
+        )
+      )
+      .groupBy(sql`date_trunc('day', ${siteVisits.timestamp})`)
+      .orderBy(sql`date_trunc('day', ${siteVisits.timestamp})`);
   }
 }
 
