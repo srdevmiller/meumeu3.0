@@ -669,7 +669,7 @@ export default function MenuPage() {
                         </div>
                         <div className="flex-1">
                           <CardHeader className="p-3">
-                            <div className="flex justify-between items-start">
+                            <div className="flex justify-between items-start mb-2">
                               <div>
                                 <CardTitle className="text-sm sm:text-base truncate">
                                   {product.name}
@@ -684,7 +684,7 @@ export default function MenuPage() {
                             {product.suggestions && product.suggestions.length > 0 && (
                               <SuggestionsWidget
                                 suggestions={product.suggestions as unknown as SuggestionType[]}
-                                className="mt-2"
+                                className="mt-1"
                               />
                             )}
                           </CardHeader>
@@ -854,7 +854,7 @@ export default function MenuPage() {
 
             .card-interactive:hover {
               transform: translateY(-4px);
-              box-shadow: 0 12px 24px -10px rgba(0, 0,0, 0, 0.1);
+              box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
             }
 
             /* Smooth transitions for filters */

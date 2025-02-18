@@ -89,13 +89,13 @@ export function SuggestionBadge({ type, className }: SuggestionBadgeProps) {
           <Badge 
             variant="outline" 
             className={cn(
-              "cursor-help transition-colors",
+              "cursor-help transition-colors inline-flex items-center px-2 py-0.5 text-xs",
               suggestion.color,
               className
             )}
           >
             {suggestion.icon}
-            <span className="ml-1">{suggestion.label}</span>
+            <span className="ml-1 whitespace-nowrap">{suggestion.label}</span>
           </Badge>
         </TooltipTrigger>
         <TooltipContent>
@@ -113,16 +113,11 @@ interface SuggestionsWidgetProps {
 
 export function SuggestionsWidget({ suggestions, className }: SuggestionsWidgetProps) {
   return (
-    <Card className={cn("w-full", className)}>
-      <CardContent className="p-4">
-        <div className="flex items-center gap-2 flex-wrap">
-          <Info size={20} className="text-muted-foreground" />
-          <p className="text-sm text-muted-foreground mr-4">Informações do Item:</p>
-          {suggestions.map((type) => (
-            <SuggestionBadge key={type} type={type} />
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div className={cn("flex flex-wrap gap-1.5 items-center", className)}>
+      <Info size={16} className="text-muted-foreground flex-shrink-0" />
+      {suggestions.map((type) => (
+        <SuggestionBadge key={type} type={type} />
+      ))}
+    </div>
   );
 }
