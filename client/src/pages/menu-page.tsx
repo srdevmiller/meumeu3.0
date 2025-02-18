@@ -35,8 +35,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
 import { SuggestionsWidget } from "@/components/ui/suggestions-widget";
 import {SuggestionType} from "@/types/suggestion";
-import { RelatedProductsCarousel } from "@/components/ui/related-products-carousel";
-
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -745,23 +743,6 @@ export default function MenuPage() {
                     </motion.div>
                   ))}
                 </motion.div>
-              )}
-
-              {sortedProducts.length > 0 && (
-                <div className="mt-8 mb-4 relative">
-                  <h2 className="text-xl font-bold mb-4">Produtos Relacionados</h2>
-                  <RelatedProductsCarousel
-                    products={sortedProducts.filter(
-                      (p) =>
-                        p.categoryId === sortedProducts[0].categoryId &&
-                        p.id !== sortedProducts[0].id
-                    ).slice(0, 8)}
-                    favorites={data?.favorites || []}
-                    onToggleFavorite={toggleFavorite}
-                    formatPrice={formatPrice}
-                    categories={categories}
-                  />
-                </div>
               )}
 
               {filteredProducts.length === 0 && (
