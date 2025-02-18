@@ -263,32 +263,42 @@ export class DatabaseStorage implements IStorage {
     return Number(result.value);
   }
   async getAnalyticsSummary(days: number = 30): Promise<AnalyticsSummary> {
-    // Primeiro, vamos buscar o total de visitas
+    // Total de visitas
     const [totalVisits] = await db
-      .select({ count: sql<number>`count(*)::int` })
-      .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days.toString()} days'`);
-
-    // Depois, a duração média da sessão
-    const [avgDuration] = await db
       .select({ 
-        avg: sql<number>`COALESCE(avg(${siteVisits.sessionDuration}), 0)::int` 
+        count: sql<number>`cast(count(*) as integer)` 
       })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days.toString()} days'`);
+      .where(
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} days'`
+      );
+
+    // Duração média da sessão
+    const [avgDuration] = await db
+      .select({ 
+        avg: sql<number>`cast(coalesce(avg(${siteVisits.sessionDuration}), 0) as integer)` 
+      })
+      .from(siteVisits)
+      .where(
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} days'`
+      );
 
     // Estatísticas por dispositivo
     const deviceStats = await db
       .select({
         device: siteVisits.deviceType,
-        count: sql<number>`count(*)::int`
+        count: sql<number>`cast(count(*) as integer)`
       })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days.toString()} days'`)
+      .where(
+        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} days'`
+      )
       .groupBy(siteVisits.deviceType);
 
-    // Buscar páginas populares e visitas por dia
+    // Páginas populares
     const popularPages = await this.getPopularPages();
+
+    // Visitas por dia
     const visitsByDay = await this.getVisitsByTimeRange(
       new Date(Date.now() - days * 24 * 60 * 60 * 1000),
       new Date()
@@ -317,25 +327,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPopularPages(): Promise<{ path: string; visits: number; }[]> {
-    return db
+    const result = await db
       .select({
         path: siteVisits.path,
-        visits: sql<number>`count(*)::int`
+        visits: sql<number>`cast(count(*) as integer)`
       })
       .from(siteVisits)
       .groupBy(siteVisits.path)
       .orderBy(sql`count(*) desc`)
       .limit(10);
+
+    return result;
   }
 
   async getVisitsByTimeRange(
     startDate: Date,
     endDate: Date
   ): Promise<{ date: string; visits: number; }[]> {
-    return db
+    const result = await db
       .select({
-        date: sql<string>`date_trunc('day', ${siteVisits.timestamp})::text`,
-        visits: sql<number>`count(*)::int`
+        date: sql<string>`cast(date_trunc('day', ${siteVisits.timestamp}) as text)`,
+        visits: sql<number>`cast(count(*) as integer)`
       })
       .from(siteVisits)
       .where(
@@ -346,7 +358,10 @@ export class DatabaseStorage implements IStorage {
       )
       .groupBy(sql`date_trunc('day', ${siteVisits.timestamp})`)
       .orderBy(sql`date_trunc('day', ${siteVisits.timestamp})`);
+
+    return result;
   }
+
 }
 
 export const storage = new DatabaseStorage();
