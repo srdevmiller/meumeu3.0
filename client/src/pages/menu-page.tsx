@@ -521,8 +521,8 @@ export default function MenuPage() {
               <div
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-1 md:grid-cols-2 gap-4 max-w-[1400px] mx-auto"
-                    : "flex flex-col gap-4"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 max-w-[900px] mx-auto"
+                    : "flex flex-col gap-3 md:gap-4"
                 }
               >
                 {sortedProducts.map((product, index) => (
@@ -535,14 +535,14 @@ export default function MenuPage() {
                     <Card
                       className={`overflow-hidden ${
                         viewMode === "list"
-                          ? "flex flex-row"
+                          ? "flex flex-col sm:flex-row"
                           : ""
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
                       <div
                         className={
                           viewMode === "list"
-                            ? "w-64 h-64 flex-shrink-0"
+                            ? "w-full sm:w-72 h-48 sm:h-72 flex-shrink-0"
                             : "aspect-square"
                         }
                       >
@@ -553,7 +553,7 @@ export default function MenuPage() {
                         />
                       </div>
                       <div className={viewMode === "list" ? "flex-1" : ""}>
-                        <CardHeader className="p-4">
+                        <CardHeader className="p-3 sm:p-4">
                           <div className="flex justify-between items-start mb-2">
                             <div>
                               <CardTitle className="text-lg md:text-xl truncate">
@@ -573,21 +573,21 @@ export default function MenuPage() {
                             />
                           )}
                         </CardHeader>
-                        <CardContent className="p-4 pt-0">
+                        <CardContent className="p-3 sm:p-4 pt-0">
                           <div className="flex justify-between items-center">
-                            <p className="text-xl font-bold">
+                            <p className="text-lg sm:text-xl font-bold">
                               {formatPrice(product.price)}
                             </p>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-10 w-10"
+                              className="h-9 w-9 sm:h-10 sm:w-10"
                               onClick={() => toggleFavorite(product.id)}
                             >
                               <Heart
                                 className={data?.favorites.includes(product.id)
-                                  ? "h-5 w-5 fill-current text-red-500"
-                                  : "h-5 w-5 text-muted-foreground"
+                                  ? "h-4 w-4 sm:h-5 sm:w-5 fill-current text-red-500"
+                                  : "h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground"
                                 }
                               />
                             </Button>
