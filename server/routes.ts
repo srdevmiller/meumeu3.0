@@ -40,33 +40,36 @@ async function ensureAdminUser() {
 
 // Middleware para registrar visitas
 function trackVisit(req: Request, res: Response, next: NextFunction) {
-    if (!req.path.startsWith('/api/')) {
-      const userAgent = req.get('user-agent') || 'unknown';
+  // Não rastrear chamadas de API ou requisições de recursos estáticos
+  if (!req.path.startsWith('/api/') && !req.path.includes('.')) {
+    const userAgent = req.get('user-agent') || 'unknown';
 
-      // Simple device type detection
-      let deviceType = 'desktop';
-      if (/mobile/i.test(userAgent)) deviceType = 'mobile';
-      else if (/tablet/i.test(userAgent)) deviceType = 'tablet';
+    // Detecção de dispositivo melhorada
+    let deviceType = 'desktop';
+    if (/mobile/i.test(userAgent)) deviceType = 'mobile';
+    else if (/tablet/i.test(userAgent)) deviceType = 'tablet';
 
-      storage.createSiteVisit({
-        path: req.path,
-        ipAddress: req.ip,
-        userAgent,
-        referrer: req.get('referrer') || '',
-        deviceType,
-        sessionDuration: 0,
-        pageInteractions: {},
-      }).catch(console.error);
-    }
-    next();
+    storage.createSiteVisit({
+      path: req.path,
+      ipAddress: req.ip || req.socket.remoteAddress || '',
+      userAgent,
+      referrer: req.get('referrer') || '',
+      deviceType,
+      sessionDuration: 0, // Será atualizado quando o usuário sair
+      pageInteractions: {},
+    }).catch(error => {
+      console.error('Error tracking visit:', error);
+    });
   }
+  next();
+}
 
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
   await ensureAdminUser();
 
-  // Adiciona o middleware de rastreamento
+  // Registrar o middleware de rastreamento antes das rotas
   app.use(trackVisit);
 
   // Novas rotas para logs administrativos
