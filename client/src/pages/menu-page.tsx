@@ -28,13 +28,26 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useState, useMemo, useEffect } from "react";
-import { Search, LayoutGrid, List, Moon, Sun, Heart, Filter, Share2, CheckCheck, Scale, ArrowUp01, ArrowDown01 } from "lucide-react";
+import {
+  Search,
+  LayoutGrid,
+  List,
+  Moon,
+  Sun,
+  Heart,
+  Filter,
+  Share2,
+  CheckCheck,
+  Scale,
+  ArrowUp01,
+  ArrowDown01,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
 import { SuggestionsWidget } from "@/components/ui/suggestions-widget";
-import {SuggestionType} from "@/types/suggestion";
+import { SuggestionType } from "@/types/suggestion";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -269,13 +282,13 @@ export default function MenuPage() {
         transition={{ duration: 0.3 }}
       >
         <motion.div
-          className="relative h-48 flex items-center justify-center overflow-hidden motion-safe"
+          className="relative h-36 md:h-48 flex items-center justify-center overflow-hidden"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <div className="absolute inset-0 z-0 overflow-hidden">
-            {data.bannerImageUrl && (
+            {data?.bannerImageUrl && (
               <img
                 src={data.bannerImageUrl}
                 alt={data.businessName}
@@ -285,16 +298,16 @@ export default function MenuPage() {
             <div className="absolute inset-0 bg-[var(--theme-color)]/90" />
           </div>
 
-          <div className="z-10 flex flex-col items-center gap-4">
-            <div className="flex items-center gap-4">
-              {data.logoUrl && (
+          <div className="z-10 flex flex-col items-center gap-2 md:gap-4 px-4">
+            <div className="flex items-center gap-2 md:gap-4">
+              {data?.logoUrl && (
                 <img
                   src={data.logoUrl}
                   alt={`Logo ${data.businessName}`}
-                  className="w-16 h-16 object-contain bg-transparent"
+                  className="w-12 h-12 md:w-16 md:h-16 object-contain bg-transparent"
                 />
               )}
-              <h1 className="text-4xl font-bold text-white">{data.businessName}</h1>
+              <h1 className="text-2xl md:text-4xl font-bold text-white text-center">{data?.businessName}</h1>
             </div>
             <div className="flex gap-2">
               <Tooltip>
@@ -302,15 +315,15 @@ export default function MenuPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10"
+                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-8 h-8 md:w-10 md:h-10"
                     onClick={(e) => {
                       createRipple(e);
                       copyMenuLink();
                     }}
                   >
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Share2 className={`h-4 w-4 absolute transition-opacity duration-200 ${copied ? 'opacity-0' : 'opacity-100'}`} />
-                      <CheckCheck className={`h-4 w-4 absolute text-green-500 transition-opacity duration-200 ${copied ? 'opacity-100' : 'opacity-0'}`} />
+                      <Share2 className={`h-3 w-3 md:h-4 md:w-4 absolute transition-opacity duration-200 ${copied ? 'opacity-0' : 'opacity-100'}`} />
+                      <CheckCheck className={`h-3 w-3 md:h-4 md:w-4 absolute text-green-500 transition-opacity duration-200 ${copied ? 'opacity-100' : 'opacity-0'}`} />
                     </div>
                   </Button>
                 </TooltipTrigger>
@@ -323,15 +336,15 @@ export default function MenuPage() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-10 h-10"
+                    className="bg-background/80 backdrop-blur-sm relative overflow-hidden w-8 h-8 md:w-10 md:h-10"
                     onClick={(e) => {
                       createRipple(e);
                       setTheme(theme === "dark" ? "light" : "dark");
                     }}
                   >
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Sun className={`h-4 w-4 absolute transition-opacity duration-200 ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`} />
-                      <Moon className={`h-4 w-4 absolute transition-opacity duration-200 ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`} />
+                      <Sun className={`h-3 w-3 md:h-4 md:w-4 absolute transition-opacity duration-200 ${theme === 'dark' ? 'opacity-100' : 'opacity-0'}`} />
+                      <Moon className={`h-3 w-3 md:h-4 md:w-4 absolute transition-opacity duration-200 ${theme === 'dark' ? 'opacity-0' : 'opacity-100'}`} />
                     </div>
                   </Button>
                 </TooltipTrigger>
@@ -343,10 +356,10 @@ export default function MenuPage() {
           </div>
         </motion.div>
 
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid md:grid-cols-[300px_1fr] gap-8 grid-container">
+        <div className="container mx-auto px-2 md:px-4 py-4 md:py-8">
+          <div className="grid md:grid-cols-[300px_1fr] gap-4 md:gap-8">
             <motion.div
-              className="space-y-6 motion-safe"
+              className="space-y-4 md:space-y-6"
               initial={{ x: -20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
@@ -358,92 +371,66 @@ export default function MenuPage() {
                 <CardContent className="pb-4">
                   <div className="relative">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Input
-                          placeholder="Buscar produtos..."
-                          className="pl-8"
-                          value={search}
-                          onChange={(e) => {
-                            setSearch(e.target.value);
-                            if (showFilters) setShowFilters(false);
-                          }}
-                        />
-                      </TooltipTrigger>
-                      <TooltipContent side="right" align="center">
-                        <p>Digite para buscar produtos por nome</p>
-                        <p className="text-xs text-muted-foreground mt-1">A busca é atualizada automaticamente enquanto você digita</p>
-                      </TooltipContent>
-                    </Tooltip>
+                    <Input
+                      placeholder="Buscar produtos..."
+                      className="pl-8"
+                      value={search}
+                      onChange={(e) => {
+                        setSearch(e.target.value);
+                        if (showFilters) setShowFilters(false);
+                      }}
+                    />
                   </div>
                 </CardContent>
               </Card>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="w-full flex items-center gap-2 bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90"
-                  >
-                    <Filter className="h-4 w-4" />
-                    {showFilters ? "Ocultar filtros" : "Filtrar produtos"}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" align="center">
-                  <p>Clique para {showFilters ? 'ocultar' : 'exibir'} opções de filtro</p>
-                  <p className="text-xs text-muted-foreground mt-1">Filtre por categoria e faixa de preço</p>
-                </TooltipContent>
-              </Tooltip>
+              <Button
+                onClick={() => setShowFilters(!showFilters)}
+                className="w-full flex items-center gap-2 bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 text-sm md:text-base"
+              >
+                <Filter className="h-4 w-4" />
+                {showFilters ? "Ocultar filtros" : "Filtrar produtos"}
+              </Button>
 
               <AnimatePresence>
                 {showFilters && (
-                  <div
-                    className="space-y-6 filter-transition"
-                    style={{
-                      opacity: 1,
-                      height: "auto",
-                      transition: "opacity 0.2s, height 0.2s",
-                    }}
-                  >
+                  <div className="space-y-4 md:space-y-6">
                     <Card>
                       <CardHeader>
                         <CardTitle>Categorias</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="flex flex-wrap gap-2">
+                        <div className="grid grid-cols-2 md:flex md:flex-wrap gap-2">
                           {categories.map((category) => (
-                            <Tooltip key={category.id}>
-                              <TooltipTrigger asChild>
-                                <button
-                                  className="flex items-center space-x-2 min-w-[120px] hover:bg-accent/50 p-1 rounded-md category-pill"
-                                  onClick={() => {
-                                    setSelectedCategories(
-                                      selectedCategories.includes(category.id)
-                                        ? selectedCategories.filter((id) => id !== category.id)
-                                        : [...selectedCategories, category.id]
-                                    );
-                                  }}
-                                >
-                                  <Checkbox
-                                    checked={selectedCategories.includes(category.id)}
-                                    onCheckedChange={(checked) => {
-                                      setSelectedCategories(
-                                        checked
-                                          ? [...selectedCategories, category.id]
-                                          : selectedCategories.filter((id) => id !== category.id)
-                                      );
-                                    }}
-                                  />
-                                  <label className="text-sm font-medium leading-none cursor-pointer">
-                                    {category.name}
-                                  </label>
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent side="right">
-                                <p>Filtrar produtos da categoria {category.name}</p>
-                                <p className="text-xs text-muted-foreground mt-1">Clique para {selectedCategories.includes(category.id) ? 'remover' : 'adicionar'} o filtro</p>
-                              </TooltipContent>
-                            </Tooltip>
+                            <button
+                              key={category.id}
+                              className={`flex items-center space-x-2 hover:bg-accent/50 p-2 rounded-md transition-colors ${
+                                selectedCategories.includes(category.id)
+                                  ? "bg-[var(--theme-color)]/10 text-[var(--theme-color)]"
+                                  : ""
+                              }`}
+                              onClick={() => {
+                                setSelectedCategories(
+                                  selectedCategories.includes(category.id)
+                                    ? selectedCategories.filter((id) => id !== category.id)
+                                    : [...selectedCategories, category.id]
+                                );
+                              }}
+                            >
+                              <Checkbox
+                                checked={selectedCategories.includes(category.id)}
+                                onCheckedChange={(checked) => {
+                                  setSelectedCategories(
+                                    checked
+                                      ? [...selectedCategories, category.id]
+                                      : selectedCategories.filter((id) => id !== category.id)
+                                  );
+                                }}
+                              />
+                              <label className="text-sm font-medium leading-none cursor-pointer">
+                                {category.name}
+                              </label>
+                            </button>
                           ))}
                         </div>
                       </CardContent>
@@ -454,24 +441,14 @@ export default function MenuPage() {
                         <CardTitle>Faixa de Preço</CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div>
-                              <Slider
-                                min={0}
-                                max={5000}
-                                step={1}
-                                value={priceRange}
-                                onValueChange={setPriceRange}
-                                className="my-6 [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:bg-[var(--theme-color)] [&_[role=slider]]:border-2 [&_[role=slider]]:border-background [&_[role=slider]]:shadow-sm [&_[role=slider]]:hover:scale-110 [&_[role=slider]]:transition-transform [&_[role=slider]]:focus:ring-2 [&_[role=slider]]:focus:ring-[var(--theme-color)]/50 [&_.range]:bg-[var(--theme-color)] [&_.track]:bg-muted"
-                              />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            <p>Ajuste o intervalo de preços dos produtos</p>
-                            <p className="text-xs text-muted-foreground mt-1">Arraste os controles para definir o preço mínimo e máximo</p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <Slider
+                          min={0}
+                          max={5000}
+                          step={1}
+                          value={priceRange}
+                          onValueChange={setPriceRange}
+                          className="my-6"
+                        />
                         <div className="flex justify-between text-sm">
                           <span>{formatPrice(priceRange[0])}</span>
                           <span>{formatPrice(priceRange[1])}</span>
@@ -484,151 +461,61 @@ export default function MenuPage() {
             </motion.div>
 
             <motion.div
-              className="motion-safe"
               initial={{ x: 20, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <div className="flex items-center justify-between mb-4">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                 <div className="text-sm">
                   <span className="font-bold text-[var(--theme-color)]">
-                    Qtd Produtos {filteredProducts.length}
+                    {filteredProducts.length} Produtos
                   </span>
                 </div>
 
                 <div className="flex gap-2">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant={sortOrder === "asc" ? "default" : "outline"}
-                        size="icon"
-                        onClick={() => setSortOrder(sortOrder === "asc" ? null : "asc")}
-                        className={sortOrder === "asc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
-                      >
-                        <ArrowUp01 className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Ordenar por preço crescente</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <Button
+                    variant={sortOrder === "asc" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setSortOrder(sortOrder === "asc" ? null : "asc")}
+                    className={`h-8 w-8 md:h-10 md:w-10 ${
+                      sortOrder === "asc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                    }`}
+                  >
+                    <ArrowUp01 className="h-3 w-3 md:h-4 md:w-4" />
+                  </Button>
 
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant={sortOrder === "desc" ? "default" : "outline"}
-                        size="icon"
-                        onClick={() => setSortOrder(sortOrder === "desc" ? null : "desc")}
-                        className={sortOrder === "desc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
-                      >
-                        <ArrowDown01 className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Ordenar por preço decrescente</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <Button
+                    variant={sortOrder === "desc" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setSortOrder(sortOrder === "desc" ? null : "desc")}
+                    className={`h-8 w-8 md:h-10 md:w-10 ${
+                      sortOrder === "desc" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                    }`}
+                  >
+                    <ArrowDown01 className="h-3 w-3 md:h-4 md:w-4" />
+                  </Button>
 
-                  {compareProducts.length > 0 && (
-                    <Sheet open={showCompareSheet} onOpenChange={setShowCompareSheet}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <SheetTrigger asChild>
-                            <Button
-                              variant="default"
-                              size="icon"
-                              className="bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 relative"
-                            >
-                              <Scale className="h-4 w-4" />
-                              <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center">
-                                {compareProducts.length}
-                              </span>
-                            </Button>
-                          </SheetTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Ver produtos selecionados para comparação</p>
-                        </TooltipContent>
-                      </Tooltip>
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("grid")}
+                    className={`h-8 w-8 md:h-10 md:w-10 ${
+                      viewMode === "grid" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                    }`}
+                  >
+                    <LayoutGrid className="h-3 w-3 md:h-4 md:w-4" />
+                  </Button>
 
-                      <SheetContent side="right" className="w-[90vw] sm:w-[500px]">
-                        <SheetHeader>
-                          <SheetTitle>Comparação de Produtos</SheetTitle>
-                          <SheetDescription>
-                            Compare as características dos produtos selecionados
-                          </SheetDescription>
-                        </SheetHeader>
-                        <div className="mt-6">
-                          <div className="grid grid-cols-1 gap-4">
-                            {compareProducts.map((product) => (
-                              <Card key={product.id} className="relative">
-                                <CardHeader className="flex md:flex-row gap-4">
-                                  <img
-                                    src={product.imageUrl}
-                                    alt={product.name}
-                                    className="w-32 h-32 object-cover rounded-md flex-shrink-0"
-                                  />
-                                  <div className="flex-1">
-                                    <CardTitle className="text-lg">{product.name}</CardTitle>
-                                    <CardDescription>
-                                      {categories.find((c) => c.id === product.categoryId)?.name}
-                                    </CardDescription>
-                                    <p className="text-2xl font-bold text-[var(--theme-color)] mt-2">
-                                      {formatPrice(product.price)}
-                                    </p>
-                                  </div>
-                                </CardHeader>
-                                <CardContent>
-                                  <Button
-                                    variant="ghost"
-                                    className="w-full"
-                                    onClick={() => {
-                                      toggleCompare(product);
-                                      if (compareProducts.length === 1) {
-                                        setShowCompareSheet(false);
-                                      }
-                                    }}
-                                  >
-                                    Remover da comparação
-                                  </Button>
-                                </CardContent>
-                              </Card>
-                            ))}
-                          </div>
-                        </div>
-                      </SheetContent>
-                    </Sheet>
-                  )}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant={viewMode === "grid" ? "default" : "outline"}
-                        size="icon"
-                        onClick={() => setViewMode("grid")}
-                        className={viewMode === "grid" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
-                      >
-                        <LayoutGrid className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Visualizar produtos em grade</p>
-                    </TooltipContent>
-                  </Tooltip>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant={viewMode === "list" ? "default" : "outline"}
-                        size="icon"
-                        onClick={() => setViewMode("list")}
-                        className={viewMode === "list" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""}
-                      >
-                        <List className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Visualizar produtos em lista</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("list")}
+                    className={`h-8 w-8 md:h-10 md:w-10 ${
+                      viewMode === "list" ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                    }`}
+                  >
+                    <List className="h-3 w-3 md:h-4 md:w-4" />
+                  </Button>
                 </div>
               </div>
 
@@ -636,31 +523,27 @@ export default function MenuPage() {
                 <LoadingSkeleton />
               ) : (
                 <motion.div
-                  style={{
-                    opacity: 1,
-                    transition: "opacity 0.1s",
-                  }}
                   className={`grid-container ${
                     viewMode === "grid"
-                      ? "grid grid-cols-2 md:grid-cols-3 gap-4"
-                      : "flex flex-col gap-4"
+                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"
+                      : "flex flex-col gap-3 md:gap-4"
                   }`}
                 >
                   {sortedProducts.map((product, index) => (
                     <motion.div
                       key={product.id}
-                      className="card-interactive scroll-reveal"
+                      className="card-interactive"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      whileTap={{ scale: 0.98 }}
                     >
                       <Card
-                        className={`relative overflow-hidden ${viewMode === "list" ? "flex" : ""} border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
-                        onClick={(e) => createRipple(e)}
+                        className={`relative overflow-hidden ${
+                          viewMode === "list" ? "flex" : ""
+                        } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                       >
                         <div
-                          className={viewMode === "list" ? "w-48 h-48" : "aspect-square"}
+                          className={viewMode === "list" ? "w-32 h-32 md:w-48 md:h-48" : "aspect-square"}
                         >
                           <img
                             src={product.imageUrl}
@@ -669,13 +552,13 @@ export default function MenuPage() {
                           />
                         </div>
                         <div className="flex-1">
-                          <CardHeader className="p-3">
+                          <CardHeader className="p-2 md:p-3">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <CardTitle className="text-sm sm:text-base truncate">
+                                <CardTitle className="text-sm md:text-base truncate">
                                   {product.name}
                                 </CardTitle>
-                                <CardDescription className="text-xs sm:text-sm">
+                                <CardDescription className="text-xs md:text-sm">
                                   <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
                                     {categories.find((c) => c.id === product.categoryId)?.name}
                                   </span>
@@ -689,39 +572,12 @@ export default function MenuPage() {
                               />
                             )}
                           </CardHeader>
-                          <CardContent className="p-3 pt-0">
+                          <CardContent className="p-2 md:p-3 pt-0">
                             <div className="flex justify-between items-center">
-                              <p className="text-lg sm:text-xl font-bold">
+                              <p className="text-base md:text-xl font-bold">
                                 {formatPrice(product.price)}
                               </p>
                               <div className="flex gap-2">
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon"
-                                      className={`h-8 w-8 ${
-                                        compareProducts.some((p) => p.id === product.id)
-                                          ? "bg-[var(--theme-color)]/10"
-                                          : ""
-                                      }`}
-                                      onClick={() => toggleCompare(product)}
-                                    >
-                                      <Scale className={`h-4 w-4 ${
-                                        compareProducts.some((p) => p.id === product.id)
-                                          ? "text-[var(--theme-color)]"
-                                          : "text-muted-foreground"
-                                      }`} />
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>
-                                      {compareProducts.some((p) => p.id === product.id)
-                                        ? "Remover da comparação"
-                                        : "Adicionar à comparação"}
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -747,10 +603,9 @@ export default function MenuPage() {
 
               {filteredProducts.length === 0 && (
                 <motion.div
-                  className="text-center py-12 animate-presence"
+                  className="text-center py-8 md:py-12"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
                   <p className="text-muted-foreground">
@@ -761,7 +616,6 @@ export default function MenuPage() {
             </motion.div>
           </div>
         </div>
-
         {/* Footer with CTA */}
         <motion.div
           className="py-8 bg-[var(--theme-color)] mt-12"
