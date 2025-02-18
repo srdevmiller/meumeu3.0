@@ -7,7 +7,7 @@ import { eq, and, count, sql } from "drizzle-orm";
 import { products, users, favorites } from "@shared/schema";
 import { db } from "./db";
 
-// Função para criar logs administrativos
+// Corrigindo o problema do req.ip undefined
 async function createAdminLog(req: Request, action: string, details: string) {
   if (!req.user?.id) return;
 
@@ -16,7 +16,7 @@ async function createAdminLog(req: Request, action: string, details: string) {
       userId: req.user.id,
       action,
       details,
-      ipAddress: req.ip
+      ipAddress: req.ip || req.socket.remoteAddress || "unknown"
     });
   } catch (error) {
     console.error('Error creating admin log:', error);
@@ -38,9 +38,7 @@ async function ensureAdminUser() {
   }
 }
 
-// Middleware para registrar visitas
 function trackVisit(req: Request, res: Response, next: NextFunction) {
-  // Lista de extensões e caminhos para ignorar
   const ignoredPaths = [
     '/api/',
     '/assets/',
@@ -54,49 +52,32 @@ function trackVisit(req: Request, res: Response, next: NextFunction) {
     '.png',
     '.jpg',
     '.ico',
-    '/admin',  // Ignorar todas as páginas administrativas
-    '/auth',   // Ignorar páginas de autenticação
-    '/@'       // Ignorar rotas internas do Vite
+    '/admin',
+    '/auth',
+    '/@'
   ];
 
-  // Verifica se o caminho deve ser ignorado
-  const shouldIgnorePath = ignoredPaths.some(path => 
+  const shouldIgnorePath = ignoredPaths.some(path =>
     req.path.startsWith(path) || req.path.includes(path)
   );
 
-  // Só rastreia se for uma página de menu e for uma requisição GET
   if (!shouldIgnorePath && req.method === 'GET' && req.path.startsWith('/menu')) {
     const userAgent = req.get('user-agent') || 'unknown';
-
-    // Detecção de dispositivo melhorada
     let deviceType = 'desktop';
     if (/mobile/i.test(userAgent)) deviceType = 'mobile';
     else if (/tablet/i.test(userAgent)) deviceType = 'tablet';
-
-    // Usar um identificador de sessão para evitar contagens duplicadas
     const sessionId = req.sessionID;
     const currentPath = req.path;
-
-    // Chave única para esta visita
     const visitKey = `${sessionId}:${currentPath}`;
-
-    // Inicializar arrays de visitas se necessário
     if (!req.session.visitedPaths) {
       req.session.visitedPaths = [];
     }
-
     if (!req.session.visitTimes) {
       req.session.visitTimes = {};
     }
-
-    // Tempo mínimo entre visitas da mesma página (15 minutos)
-    const MIN_TIME_BETWEEN_VISITS = 15 * 60 * 1000; // 15 minutos em milissegundos
-
-    // Verificar quando foi a última visita
+    const MIN_TIME_BETWEEN_VISITS = 15 * 60 * 1000;
     const lastVisitTime = req.session.visitTimes[visitKey] || 0;
     const now = Date.now();
-
-    // Só registra se ainda não visitou esta página nesta sessão ou se já passou tempo suficiente
     if (!req.session.visitedPaths.includes(visitKey) || (now - lastVisitTime) > MIN_TIME_BETWEEN_VISITS) {
       storage.createSiteVisit({
         path: currentPath,
@@ -109,8 +90,6 @@ function trackVisit(req: Request, res: Response, next: NextFunction) {
       }).catch(error => {
         console.error('Error tracking visit:', error);
       });
-
-      // Atualizar o array de visitas e o tempo da última visita
       if (!req.session.visitedPaths.includes(visitKey)) {
         req.session.visitedPaths.push(visitKey);
       }
@@ -125,15 +104,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
   await ensureAdminUser();
 
-  // Registrar o middleware de rastreamento antes das rotas
   app.use(trackVisit);
 
-  // Novas rotas para logs administrativos
   app.get("/api/admin/logs", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
-      return res.status(403).json({ 
+      return res.status(403).json({
         error: "FORBIDDEN",
-        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+        message: "Acesso negado. Apenas administradores podem acessar esta rota."
       });
     }
 
@@ -144,26 +121,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(logs);
     } catch (error) {
       console.error('Error fetching admin logs:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: "SERVER_ERROR",
-        message: "Erro ao buscar logs administrativos" 
+        message: "Erro ao buscar logs administrativos"
       });
     }
   });
 
-  // Rota para estatísticas do admin (atualizada com log)
   app.get("/api/admin/stats", async (req, res) => {
     if (!req.isAuthenticated()) {
-      return res.status(401).json({ 
+      return res.status(401).json({
         error: "AUTH_ERROR",
-        message: "Não autorizado" 
+        message: "Não autorizado"
       });
     }
 
     if (!req.user || req.user.username !== "admin@admin.com") {
-      return res.status(403).json({ 
+      return res.status(403).json({
         error: "FORBIDDEN",
-        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+        message: "Acesso negado. Apenas administradores podem acessar esta rota."
       });
     }
 
@@ -194,19 +170,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       console.error('Error in admin stats:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: "SERVER_ERROR",
-        message: "Erro ao buscar estatísticas" 
+        message: "Erro ao buscar estatísticas"
       });
     }
   });
 
-  // New analytics routes
   app.get("/api/admin/analytics", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
-      return res.status(403).json({ 
+      return res.status(403).json({
         error: "FORBIDDEN",
-        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+        message: "Acesso negado. Apenas administradores podem acessar esta rota."
       });
     }
 
@@ -219,14 +194,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(analytics);
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: "SERVER_ERROR",
-        message: "Erro ao buscar análises" 
+        message: "Erro ao buscar análises"
       });
     }
   });
 
-  // Product routes
   app.post("/api/products", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = req.user!.id;
@@ -250,7 +224,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = req.user!.id;
     try {
-      // Garantindo que só retorne produtos do usuário logado
       const products = await storage.getProducts(userId);
       res.json(products);
     } catch (error) {
@@ -264,7 +237,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const productId = parseInt(req.params.id);
 
     try {
-      // Primeiro, verifica se o produto existe e pertence ao usuário
       const existingProduct = await storage.getProduct(productId);
       if (!existingProduct) {
         return res.status(404).json({ message: "Produto não encontrado" });
@@ -273,10 +245,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Você não tem permissão para editar este produto" });
       }
 
-      // Valida e atualiza o produto
       const productData = updateProductSchema.parse(req.body);
       const updatedProduct = await storage.updateProduct(productId, productData);
-      await createAdminLog(req, "UPDATE_PRODUCT", `Produto atualizado: ${updatedProduct.name}`); //Added Log
+
+      if (!updatedProduct) {
+        return res.status(500).json({ message: "Erro ao atualizar produto" });
+      }
+
+      await createAdminLog(req, "UPDATE_PRODUCT", `Produto atualizado: ${updatedProduct.name}`);
       res.json(updatedProduct);
     } catch (error) {
       console.error('Error updating product:', error);
@@ -290,7 +266,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const productId = parseInt(req.params.id);
 
     try {
-      // Primeiro, verifica se o produto existe e pertence ao usuário
       const existingProduct = await storage.getProduct(productId);
       if (!existingProduct) {
         return res.status(404).json({ message: "Produto não encontrado" });
@@ -300,7 +275,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       await storage.deleteProduct(productId, userId);
-      await createAdminLog(req, "DELETE_PRODUCT", `Produto excluído: ${existingProduct.name}`); //Added Log
+      await createAdminLog(req, "DELETE_PRODUCT", `Produto excluído: ${existingProduct.name}`);
       res.sendStatus(200);
     } catch (error) {
       console.error('Error deleting product:', error);
@@ -308,7 +283,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Novas rotas para favoritos
   app.post("/api/favorites", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = req.user!.id;
@@ -319,7 +293,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         userId,
       });
       const favorite = await storage.createFavorite(favoriteData);
-      await createAdminLog(req, "CREATE_FAVORITE", `Favorito criado: Produto ID ${favorite.productId}`); //Added Log
+      await createAdminLog(req, "CREATE_FAVORITE", `Favorito criado: Produto ID ${favorite.productId}`);
       res.status(201).json(favorite);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -343,14 +317,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       await storage.removeFavorite(userId, productId);
-      await createAdminLog(req, "DELETE_FAVORITE", `Favorito removido: Produto ID ${productId}`); //Added Log
+      await createAdminLog(req, "DELETE_FAVORITE", `Favorito removido: Produto ID ${productId}`);
       res.sendStatus(200);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
     }
   });
 
-  // Update the menu route to include themeColor and logoUrl
   app.get("/api/menu/:userId", async (req, res) => {
     const userId = parseInt(req.params.userId);
     try {
@@ -361,8 +334,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Estabelecimento não encontrado" });
       }
 
-      // Get favorites if user is authenticated
-      let favorites = [];
+      let favorites: { productId: number }[] = [];
       if (req.isAuthenticated()) {
         favorites = await storage.getFavorites(req.user!.id);
       }
@@ -371,8 +343,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         products,
         businessName: user.businessName,
         bannerImageUrl: user.bannerImageUrl,
-        themeColor: user.themeColor || "#7c3aed", // Garantir um valor padrão
-        logoUrl: user.logoUrl, // Incluir o logoUrl na resposta
+        themeColor: user.themeColor || "#7c3aed",
+        logoUrl: user.logoUrl,
         favorites: favorites.map(f => f.productId)
       });
     } catch (error) {
@@ -380,7 +352,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Adicionar nova rota para atualizar banner
   app.patch("/api/user/banner", async (req, res) => {
     if (!req.isAuthenticated()) return res.sendStatus(401);
     const userId = req.user!.id;
@@ -388,7 +359,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { bannerImageUrl } = req.body;
       const user = await storage.updateUserBanner(userId, bannerImageUrl);
-      await createAdminLog(req, "UPDATE_BANNER", `Banner atualizado para usuário ID ${userId}`); //Added Log
+      await createAdminLog(req, "UPDATE_BANNER", `Banner atualizado para usuário ID ${userId}`);
       res.json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
@@ -407,19 +378,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         themeColor,
         logoUrl
       });
-      await createAdminLog(req, "UPDATE_PROFILE", `Perfil atualizado para usuário ID ${userId}`); //Added Log
+      await createAdminLog(req, "UPDATE_PROFILE", `Perfil atualizado para usuário ID ${userId}`);
       res.json(user);
     } catch (error) {
       res.status(400).json({ message: (error as Error).message });
     }
   });
 
-  // Nova rota para atualização de usuário pelo admin
   app.patch("/api/admin/users/:userId", async (req, res) => {
     if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
-      return res.status(403).json({ 
+      return res.status(403).json({
         error: "FORBIDDEN",
-        message: "Acesso negado. Apenas administradores podem acessar esta rota." 
+        message: "Acesso negado. Apenas administradores podem acessar esta rota."
       });
     }
 
@@ -438,9 +408,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(user);
     } catch (error) {
       console.error('Error updating user:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         error: "SERVER_ERROR",
-        message: "Erro ao atualizar usuário" 
+        message: "Erro ao atualizar usuário"
       });
     }
   });
