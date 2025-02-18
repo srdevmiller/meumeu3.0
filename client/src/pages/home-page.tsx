@@ -563,6 +563,22 @@ export default function HomePage() {
                     Gerencie seus produtos publicados
                   </CardDescription>
                 </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={viewMode === "grid" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("grid")}
+                  >
+                    <LayoutGrid className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={viewMode === "list" ? "default" : "outline"}
+                    size="icon"
+                    onClick={() => setViewMode("list")}
+                  >
+                    <List className="h-4 w-4" />
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -579,22 +595,26 @@ export default function HomePage() {
                   variants={container}
                   initial="hidden"
                   animate="show"
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+                  className={viewMode === "grid"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-6"
+                    : "flex flex-col gap-4"}
                 >
                   {products.map((product) => (
                     <motion.div
                       key={product.id}
                       variants={item}
-                      className="relative bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200"
+                      className={`relative bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 ${
+                        viewMode === "list" ? "flex items-center" : ""
+                      }`}
                     >
-                      <div className="aspect-w-4 aspect-h-3">
+                      <div className={viewMode === "list" ? "w-24 h-24" : "aspect-square"}>
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className="w-full h-48 object-cover"
+                          className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="p-4">
+                      <div className={`p-4 ${viewMode === "list" ? "flex-1" : ""}`}>
                         <h3 className="font-medium text-lg mb-1 truncate">{product.name}</h3>
                         <p className="text-xl font-bold text-green-600 mb-2">
                           R$ {Number(product.price).toFixed(2)}
