@@ -251,7 +251,8 @@ export class DatabaseStorage implements IStorage {
   async getSiteVisitsCount(): Promise<number> {
     const [result] = await db
       .select({ value: count() })
-      .from(siteVisits);
+      .from(siteVisits)
+      .where(sql`path LIKE '/menu%'`);  // Contar apenas visitas ao cardápio
     return Number(result.value);
   }
 
@@ -270,7 +271,10 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        and(
+          sql`path LIKE '/menu%'`,  // Contar apenas visitas ao cardápio
+          sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        )
       );
 
     // Duração média da sessão
@@ -280,7 +284,10 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        and(
+          sql`path LIKE '/menu%'`,  // Filtrar apenas visitas ao cardápio
+          sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        )
       );
 
     // Estatísticas por dispositivo
@@ -291,11 +298,14 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        and(
+          sql`path LIKE '/menu%'`,  // Filtrar apenas visitas ao cardápio
+          sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        )
       )
       .groupBy(siteVisits.deviceType);
 
-    // Páginas populares
+    // Páginas populares (apenas do cardápio)
     const popularPages = await db
       .select({
         path: siteVisits.path,
@@ -303,7 +313,10 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        and(
+          sql`path LIKE '/menu%'`,  // Filtrar apenas visitas ao cardápio
+          sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        )
       )
       .groupBy(siteVisits.path)
       .orderBy(sql`count(*) desc`)
@@ -317,7 +330,10 @@ export class DatabaseStorage implements IStorage {
       })
       .from(siteVisits)
       .where(
-        sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        and(
+          sql`path LIKE '/menu%'`,  // Filtrar apenas visitas ao cardápio
+          sql`timestamp >= CURRENT_DATE - make_interval(days => ${days})`
+        )
       )
       .groupBy(sql`DATE(timestamp)`)
       .orderBy(sql`DATE(timestamp)`);
