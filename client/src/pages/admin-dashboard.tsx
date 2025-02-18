@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Package, LogOut, Pencil } from "lucide-react";
+import { Users, Package, LogOut, Pencil, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
@@ -79,6 +79,7 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   useSessionTimeout();
   const [editingUser, setEditingUser] = useState<DashboardStats["users"][0] | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Debug logs para acompanhar o estado da autenticação
   useEffect(() => {
@@ -91,7 +92,6 @@ export default function AdminDashboard() {
 
   // Aguarda o carregamento da autenticação
   if (authLoading) {
-    console.log("AdminDashboard - Loading auth state");
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -101,13 +101,11 @@ export default function AdminDashboard() {
 
   // Redireciona se não estiver autenticado
   if (!user) {
-    console.log("AdminDashboard - No user, redirecting to auth");
     return <Redirect to="/auth" />;
   }
 
   // Verifica se é admin
   if (user.username !== "admin@admin.com") {
-    console.log("AdminDashboard - Not admin user:", user.username);
     toast({
       title: "Acesso negado",
       description: "Você não tem permissão para acessar esta página.",
@@ -116,35 +114,16 @@ export default function AdminDashboard() {
     return <Redirect to="/" />;
   }
 
-  const { data: statsData, isLoading: isLoadingStats, error: statsError } = useQuery<DashboardStats>({
+  const { data: statsData, isLoading: isLoadingStats } = useQuery<DashboardStats>({
     queryKey: ["/api/admin/stats"],
     retry: false,
     refetchOnWindowFocus: false,
-    onError: (error: any) => {
-      console.error("AdminDashboard - Stats query error:", error);
-      toast({
-        title: "Erro",
-        description: error?.message || "Erro ao carregar dados do painel admin",
-        variant: "destructive",
-      });
-      if (error?.status === 401 || error?.status === 403) {
-        logout();
-      }
-    },
   });
 
-  const { data: logsData, isLoading: isLoadingLogs, error: logsError } = useQuery<LogsResponse>({
+  const { data: logsData, isLoading: isLoadingLogs } = useQuery<LogsResponse>({
     queryKey: ["/api/admin/logs"],
     retry: false,
     refetchOnWindowFocus: false,
-    onError: (error: any) => {
-      console.error("AdminDashboard - Logs query error:", error);
-      toast({
-        title: "Erro",
-        description: error?.message || "Erro ao carregar logs",
-        variant: "destructive",
-      });
-    }
   });
 
   // Mutation para atualizar usuário
@@ -203,6 +182,18 @@ export default function AdminDashboard() {
     }
   };
 
+  // Função para filtrar usuários baseado na busca
+  const filterUsers = (users: DashboardStats["users"]) => {
+    if (!searchQuery) return users;
+
+    const query = searchQuery.toLowerCase();
+    return users.filter(user => 
+      user.businessName.toLowerCase().includes(query) ||
+      user.username.toLowerCase().includes(query) ||
+      user.phone.includes(query)
+    );
+  };
+
   if (isLoadingStats || isLoadingLogs) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -211,19 +202,18 @@ export default function AdminDashboard() {
     );
   }
 
-  if (statsError || logsError || !statsData) {
+  if (!statsData) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-2xl font-bold text-red-600 mb-4">
           Erro ao carregar dados
         </h1>
-        <p className="text-gray-600 mb-4">
-          {(statsError || logsError) instanceof Error ? (statsError || logsError).message : "Tente fazer login novamente"}
-        </p>
         <Button onClick={logout}>Fazer login novamente</Button>
       </div>
     );
   }
+
+  const filteredUsers = filterUsers(statsData.users);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -299,6 +289,17 @@ export default function AdminDashboard() {
           <CardTitle>Clientes:</CardTitle>
         </CardHeader>
         <CardContent>
+          {/* Search input */}
+          <div className="mb-4 relative">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por nome, email ou telefone..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+
           <Table>
             <TableHeader>
               <TableRow>
@@ -311,7 +312,7 @@ export default function AdminDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {statsData.users.map((user) => (
+              {filteredUsers.map((user) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.businessName}</TableCell>
                   <TableCell>{user.phone}</TableCell>
