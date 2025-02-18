@@ -522,7 +522,7 @@ export default function MenuPage() {
               <div
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 max-w-[900px] mx-auto"
+                    ? "grid grid-cols-2 gap-3 md:gap-4 max-w-[900px] mx-auto"
                     : "flex flex-col gap-3 md:gap-4"
                 }
               >
@@ -866,7 +866,7 @@ export default function MenuPage() {
             /* Range track styling */
             .range {
               transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+                        }
 
             /* Add spring effect to buttons */
             button:active {
