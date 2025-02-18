@@ -1,8 +1,8 @@
-import type { Express, Request } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
-import { insertProductSchema, insertFavoriteSchema, updateProductSchema, insertAdminLogSchema } from "@shared/schema";
+import { insertProductSchema, insertFavoriteSchema, updateProductSchema, insertAdminLogSchema, insertSiteVisitSchema } from "@shared/schema";
 import { eq, and, count, sql } from "drizzle-orm";
 import { products, users, favorites } from "@shared/schema";
 import { db } from "./db";
@@ -38,9 +38,24 @@ async function ensureAdminUser() {
   }
 }
 
+// Middleware para registrar visitas
+function trackVisit(req: Request, res: Response, next: NextFunction) {
+  if (!req.path.startsWith('/api/')) {  // Não rastrear chamadas de API
+    storage.createSiteVisit({
+      path: req.path,
+      ipAddress: req.ip,
+      userAgent: req.get('user-agent') || 'unknown'
+    }).catch(console.error);  // Non-blocking
+  }
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
   await ensureAdminUser();
+
+  // Adiciona o middleware de rastreamento
+  app.use(trackVisit);
 
   // Novas rotas para logs administrativos
   app.get("/api/admin/logs", async (req, res) => {
@@ -96,12 +111,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .orderBy(users.id);
 
       const productsCount = await storage.getProductsCount();
+      const visitsCount = await storage.getSiteVisitsCount();
 
       await createAdminLog(req, "VIEW_STATS", "Visualização das estatísticas do sistema");
 
       res.json({
         totalUsers: usersWithProducts.length,
         totalProducts: productsCount,
+        totalVisits: visitsCount,
         users: usersWithProducts
       });
     } catch (error) {

@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Package, LogOut, Pencil, Search } from "lucide-react";
+import { Users, Package, LogOut, Pencil, Search, Eye } from "lucide-react"; // Added Eye import
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
@@ -44,6 +44,7 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 type DashboardStats = {
   totalUsers: number;
   totalProducts: number;
+  totalVisits: number;  // Add this line
   users: {
     id: number;
     username: string;
@@ -187,7 +188,7 @@ export default function AdminDashboard() {
     if (!searchQuery) return users;
 
     const query = searchQuery.toLowerCase();
-    return users.filter(user => 
+    return users.filter(user =>
       user.businessName.toLowerCase().includes(query) ||
       user.username.toLowerCase().includes(query) ||
       user.phone.includes(query)
@@ -225,7 +226,7 @@ export default function AdminDashboard() {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 mb-8">
+      <div className="grid gap-4 md:grid-cols-3 mb-8"> {/* Changed to grid-cols-3 */}
         <Card className="bg-purple-500 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-2xl font-bold">Clientes</CardTitle>
@@ -243,6 +244,16 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="text-6xl font-bold">{statsData.totalProducts}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-blue-500 text-white">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-2xl font-bold">Visitas</CardTitle>
+            <Eye className="h-6 w-6 text-white" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-6xl font-bold">{statsData.totalVisits}</div>
           </CardContent>
         </Card>
       </div>

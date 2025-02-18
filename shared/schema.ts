@@ -44,6 +44,15 @@ export const adminLogs = pgTable("admin_logs", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+// Nova tabela para rastrear acessos ao site
+export const siteVisits = pgTable("site_visits", {
+  id: serial("id").primaryKey(),
+  path: text("path").notNull(),
+  timestamp: timestamp("timestamp").notNull().defaultNow(),
+  ipAddress: text("ip_address").notNull(),
+  userAgent: text("user_agent").notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users)
   .pick({
     username: true,
@@ -96,6 +105,13 @@ export const insertAdminLogSchema = createInsertSchema(adminLogs).pick({
   ipAddress: true,
 });
 
+// Novo schema para inserção de visitas
+export const insertSiteVisitSchema = createInsertSchema(siteVisits).pick({
+  path: true,
+  ipAddress: true,
+  userAgent: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Product = typeof products.$inferSelect;
@@ -105,3 +121,5 @@ export type Favorite = typeof favorites.$inferSelect;
 export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
 export type AdminLog = typeof adminLogs.$inferSelect;
 export type InsertAdminLog = z.infer<typeof insertAdminLogSchema>;
+export type SiteVisit = typeof siteVisits.$inferSelect;
+export type InsertSiteVisit = z.infer<typeof insertSiteVisitSchema>;

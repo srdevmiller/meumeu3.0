@@ -4,6 +4,7 @@ import { eq, and, count, desc } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
 import { pool } from "./db";
+import { siteVisits, type SiteVisit, type InsertSiteVisit } from "@shared/schema";
 
 const PostgresSessionStore = connectPg(session);
 
@@ -38,6 +39,10 @@ export interface IStorage {
     businessName?: string;
     phone?: string;
   }): Promise<User>;
+  // Novos métodos para visitas ao site
+  createSiteVisit(visit: InsertSiteVisit): Promise<SiteVisit>;
+  getSiteVisitsCount(): Promise<number>;
+  getSiteVisitsByPage(path: string): Promise<number>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -231,6 +236,28 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, userId))
       .returning();
     return user;
+  }
+  async createSiteVisit(visit: InsertSiteVisit): Promise<SiteVisit> {
+    const [newVisit] = await db
+      .insert(siteVisits)
+      .values(visit)
+      .returning();
+    return newVisit;
+  }
+
+  async getSiteVisitsCount(): Promise<number> {
+    const [result] = await db
+      .select({ value: count() })
+      .from(siteVisits);
+    return Number(result.value);
+  }
+
+  async getSiteVisitsByPage(path: string): Promise<number> {
+    const [result] = await db
+      .select({ value: count() })
+      .from(siteVisits)
+      .where(eq(siteVisits.path, path));
+    return Number(result.value);
   }
 }
 
