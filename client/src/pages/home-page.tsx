@@ -553,6 +553,7 @@ export default function HomePage() {
             </Card>
           )}
 
+          {/* Products Section */}
           <Card className={showPublishForm ? "" : "md:col-span-2"}>
             <CardHeader>
               <div className="flex justify-between items-center">
@@ -561,22 +562,6 @@ export default function HomePage() {
                   <CardDescription>
                     Gerencie seus produtos publicados
                   </CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setViewMode("grid")}
-                  >
-                    <LayoutGrid className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "outline"}
-                    size="icon"
-                    onClick={() => setViewMode("list")}
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
                 </div>
               </div>
             </CardHeader>
@@ -594,11 +579,7 @@ export default function HomePage() {
                   variants={container}
                   initial="hidden"
                   animate="show"
-                  className={`grid gap-4 ${
-                    viewMode === "grid"
-                      ? "grid-cols-3"
-                      : "grid-cols-1"
-                  }`}
+                  className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
                 >
                   {products.map((product) => (
                     <motion.div
@@ -606,41 +587,43 @@ export default function HomePage() {
                       variants={item}
                       whileHover={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}
-                      className={`flex ${viewMode === "list" ? "items-center" : "flex-col"} gap-4 p-4 border rounded-lg`}
+                      className="relative group bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300"
                     >
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className={`${
-                          viewMode === "list"
-                            ? "w-16 h-16"
-                            : "w-full aspect-square"
-                        } object-cover rounded`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium truncate">{product.name}</h3>
-                        <p className="text-sm text-muted-foreground">
+                      <div className="aspect-w-4 aspect-h-3">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="w-full h-48 object-cover"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-medium text-lg mb-1 truncate">{product.name}</h3>
+                        <p className="text-xl font-bold text-green-600 mb-2">
                           R$ {Number(product.price).toFixed(2)}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-muted-foreground mb-4">
                           {categories.find((c) => c.id === product.categoryId)?.name}
                         </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(product)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setProductToDelete(product)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEdit(product)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <Pencil className="h-4 w-4 mr-1" />
+                            Editar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setProductToDelete(product)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-600"
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Excluir
+                          </Button>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
