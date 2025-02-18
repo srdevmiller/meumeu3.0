@@ -266,14 +266,14 @@ export class DatabaseStorage implements IStorage {
     const [totalVisits] = await db
       .select({ count: sql<number>`count(*)::int` })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= now() - interval '${days} days'`);
+      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days} days'`);
 
     const [avgDuration] = await db
       .select({ 
         avg: sql<number>`avg(${siteVisits.sessionDuration})::int` 
       })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= now() - interval '${days} days'`);
+      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days} days'`);
 
     const deviceStats = await db
       .select({
@@ -281,7 +281,7 @@ export class DatabaseStorage implements IStorage {
         count: sql<number>`count(*)::int`
       })
       .from(siteVisits)
-      .where(sql`${siteVisits.timestamp} >= now() - interval '${days} days'`)
+      .where(sql`${siteVisits.timestamp} >= NOW() - INTERVAL '${days} days'`)
       .groupBy(siteVisits.deviceType);
 
     const popularPages = await this.getPopularPages();
@@ -297,7 +297,7 @@ export class DatabaseStorage implements IStorage {
     };
 
     deviceStats.forEach(stat => {
-      if (stat.device in deviceBreakdown) {
+      if (stat.device && stat.device in deviceBreakdown) {
         deviceBreakdown[stat.device as keyof typeof deviceBreakdown] = stat.count;
       }
     });
