@@ -1,6 +1,3 @@
-## 2. Instalação do PostgreSQL
-
-```bash
 # Instale o PostgreSQL
 sudo apt update
 sudo apt install postgresql postgresql-contrib -y
