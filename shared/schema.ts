@@ -1,3 +1,10 @@
+declare module 'express-session' {
+  interface SessionData {
+    visitedPaths?: string[];
+    visitTimes?: { [key: string]: number };
+  }
+}
+
 import { pgTable, text, serial, decimal, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";

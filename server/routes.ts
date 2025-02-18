@@ -40,8 +40,29 @@ async function ensureAdminUser() {
 
 // Middleware para registrar visitas
 function trackVisit(req: Request, res: Response, next: NextFunction) {
-  // Não rastrear chamadas de API ou requisições de recursos estáticos
-  if (!req.path.startsWith('/api/') && !req.path.includes('.')) {
+  // Lista de extensões e caminhos para ignorar
+  const ignoredPaths = [
+    '/api/',
+    '/assets/',
+    '/_next/',
+    '/static/',
+    '/favicon.ico',
+    '/manifest.json',
+    '/src/',
+    '.js',
+    '.css',
+    '.png',
+    '.jpg',
+    '.ico'
+  ];
+
+  // Verifica se o caminho deve ser ignorado
+  const shouldIgnorePath = ignoredPaths.some(path => 
+    req.path.startsWith(path) || req.path.includes(path)
+  );
+
+  // Só rastreia se não for um caminho ignorado e for uma requisição GET
+  if (!shouldIgnorePath && req.method === 'GET') {
     const userAgent = req.get('user-agent') || 'unknown';
 
     // Detecção de dispositivo melhorada
@@ -49,17 +70,49 @@ function trackVisit(req: Request, res: Response, next: NextFunction) {
     if (/mobile/i.test(userAgent)) deviceType = 'mobile';
     else if (/tablet/i.test(userAgent)) deviceType = 'tablet';
 
-    storage.createSiteVisit({
-      path: req.path,
-      ipAddress: req.ip || req.socket.remoteAddress || '',
-      userAgent,
-      referrer: req.get('referrer') || '',
-      deviceType,
-      sessionDuration: 0, // Será atualizado quando o usuário sair
-      pageInteractions: {},
-    }).catch(error => {
-      console.error('Error tracking visit:', error);
-    });
+    // Usar um identificador de sessão para evitar contagens duplicadas
+    const sessionId = req.sessionID;
+    const currentPath = req.path;
+
+    // Chave única para esta visita
+    const visitKey = `${sessionId}:${currentPath}`;
+
+    // Inicializar arrays de visitas se necessário
+    if (!req.session.visitedPaths) {
+      req.session.visitedPaths = [];
+    }
+
+    if (!req.session.visitTimes) {
+      req.session.visitTimes = {};
+    }
+
+    // Tempo mínimo entre visitas da mesma página (15 minutos)
+    const MIN_TIME_BETWEEN_VISITS = 15 * 60 * 1000; // 15 minutos em milissegundos
+
+    // Verificar quando foi a última visita
+    const lastVisitTime = req.session.visitTimes[visitKey] || 0;
+    const now = Date.now();
+
+    // Só registra se ainda não visitou esta página nesta sessão ou se já passou tempo suficiente
+    if (!req.session.visitedPaths.includes(visitKey) || (now - lastVisitTime) > MIN_TIME_BETWEEN_VISITS) {
+      storage.createSiteVisit({
+        path: currentPath,
+        ipAddress: req.ip || req.socket.remoteAddress || '',
+        userAgent,
+        referrer: req.get('referrer') || '',
+        deviceType,
+        sessionDuration: 0,
+        pageInteractions: {}
+      }).catch(error => {
+        console.error('Error tracking visit:', error);
+      });
+
+      // Atualizar o array de visitas e o tempo da última visita
+      if (!req.session.visitedPaths.includes(visitKey)) {
+        req.session.visitedPaths.push(visitKey);
+      }
+      req.session.visitTimes[visitKey] = now;
+    }
   }
   next();
 }
