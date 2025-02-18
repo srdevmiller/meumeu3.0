@@ -536,14 +536,14 @@ export default function MenuPage() {
                     <Card
                       className={`overflow-hidden ${
                         viewMode === "list"
-                          ? "flex flex-col sm:flex-row sm:h-48"
+                          ? "flex flex-row h-36 sm:h-48"
                           : ""
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
                       <div
                         className={
                           viewMode === "list"
-                            ? "w-full sm:w-48 h-48 sm:h-full flex-shrink-0"
+                            ? "w-36 sm:w-48 h-full flex-shrink-0"
                             : "aspect-square"
                         }
                       >
@@ -553,65 +553,61 @@ export default function MenuPage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex flex-col justify-between" : ""}>
-                        <CardHeader className="p-3 sm:p-4">
+                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : ""}>
+                        <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <CardTitle className="text-lg md:text-xl truncate">
+                              <h3 className="text-base sm:text-lg font-semibold truncate">
                                 {product.name}
-                              </CardTitle>
-                              <CardDescription className="text-sm">
-                                <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
-                                  {categories.find((c) => c.id === product.categoryId)?.name}
-                                </span>
-                              </CardDescription>
+                              </h3>
+                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                                {categories.find((c) => c.id === product.categoryId)?.name}
+                              </span>
                             </div>
                           </div>
                           {product.suggestions && product.suggestions.length > 0 && (
                             <SuggestionsWidget
                               suggestions={product.suggestions as unknown as SuggestionType[]}
-                              className="mt-2"
+                              className="mt-1"
                             />
                           )}
-                        </CardHeader>
-                        <CardContent className="p-3 sm:p-4 pt-0 mt-auto">
-                          <div className="flex justify-between items-center">
-                            <p className="text-lg sm:text-xl font-bold">
-                              {formatPrice(product.price)}
-                            </p>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={`h-9 w-9 sm:h-10 sm:w-10 ${
-                                  compareProducts.some((p) => p.id === product.id)
-                                    ? "bg-[var(--theme-color)]/10"
-                                    : ""
-                                }`}
-                                onClick={() => toggleCompare(product)}
-                              >
-                                <Scale className={`h-4 w-4 sm:h-5 sm:w-5 ${
-                                  compareProducts.some((p) => p.id === product.id)
-                                    ? "text-[var(--theme-color)]"
-                                    : "text-muted-foreground"
-                                }`} />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-9 w-9 sm:h-10 sm:w-10"
-                                onClick={() => toggleFavorite(product.id)}
-                              >
-                                <Heart
-                                  className={data?.favorites.includes(product.id)
-                                    ? "h-4 w-4 sm:h-5 sm:w-5 fill-current text-red-500"
-                                    : "h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground"
-                                  }
-                                />
-                              </Button>
-                            </div>
+                        </div>
+                        <div className="flex justify-between items-center mt-auto pt-2">
+                          <p className="text-base sm:text-lg font-bold">
+                            {formatPrice(product.price)}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={`h-8 w-8 sm:h-9 sm:w-9 ${
+                                compareProducts.some((p) => p.id === product.id)
+                                  ? "bg-[var(--theme-color)]/10"
+                                  : ""
+                              }`}
+                              onClick={() => toggleCompare(product)}
+                            >
+                              <Scale className={`h-4 w-4 ${
+                                compareProducts.some((p) => p.id === product.id)
+                                  ? "text-[var(--theme-color)]"
+                                  : "text-muted-foreground"
+                              }`} />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 sm:h-9 sm:w-9"
+                              onClick={() => toggleFavorite(product.id)}
+                            >
+                              <Heart
+                                className={data?.favorites.includes(product.id)
+                                  ? "h-4 w-4 fill-current text-red-500"
+                                  : "h-4 w-4 text-muted-foreground"
+                                }
+                              />
+                            </Button>
                           </div>
-                        </CardContent>
+                        </div>
                       </div>
                     </Card>
                   </motion.div>
@@ -861,8 +857,7 @@ export default function MenuPage() {
             }
 
             [role="slider"]:hover {
-              transform: scale(1.2);
-            }
+              transform: scale(1.2);            }
 
             [role="slider"]:active {
               transform: scale(0.95);
