@@ -466,13 +466,13 @@ export default function MenuPage() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-                <div className="text-sm">
+                <div className="text-sm order-1">
                   <span className="font-bold text-[var(--theme-color)]">
-                    {filteredProducts.length} Produtos
+                    Qtd Produtos {filteredProducts.length}
                   </span>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 order-2 md:ml-auto">
                   <Button
                     variant={sortOrder === "asc" ? "default" : "outline"}
                     size="icon"
@@ -525,7 +525,7 @@ export default function MenuPage() {
                 <motion.div
                   className={`grid-container ${
                     viewMode === "grid"
-                      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4"
+                      ? "grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4"
                       : "flex flex-col gap-3 md:gap-4"
                   }`}
                 >
@@ -543,7 +543,7 @@ export default function MenuPage() {
                         } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                       >
                         <div
-                          className={viewMode === "list" ? "w-32 h-32 md:w-48 md:h-48" : "aspect-square"}
+                          className={viewMode === "list" ? "w-48 h-48 md:w-56 md:h-56" : "aspect-square"}
                         >
                           <img
                             src={product.imageUrl}
