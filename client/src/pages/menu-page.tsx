@@ -552,7 +552,7 @@ export default function MenuPage() {
                         </TooltipContent>
                       </Tooltip>
 
-                      <SheetContent side="right" className="w-[90vw] sm:w-[600px]">
+                      <SheetContent side="right" className="w-[90vw] sm:w-[500px]">
                         <SheetHeader>
                           <SheetTitle>Comparação de Produtos</SheetTitle>
                           <SheetDescription>
@@ -560,27 +560,29 @@ export default function MenuPage() {
                           </SheetDescription>
                         </SheetHeader>
                         <div className="mt-6">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          <div className="grid grid-cols-1 gap-4">
                             {compareProducts.map((product) => (
-                              <Card key={product.id}>
-                                <CardHeader>
+                              <Card key={product.id} className="relative">
+                                <CardHeader className="flex md:flex-row gap-4">
                                   <img
                                     src={product.imageUrl}
                                     alt={product.name}
-                                    className="w-full aspect-square object-cover rounded-md"
+                                    className="w-32 h-32 object-cover rounded-md flex-shrink-0"
                                   />
-                                  <CardTitle className="text-lg mt-2">{product.name}</CardTitle>
-                                  <CardDescription>
-                                    {categories.find((c) => c.id === product.categoryId)?.name}
-                                  </CardDescription>
+                                  <div className="flex-1">
+                                    <CardTitle className="text-lg">{product.name}</CardTitle>
+                                    <CardDescription>
+                                      {categories.find((c) => c.id === product.categoryId)?.name}
+                                    </CardDescription>
+                                    <p className="text-2xl font-bold text-[var(--theme-color)] mt-2">
+                                      {formatPrice(product.price)}
+                                    </p>
+                                  </div>
                                 </CardHeader>
                                 <CardContent>
-                                  <p className="text-2xl font-bold text-[var(--theme-color)]">
-                                    {formatPrice(product.price)}
-                                  </p>
                                   <Button
                                     variant="ghost"
-                                    className="w-full mt-4"
+                                    className="w-full"
                                     onClick={() => {
                                       toggleCompare(product);
                                       if (compareProducts.length === 1) {
@@ -854,7 +856,7 @@ export default function MenuPage() {
 
             .card-interactive:hover {
               transform: translateY(-4px);
-              box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 12px 24px -10px rgba(0,0, 0, 0.1);
             }
 
             /* Smooth transitions for filters */
