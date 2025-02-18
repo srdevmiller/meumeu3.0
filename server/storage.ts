@@ -266,32 +266,32 @@ export class DatabaseStorage implements IStorage {
     // Total de visitas
     const [totalVisits] = await db
       .select({ 
-        count: sql<number>`cast(count(*) as integer)` 
+        count: sql<number>`count(*)::integer`
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
+        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
       );
 
     // Duração média da sessão
     const [avgDuration] = await db
       .select({ 
-        avg: sql<number>`cast(coalesce(avg(${siteVisits.sessionDuration}), 0) as integer)` 
+        avg: sql<number>`COALESCE(AVG(session_duration)::integer, 0)`
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
+        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
       );
 
     // Estatísticas por dispositivo
     const deviceStats = await db
       .select({
-        device: siteVisits.deviceType,
-        count: sql<number>`cast(count(*) as integer)`
+        device_type: siteVisits.deviceType,
+        count: sql<number>`count(*)::integer`
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
+        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
       )
       .groupBy(siteVisits.deviceType);
 
@@ -299,11 +299,11 @@ export class DatabaseStorage implements IStorage {
     const popularPages = await db
       .select({
         path: siteVisits.path,
-        visits: sql<number>`cast(count(*) as integer)`
+        visits: sql<number>`count(*)::integer`
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
+        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
       )
       .groupBy(siteVisits.path)
       .orderBy(sql`count(*) desc`)
@@ -312,26 +312,26 @@ export class DatabaseStorage implements IStorage {
     // Visitas por dia
     const visitsByDay = await db
       .select({
-        date: sql<string>`date_trunc('day', ${siteVisits.timestamp})::text`,
-        visits: sql<number>`cast(count(*) as integer)`
+        date: sql<string>`to_char(DATE(timestamp), 'YYYY-MM-DD')`,
+        visits: sql<number>`count(*)::integer`
       })
       .from(siteVisits)
       .where(
-        sql`${siteVisits.timestamp} >= current_timestamp - interval '${days} day'`
+        sql`timestamp >= CURRENT_DATE - INTERVAL '${days} days'`
       )
-      .groupBy(sql`date_trunc('day', ${siteVisits.timestamp})`)
-      .orderBy(sql`date_trunc('day', ${siteVisits.timestamp})`);
+      .groupBy(sql`DATE(timestamp)`)
+      .orderBy(sql`DATE(timestamp)`);
 
     // Preparar a distribuição por dispositivo
     const deviceBreakdown = {
       desktop: 0,
       mobile: 0,
-      tablet: 0,
+      tablet: 0
     };
 
     deviceStats.forEach(stat => {
-      if (stat.device && stat.device in deviceBreakdown) {
-        deviceBreakdown[stat.device as keyof typeof deviceBreakdown] = stat.count;
+      if (stat.device_type && stat.device_type in deviceBreakdown) {
+        deviceBreakdown[stat.device_type as keyof typeof deviceBreakdown] = stat.count;
       }
     });
 
