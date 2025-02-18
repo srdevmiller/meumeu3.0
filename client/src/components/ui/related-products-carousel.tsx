@@ -35,11 +35,13 @@ export function RelatedProductsCarousel({
       opts={{
         align: "start",
         loop: true,
+        skipSnaps: false,
+        inViewThreshold: 0.7,
       }}
       className={cn("w-full", className)}
     >
       <CarouselContent className="-ml-2 md:-ml-4">
-        {products.map((product, index) => (
+        {products.map((product) => (
           <CarouselItem key={product.id} className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3 xl:basis-1/4">
             <div className="p-1">
               <Card className="relative overflow-hidden border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300">
@@ -47,7 +49,7 @@ export function RelatedProductsCarousel({
                   <img
                     src={product.imageUrl}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover transform transition-transform duration-300 hover:scale-105"
                   />
                 </div>
                 <CardHeader className="p-3">

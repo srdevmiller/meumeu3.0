@@ -747,48 +747,36 @@ export default function MenuPage() {
                 </motion.div>
               )}
 
-              <AnimatePresence>
-                {sortedProducts.length > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="mt-12"
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-xl font-bold">Produtos Relacionados</h2>
-                    </div>
-                    <RelatedProductsCarousel
-                      products={sortedProducts.filter(
-                        (p) =>
-                          p.categoryId === sortedProducts[0].categoryId &&
-                          p.id !== sortedProducts[0].id
-                      ).slice(0, 8)}
-                      favorites={data?.favorites || []}
-                      onToggleFavorite={toggleFavorite}
-                      formatPrice={formatPrice}
-                      categories={categories}
-                      className="px-4 md:px-12"
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {sortedProducts.length > 0 && (
+                <div className="mt-8 mb-4 relative">
+                  <h2 className="text-xl font-bold mb-4">Produtos Relacionados</h2>
+                  <RelatedProductsCarousel
+                    products={sortedProducts.filter(
+                      (p) =>
+                        p.categoryId === sortedProducts[0].categoryId &&
+                        p.id !== sortedProducts[0].id
+                    ).slice(0, 8)}
+                    favorites={data?.favorites || []}
+                    onToggleFavorite={toggleFavorite}
+                    formatPrice={formatPrice}
+                    categories={categories}
+                  />
+                </div>
+              )}
 
-              <AnimatePresence>
-                {filteredProducts.length === 0 && (
-                  <motion.div
-                    className="text-center py-12 animate-presence"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <p className="text-muted-foreground">
-                      Nenhum produto encontrado com os filtros selecionados.
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {filteredProducts.length === 0 && (
+                <motion.div
+                  className="text-center py-12 animate-presence"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="text-muted-foreground">
+                    Nenhum produto encontrado com os filtros selecionados.
+                  </p>
+                </motion.div>
+              )}
             </motion.div>
           </div>
         </div>
