@@ -41,6 +41,7 @@ import {
   Scale,
   ArrowUp01,
   ArrowDown01,
+  X, // Import X from lucide-react
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -632,6 +633,77 @@ export default function MenuPage() {
             </motion.div>
           </div>
         </div>
+
+        {/* Sheet de comparação */}
+        <Sheet open={showCompareSheet} onOpenChange={setShowCompareSheet}>
+          <SheetContent side="right" className="w-full sm:max-w-lg">
+            <SheetHeader>
+              <SheetTitle>Comparação de Produtos</SheetTitle>
+              <SheetDescription>
+                Compare as características dos produtos selecionados
+              </SheetDescription>
+            </SheetHeader>
+            <div className="mt-6 space-y-6">
+              <div className="grid grid-cols-1 gap-4">
+                {compareProducts.map((product) => (
+                  <div key={product.id} className="relative">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-background"
+                      onClick={() => {
+                        setCompareProducts((current) =>
+                          current.filter((p) => p.id !== product.id)
+                        );
+                        if (compareProducts.length <= 1) {
+                          setShowCompareSheet(false);
+                        }
+                      }}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                    <Card>
+                      <div className="aspect-square w-24">
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <CardHeader className="p-2">
+                        <CardTitle className="text-sm truncate">
+                          {product.name}
+                        </CardTitle>
+                        <CardDescription className="text-xs">
+                          {categories.find((c) => c.id === product.categoryId)?.name}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="p-2 pt-0">
+                        <p className="text-sm font-bold">
+                          {formatPrice(product.price)}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+
+        {compareProducts.length > 1 && !showCompareSheet && (
+          <div className="fixed bottom-4 right-4 z-50">
+            <Button
+              onClick={() => setShowCompareSheet(true)}
+              className="bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 shadow-lg"
+            >
+              <Scale className="mr-2 h-4 w-4" />
+              Comparar {compareProducts.length} produtos
+            </Button>
+          </div>
+        )}
+
+
         {/* Footer with CTA */}
         <motion.div
           className="py-8 bg-[var(--theme-color)] mt-12"
