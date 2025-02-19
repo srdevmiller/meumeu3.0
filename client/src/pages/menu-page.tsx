@@ -574,11 +574,11 @@ export default function MenuPage() {
                             />
                           )}
                         </div>
-                        <div className="flex justify-between items-center mt-auto pt-2">
-                          <p className="text-base sm:text-lg font-bold">
+                        <div className="flex justify-between items-center mt-auto pt-2 flex-wrap gap-2">
+                          <p className="text-base sm:text-lg font-bold whitespace-nowrap">
                             {formatPrice(product.price)}
                           </p>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5 shrink-0">
                             <Button
                               variant="ghost"
                               size="icon"
