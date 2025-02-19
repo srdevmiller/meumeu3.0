@@ -4,7 +4,7 @@ import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
 import { insertProductSchema, insertFavoriteSchema, updateProductSchema, insertAdminLogSchema, insertSiteVisitSchema } from "@shared/schema";
 import { eq, and, count, sql } from "drizzle-orm";
-import { products, users, favorites } from "@shared/schema";
+import { products, users, favorites, paymentSettings, type PaymentSettings } from "@shared/schema";
 import { db } from "./db";
 
 // Corrigindo o problema do req.ip undefined
@@ -415,6 +415,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/admin/payment-settings", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
+      return res.status(403).json({
+        error: "FORBIDDEN",
+        message: "Acesso negado. Apenas administradores podem acessar esta rota."
+      });
+    }
+
+    try {
+      const settings = await storage.getPaymentSettings(req.user.id);
+      await createAdminLog(req, "VIEW_PAYMENT_SETTINGS", "Visualização das configurações de pagamento");
+      res.json(settings || {});
+    } catch (error) {
+      console.error('Error fetching payment settings:', error);
+      res.status(500).json({
+        error: "SERVER_ERROR",
+        message: "Erro ao buscar configurações de pagamento"
+      });
+    }
+  });
+
+  app.post("/api/admin/payment-settings", async (req, res) => {
+    if (!req.isAuthenticated() || req.user?.username !== "admin@admin.com") {
+      return res.status(403).json({
+        error: "FORBIDDEN",
+        message: "Acesso negado. Apenas administradores podem acessar esta rota."
+      });
+    }
+
+    try {
+      const { clientSecret, accessToken } = req.body;
+
+      if (!clientSecret || !accessToken) {
+        return res.status(400).json({
+          error: "VALIDATION_ERROR",
+          message: "Client Secret e Access Token são obrigatórios"
+        });
+      }
+
+      const existingSettings = await storage.getPaymentSettings(req.user.id);
+      let settings;
+
+      if (existingSettings) {
+        settings = await storage.updatePaymentSettings(req.user.id, {
+          clientSecret,
+          accessToken
+        });
+      } else {
+        settings = await storage.savePaymentSettings({
+          userId: req.user.id,
+          clientSecret,
+          accessToken
+        });
+      }
+
+      await createAdminLog(req, "UPDATE_PAYMENT_SETTINGS", "Atualização das configurações de pagamento");
+
+      res.json(settings);
+    } catch (error) {
+      console.error('Error saving payment settings:', error);
+      res.status(500).json({
+        error: "SERVER_ERROR",
+        message: "Erro ao salvar configurações de pagamento"
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
