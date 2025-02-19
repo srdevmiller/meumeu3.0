@@ -181,6 +181,13 @@ export default function PricingPage() {
   });
 
   const handlePlanSelection = (plan: Plan) => {
+    // Se for plano básico, redireciona para registro
+    if (plan.price.monthly === 0 && plan.price.yearly === 0) {
+      setLocation("/auth");
+      return;
+    }
+
+    // Se for plano pago, mostra formulário de pagamento
     setSelectedPlan(plan);
     setShowCustomerForm(true);
     setShowPixCode(false);
@@ -476,16 +483,10 @@ export default function PricingPage() {
 
                 <div className="mt-6">
                   <p className="text-sm text-gray-600">
-                    {paymentId ? (
-                      <>
-                        Status do pagamento:{" "}
-                        <span className="font-medium text-yellow-600">
-                          Aguardando confirmação...
-                        </span>
-                      </>
-                    ) : (
-                      "Aguardando geração do pagamento..."
-                    )}
+                    Status do pagamento:
+                  </p>
+                  <p className="text-sm font-medium text-yellow-600 mt-1">
+                    Aguardando confirmação...
                   </p>
                 </div>
               </div>
