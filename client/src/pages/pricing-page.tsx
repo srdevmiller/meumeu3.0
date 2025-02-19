@@ -175,7 +175,7 @@ export default function PricingPage() {
     },
   });
 
-  // Consulta periódica do status do pagamento
+  // Payment status query
   const paymentStatusQuery = useQuery({
     queryKey: ["payment-status", paymentId],
     queryFn: async () => {
@@ -191,14 +191,20 @@ export default function PricingPage() {
           title: "Pagamento aprovado!",
           description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
         });
-        // Quando aprovado, redireciona para home após um pequeno delay
+
+        // Limpar estados e redirecionar
         setTimeout(() => {
-          setLocation("/home"); // Using wouter's setLocation
+          setShowPixCode(false);
+          setPaymentId(null);
+          setLocation("/home");
         }, 1500);
-        return false; // Para de consultar
+
+        return false; // Para imediatamente de consultar
       }
       return 5000; // Continua consultando a cada 5 segundos
-    }
+    },
+    retry: 3, // Limita o número de tentativas em caso de erro
+    staleTime: 0, // Sempre busca dados frescos
   });
 
 
