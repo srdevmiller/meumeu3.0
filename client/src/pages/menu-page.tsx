@@ -575,14 +575,16 @@ export default function MenuPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
+                    {/*Start of edited Card component*/}
                     <Card
                       className={`overflow-hidden ${
                         viewMode === "list"
-                          ? "flex flex-row h-36 sm:h-48"
+                          ? "flex h-36 sm:h-48"
                           : "h-full"
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300 cursor-pointer`}
                       onClick={() => setSelectedProduct(product)}
                     >
+                      {/* Image container */}
                       <div
                         className={
                           viewMode === "list"
@@ -593,26 +595,25 @@ export default function MenuPage() {
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className={`${
-                            viewMode === "list"
-                              ? "w-full h-full"
-                              : "absolute inset-0 w-full h-full"
-                          } object-cover`}
+                          className="w-full h-full object-cover"
                         />
                       </div>
+
+                      {/* Product info and actions container */}
                       <div
                         className={
                           viewMode === "list"
-                            ? "flex-1 flex flex-col p-3 sm:p-4"
+                            ? "flex-1 flex justify-between p-4"
                             : "p-6 flex flex-col"
                         }
                       >
-                        <div className="flex flex-row justify-between flex-grow gap-4">
-                          <div className="flex flex-col space-y-2">
-                            <h3 className="text-xl font-semibold line-clamp-2 text-foreground">
+                        {/* Product information */}
+                        <div className={`flex flex-col ${viewMode === "list" ? "justify-between" : ""}`}>
+                          <div className="space-y-2">
+                            <h3 className="text-lg font-semibold line-clamp-2 text-foreground">
                               {product.name}
                             </h3>
-                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-3 py-1 text-sm font-medium text-[var(--theme-color)]">
+                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-sm font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
                             {product.description && (
@@ -620,62 +621,64 @@ export default function MenuPage() {
                                 {product.description}
                               </p>
                             )}
-                            <p className="text-xl font-bold whitespace-nowrap text-foreground mt-auto">
-                              {formatPrice(product.price)}
-                            </p>
                           </div>
+                          <p className="text-xl font-bold text-foreground mt-2">
+                            {formatPrice(product.price)}
+                          </p>
+                        </div>
 
-                          <div className="flex flex-col justify-between items-end">
-                            {product.suggestions && product.suggestions.length > 0 && (
-                              <SuggestionsWidget
-                                suggestions={product.suggestions}
-                                className="mb-4"
-                              />
-                            )}
-                            <div className="flex items-center gap-2 mt-auto">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={`h-10 w-10 rounded-full transition-all duration-200 ${
+                        {/* Right side: Tags and actions */}
+                        <div className={`flex flex-col ${viewMode === "list" ? "justify-between items-end ml-4" : "items-end mt-4"}`}>
+                          {product.suggestions && product.suggestions.length > 0 && (
+                            <SuggestionsWidget
+                              suggestions={product.suggestions}
+                              className={viewMode === "list" ? "" : "mb-4"}
+                            />
+                          )}
+                          <div className={`flex items-center gap-2 ${viewMode === "list" ? "mt-2" : "mt-auto"}`}>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={`h-9 w-9 rounded-full transition-all duration-200 ${
+                                compareProducts.some((p) => p.id === product.id)
+                                  ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
+                                  : "hover:bg-[var(--theme-color)]/5"
+                              }`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleCompare(product);
+                              }}
+                            >
+                              <Scale
+                                className={`h-4 w-4 ${
                                   compareProducts.some((p) => p.id === product.id)
-                                    ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
-                                    : "hover:bg-[var(--theme-color)]/5"
+                                    ? "text-[var(--theme-color)]"
+                                    : "text-muted-foreground"
                                 }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleCompare(product);
-                                }}
-                              >
-                                <Scale
-                                  className={`h-5 w-5 ${
-                                    compareProducts.some((p) => p.id === product.id)
-                                      ? "text-[var(--theme-color)]"
-                                      : "text-muted-foreground"
-                                  }`}
-                                />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-10 w-10 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleFavorite(product.id);
-                                }}
-                              >
-                                <Heart
-                                  className={`h-5 w-5 transition-colors ${
-                                    data?.favorites.includes(product.id)
-                                      ? "fill-current text-red-500"
-                                      : "text-muted-foreground hover:text-red-400"
-                                  }`}
-                                />
-                              </Button>
-                            </div>
+                              />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-9 w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleFavorite(product.id);
+                              }}
+                            >
+                              <Heart
+                                className={`h-4 w-4 transition-colors ${
+                                  data?.favorites.includes(product.id)
+                                    ? "fill-current text-red-500"
+                                    : "text-muted-foreground hover:text-red-400"
+                                }`}
+                              />
+                            </Button>
                           </div>
                         </div>
                       </div>
                     </Card>
+                    {/*End of edited Card component*/}
                   </motion.div>
                 ))}
               </div>
@@ -836,7 +839,7 @@ export default function MenuPage() {
             }
 
             .scroll-reveal.visible {
-              opacity: 1;
+              opacity:1;
               transform: translateY(0);
             }
           `}
