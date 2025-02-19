@@ -8,6 +8,7 @@ import AnalyticsDashboard from "@/pages/analytics-dashboard";
 import ProfilePage from "@/pages/profile-page";
 import LandingPage from "@/pages/landing-page";
 import PricingPage from "@/pages/pricing-page";
+import WelcomePage from "@/pages/welcome-page";
 import { AuthProvider, useAuth } from "./hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Toaster } from "@/components/ui/toaster";
@@ -27,6 +28,7 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/menu/:businessName/:id" component={MenuPage} />
       <Route path="/pricing" component={PricingPage} />
+      <Route path="/welcome" component={WelcomePage} />
       <ProtectedRoute path="/admin" component={AdminDashboard} adminOnly={true} />
       <ProtectedRoute path="/admin/analytics" component={AnalyticsDashboard} adminOnly={true} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
