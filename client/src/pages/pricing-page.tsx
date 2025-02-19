@@ -191,13 +191,33 @@ export default function PricingPage() {
     enabled: !!paymentId && showPixCode && !paymentApproved,
     refetchInterval: (data) => {
       console.log("Current payment status data:", data);
-      if (data?.status === "approved" && data?.redirectUrl) {
-        console.log("Payment approved, redirecting to welcome page...");
+      if (data?.status === "approved") {
+        console.log("Payment approved, preparing redirect...");
         setPaymentApproved(true);
-        // Redirect to welcome page with a small delay to ensure all states are updated
+
+        // Construct welcome page URL with user data
+        const welcomeParams = new URLSearchParams({
+          name: form.getValues("name"),
+          email: form.getValues("email"),
+          phone: form.getValues("phone"),
+          planType: selectedPlan?.name || ''
+        });
+
+        const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
+        console.log("Redirecting to:", welcomeUrl);
+
+        // Ensure all states are updated before redirect
         setTimeout(() => {
-          window.location.href = data.redirectUrl;
-        }, 1500);
+          try {
+            console.log("Executing redirect to:", welcomeUrl);
+            setLocation(welcomeUrl);
+          } catch (error) {
+            console.error("Error during redirect:", error);
+            // Fallback to window.location if wouter fails
+            window.location.href = welcomeUrl;
+          }
+        }, 3000); // Increased timeout to 3 seconds
+
         return false; // Stop polling
       }
       return 5000; // Continue polling every 5 seconds
@@ -257,7 +277,7 @@ export default function PricingPage() {
     }
   };
 
-  // Effect to handle payment approval and redirect
+  // Effect to handle payment approval and toasts
   useEffect(() => {
     if (paymentApproved) {
       console.log("Payment approved in useEffect");
