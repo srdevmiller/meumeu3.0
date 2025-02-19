@@ -607,53 +607,78 @@ export default function HomePage() {
                       variants={item}
                       className={`relative bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 ${
                         viewMode === "list"
-                          ? "flex items-center"
+                          ? "flex items-center h-24"
                           : ""
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
-                      <div className={viewMode === "list" ? "w-28 h-full flex-shrink-0" : "aspect-square"}> {/* Increased width for list view */}
+                      <div className={viewMode === "list" ? "w-24 h-full flex-shrink-0" : "aspect-square"}>
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-2.5" : "p-2.5"}> {/* Reduced padding */}
-                        <div className="flex flex-col flex-grow">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="text-[13px] font-semibold break-words max-h-[2.8rem] overflow-hidden">
-                                {product.name}
-                              </h3>
-                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
-                                {categories.find((c) => c.id === product.categoryId)?.name}
-                              </span>
+                      <div className={viewMode === "list" ? "flex-1 flex items-center px-4" : "p-2.5"}>
+                        <div className={viewMode === "list" ? "flex-1" : "flex flex-col flex-grow"}>
+                          <div className={viewMode === "list" ? "flex flex-col" : "flex justify-between items-start"}>
+                            <h3 className="text-[13px] font-semibold break-words">
+                              {product.name}
+                            </h3>
+                            <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                              {categories.find((c) => c.id === product.categoryId)?.name}
+                            </span>
+                          </div>
+                        </div>
+                        {viewMode === "list" && (
+                          <div className="flex items-center gap-4 ml-auto">
+                            <p className="text-sm font-medium whitespace-nowrap">
+                              R$ {Number(product.price).toFixed(2)}
+                            </p>
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                className="text-[10px] h-6 py-0"
+                                onClick={() => handleEdit(product)}
+                              >
+                                <Pencil className="h-3 w-3 mr-1" />
+                                Editar
+                              </Button>
+                              <Button
+                                variant="outline"
+                                className="text-[10px] h-6 py-0 text-red-500 hover:text-red-600"
+                                onClick={() => setProductToDelete(product)}
+                              >
+                                <Trash2 className="h-3 w-3 mr-1" />
+                                Excluir
+                              </Button>
                             </div>
                           </div>
-                        </div>
-                        <div className={`flex ${viewMode === "list" ? "flex-col" : "flex-col"} mt-auto`}>
-                          <p className="text-sm font-medium">
-                            R$ {Number(product.price).toFixed(2)}
-                          </p>
-                          <div className={`flex gap-1 ${viewMode === "list" ? "flex-row" : "flex-col w-full"}`}>
-                            <Button
-                              variant="outline"
-                              className={`text-[10px] h-6 py-0 ${viewMode === "list" ? "flex-1" : "w-full"}`}
-                              onClick={() => handleEdit(product)}
-                            >
-                              <Pencil className="h-3 w-3 mr-1" />
-                              Editar
-                            </Button>
-                            <Button
-                              variant="outline"
-                              className={`text-[10px] h-6 py-0 text-red-500 hover:text-red-600 ${viewMode === "list" ? "flex-1" : "w-full"}`}
-                              onClick={() => setProductToDelete(product)}
-                            >
-                              <Trash2 className="h-3 w-3 mr-1" />
-                              Excluir
-                            </Button>
+                        )}
+                        {viewMode !== "list" && (
+                          <div className="flex flex-col mt-auto">
+                            <p className="text-sm font-medium">
+                              R$ {Number(product.price).toFixed(2)}
+                            </p>
+                            <div className="flex flex-col w-full gap-1">
+                              <Button
+                                variant="outline"
+                                className="text-[10px] h-6 py-0 w-full"
+                                onClick={() => handleEdit(product)}
+                              >
+                                <Pencil className="h-3 w-3 mr-1" />
+                                Editar
+                              </Button>
+                              <Button
+                                variant="outline"
+                                className="text-[10px] h-6 py-0 w-full text-red-500 hover:text-red-600"
+                                onClick={() => setProductToDelete(product)}
+                              >
+                                <Trash2 className="h-3 w-3 mr-1" />
+                                Excluir
+                              </Button>
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
                     </motion.div>
                   ))}
