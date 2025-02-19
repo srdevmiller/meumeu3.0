@@ -199,18 +199,16 @@ export default function HomePage() {
         title: "Produto criado",
         description: "O produto foi publicado com sucesso!",
       });
-      // Reset completo do formulário
       form.reset({
         name: "",
         price: 0,
         imageUrl: "",
         categoryId: undefined,
-        suggestions: [], // Garantir que as tags sejam resetadas
+        suggestions: [],
         description: "",
       });
       setImagePreview(null);
       setShowPublishForm(false);
-      setEditingProduct(null); // Garantir que não haja produto em edição
     },
     onError: (error: Error) => {
       toast({
@@ -237,18 +235,17 @@ export default function HomePage() {
         title: "Produto atualizado",
         description: "O produto foi atualizado com sucesso!",
       });
-      // Reset completo do formulário
+      setEditingProduct(null);
       form.reset({
         name: "",
         price: 0,
         imageUrl: "",
         categoryId: undefined,
-        suggestions: [], // Garantir que as tags sejam resetadas
+        suggestions: [],
         description: "",
       });
       setImagePreview(null);
       setShowPublishForm(false);
-      setEditingProduct(null); // Garantir que não haja produto em edição
     },
     onError: (error: Error) => {
       toast({
@@ -351,7 +348,7 @@ export default function HomePage() {
     "#7c3aed", // Roxo
     "#ef4444", // Vermelho
     "#f97316", // Laranja
-    "#0BD979", // Verde
+    "#84cc16", // Verde
     "#06b6d4", // Ciano
     "#3b82f6", // Azul
     "#ec4899", // Rosa
