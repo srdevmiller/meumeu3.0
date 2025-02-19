@@ -576,18 +576,18 @@ export default function MenuPage() {
                           <p className="text-base sm:text-lg font-bold">
                             {formatPrice(product.price)}
                           </p>
-                          <div className="flex gap-2">
+                          <div className="flex items-center gap-1.5">
                             <Button
                               variant="ghost"
                               size="icon"
-                              className={`h-8 w-8 sm:h-9 sm:w-9 ${
+                              className={`h-7 w-7 sm:h-8 sm:w-8 rounded-full transition-all duration-200 ${
                                 compareProducts.some((p) => p.id === product.id)
-                                  ? "bg-[var(--theme-color)]/10"
-                                  : ""
+                                  ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
+                                  : "hover:bg-[var(--theme-color)]/5"
                               }`}
                               onClick={() => toggleCompare(product)}
                             >
-                              <Scale className={`h-4 w-4 ${
+                              <Scale className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
                                 compareProducts.some((p) => p.id === product.id)
                                   ? "text-[var(--theme-color)]"
                                   : "text-muted-foreground"
@@ -596,14 +596,15 @@ export default function MenuPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-8 w-8 sm:h-9 sm:w-9"
+                              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
                               onClick={() => toggleFavorite(product.id)}
                             >
                               <Heart
-                                className={data?.favorites.includes(product.id)
-                                  ? "h-4 w-4 fill-current text-red-500"
-                                  : "h-4 w-4 text-muted-foreground"
-                                }
+                                className={`h-3.5 w-3.5 sm:h-4 sm:w-4 transition-colors ${
+                                  data?.favorites.includes(product.id)
+                                    ? "fill-current text-red-500"
+                                    : "text-muted-foreground hover:text-red-400"
+                                }`}
                               />
                             </Button>
                           </div>
