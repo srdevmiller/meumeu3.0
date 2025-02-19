@@ -619,71 +619,35 @@ export default function HomePage() {
                         />
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex items-center justify-between px-4" : "p-2.5 flex flex-col h-full"}>
-                        {viewMode === "list" ? (
-                          <>
-                            <div className="flex-1 flex flex-col">
-                              <h3 className="text-[13px] font-semibold break-words">
-                                {product.name}
-                              </h3>
-                              <p className="text-sm font-medium mt-1">
-                                R$ {Number(product.price).toFixed(2)}
-                              </p>
-                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)] mt-1">
-                                {categories.find((c) => c.id === product.categoryId)?.name}
-                              </span>
-                            </div>
-                            <div className="flex flex-col gap-2 min-w-[80px]">
-                              <Button
-                                variant="outline"
-                                className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
-                                onClick={() => handleEdit(product)}
-                              >
-                                <Pencil className="h-3 w-3 mr-2 flex-shrink-0" />
-                                <span className="truncate">Editar</span>
-                              </Button>
-                              <Button
-                                variant="outline"
-                                className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis text-red-500 hover:text-red-600"
-                                onClick={() => setProductToDelete(product)}
-                              >
-                                <Trash2 className="h-3 w-3 mr-2 flex-shrink-0" />
-                                <span className="truncate">Excluir</span>
-                              </Button>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex-1 flex flex-col">
-                              <h3 className="text-[13px] font-semibold break-words">
-                                {product.name}
-                              </h3>
-                              <p className="text-sm font-medium mt-1">
-                                R$ {Number(product.price).toFixed(2)}
-                              </p>
-                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)] mt-1">
-                                {categories.find((c) => c.id === product.categoryId)?.name}
-                              </span>
-                            </div>
-                            <div className="flex flex-col gap-2 mt-auto pt-2">
-                              <Button
-                                variant="outline"
-                                className="text-[10px] h-7 px-3 min-w-[60px] whitespace-nowrap overflow-hidden text-ellipsis"
-                                onClick={() => handleEdit(product)}
-                              >
-                                <Pencil className="h-3 w-3 mr-2 flex-shrink-0" />
-                                <span className="truncate">Editar</span>
-                              </Button>
-                              <Button
-                                variant="outline"
-                                className="text-[10px] h-7 px-3 min-w-[60px] whitespace-nowrap overflow-hidden text-ellipsis text-red-500 hover:text-red-600"
-                                onClick={() => setProductToDelete(product)}
-                              >
-                                <Trash2 className="h-3 w-3 mr-2 flex-shrink-0" />
-                                <span className="truncate">Excluir</span>
-                              </Button>
-                            </div>
-                          </>
-                        )}
+                        <div className="flex-1 flex flex-col">
+                          <h3 className="text-[13px] font-semibold break-words">
+                            {product.name}
+                          </h3>
+                          <p className="text-sm font-medium mt-1">
+                            R$ {Number(product.price).toFixed(2)}
+                          </p>
+                          <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)] mt-1">
+                            {categories.find((c) => c.id === product.categoryId)?.name}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-2 min-w-[80px] mt-auto pt-2">
+                          <Button
+                            variant="outline"
+                            className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
+                            onClick={() => handleEdit(product)}
+                          >
+                            <Pencil className="h-3 w-3 mr-2 flex-shrink-0" />
+                            <span className="truncate">Editar</span>
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis text-red-500 hover:text-red-600"
+                            onClick={() => setProductToDelete(product)}
+                          >
+                            <Trash2 className="h-3 w-3 mr-2 flex-shrink-0" />
+                            <span className="truncate">Excluir</span>
+                          </Button>
+                        </div>
                       </div>
                     </motion.div>
                   ))}
