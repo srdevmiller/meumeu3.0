@@ -575,21 +575,19 @@ export default function MenuPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
-                    {/*Start of edited Card component*/}
                     <Card
                       className={`overflow-hidden ${
                         viewMode === "list"
                           ? "flex h-36 sm:h-48"
-                          : "h-full"
+                          : "flex flex-col h-full"
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300 cursor-pointer`}
                       onClick={() => setSelectedProduct(product)}
                     >
-                      {/* Image container */}
                       <div
                         className={
                           viewMode === "list"
                             ? "w-36 sm:w-48 h-full flex-shrink-0"
-                            : "w-full aspect-square relative"
+                            : "w-full aspect-square"
                         }
                       >
                         <img
@@ -599,43 +597,39 @@ export default function MenuPage() {
                         />
                       </div>
 
-                      {/* Product info and actions container */}
                       <div
                         className={
                           viewMode === "list"
                             ? "flex-1 flex justify-between p-4"
-                            : "p-6 flex flex-col"
+                            : "flex flex-col p-4 flex-1"
                         }
                       >
-                        {/* Product information */}
-                        <div className={`flex flex-col ${viewMode === "list" ? "justify-between" : ""}`}>
-                          <div className="space-y-2">
-                            <h3 className="text-lg font-semibold line-clamp-2 text-foreground">
-                              {product.name}
-                            </h3>
-                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-sm font-medium text-[var(--theme-color)]">
+                        <div className="flex flex-col space-y-2">
+                          <h3 className="font-semibold text-lg line-clamp-2">
+                            {product.name}
+                          </h3>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
-                            {product.description && (
-                              <p className="text-sm text-muted-foreground line-clamp-2">
-                                {product.description}
-                              </p>
+                            {product.suggestions && product.suggestions.includes("new") && (
+                              <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-1 text-xs font-medium text-green-600 dark:text-green-400">
+                                Novidade
+                              </span>
                             )}
                           </div>
-                          <p className="text-xl font-bold text-foreground mt-2">
-                            {formatPrice(product.price)}
-                          </p>
+                          {product.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">
+                              {product.description}
+                            </p>
+                          )}
                         </div>
 
-                        {/* Right side: Tags and actions */}
-                        <div className={`flex flex-col ${viewMode === "list" ? "justify-between items-end ml-4" : "items-end mt-4"}`}>
-                          {product.suggestions && product.suggestions.length > 0 && (
-                            <SuggestionsWidget
-                              suggestions={product.suggestions}
-                              className={viewMode === "list" ? "" : "mb-4"}
-                            />
-                          )}
-                          <div className={`flex items-center gap-2 ${viewMode === "list" ? "mt-2" : "mt-auto"}`}>
+                        <div className="mt-auto pt-4 flex items-center justify-between">
+                          <p className="text-xl font-bold">
+                            {formatPrice(product.price)}
+                          </p>
+                          <div className="flex items-center gap-2">
                             <Button
                               variant="ghost"
                               size="icon"
@@ -678,7 +672,6 @@ export default function MenuPage() {
                         </div>
                       </div>
                     </Card>
-                    {/*End of edited Card component*/}
                   </motion.div>
                 ))}
               </div>
@@ -699,7 +692,6 @@ export default function MenuPage() {
           </div>
         </div>
 
-        {/* Sheet de comparação */}
         <Sheet open={showCompareSheet} onOpenChange={setShowCompareSheet}>
           <SheetContent side="right" className="w-full sm:max-w-lg">
             <SheetHeader>
@@ -769,7 +761,6 @@ export default function MenuPage() {
         )}
 
 
-        {/* Product Details Dialog */}
         <ProductDetailsDialog
           product={selectedProduct}
           categories={categories}
@@ -777,7 +768,6 @@ export default function MenuPage() {
           onOpenChange={(open) => !open && setSelectedProduct(null)}
         />
 
-        {/* Footer with CTA */}
         <motion.div
           className="py-8 bg-[var(--theme-color)] mt-12"
           initial={{ opacity: 0, y: 20 }}
