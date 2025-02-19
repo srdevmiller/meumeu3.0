@@ -554,17 +554,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       if (approvedStatuses.includes(paymentData.status)) {
         console.log("Pagamento aprovado, criando usuário...");
-        // Se o pagamento foi aprovado, criar o usuário com o plano escolhido
         const userData = paymentData.metadata.user_data;
-        const planId = paymentData.metadata.plan_id;
         const planType = paymentData.metadata.plan_type;
 
-        console.log("Dados para criação do usuário:", {
-          ...userData,
-          planType,
-          planId
-        });
+        // Verificar se o usuário já existe
+        const existingUser = await storage.getUserByUsername(userData.email);
 
+        if (existingUser) {
+          // Se o usuário já existe, apenas atualize o plano
+          const updatedUser = await storage.updateUserProfile(existingUser.id, {
+            planType,
+            businessName: userData.name,
+            phone: userData.phone
+          });
+          return res.json({ status: "approved", user: updatedUser });
+        }
+
+        // Se o usuário não existe, crie um novo
         const user = await storage.createUser({
           username: userData.email,
           businessName: userData.name,
@@ -574,9 +580,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           confirmPassword: userData.password
         });
 
-        console.log("Usuário criado com sucesso:", {
+        console.log("Usuário criado/atualizado com sucesso:", {
           id: user.id,
-          username: user.username
+          username: user.username,
+          planType
         });
 
         res.json({ status: "approved", user });

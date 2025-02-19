@@ -184,23 +184,17 @@ export default function PricingPage() {
       if (!response.ok) throw new Error("Erro ao verificar pagamento");
       return response.json();
     },
-    enabled: !!paymentId && showPixCode, // Only enabled when PIX code is shown
-    refetchInterval: (data) => {
-      // Para de consultar quando o pagamento for aprovado
-      return data?.status === "approved" ? false : 5000;
-    },
-    onSuccess: (data) => {
+    enabled: !!paymentId && showPixCode,
+    refetchInterval: (data: any) => {
       if (data?.status === "approved") {
-        setShowConfetti(true);
-        toast({
-          title: "Pagamento aprovado!",
-          description: "Seu cadastro foi concluído com sucesso.",
-        });
+        // Quando aprovado, redireciona para home após um pequeno delay
         setTimeout(() => {
-          setLocation("/home");
-        }, 1500); // Redirecionamento mais rápido (1.5 segundos)
+          window.location.href = "/home"; // Usando window.location para garantir refresh completo
+        }, 1500);
+        return false; // Para de consultar
       }
-    },
+      return 5000; // Continua consultando a cada 5 segundos
+    }
   });
 
 
