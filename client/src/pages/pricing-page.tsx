@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
+import ReactConfetti from 'react-confetti';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -114,8 +115,19 @@ export default function PricingPage() {
   const [showCustomerForm, setShowCustomerForm] = useState(false);
   const [showPixCode, setShowPixCode] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+
+  // Add effect to control confetti duration
+  useEffect(() => {
+    if (showConfetti) {
+      const timer = setTimeout(() => {
+        setShowConfetti(false);
+      }, 5000); // Show confetti for 5 seconds
+      return () => clearTimeout(timer);
+    }
+  }, [showConfetti]);
 
   const form = useForm<CustomerFormData>({
     resolver: zodResolver(customerFormSchema),
@@ -171,19 +183,25 @@ export default function PricingPage() {
     },
     onSuccess: (data: any) => {
       if (data?.status === "approved") {
+        setShowConfetti(true);
         toast({
           title: "Pagamento aprovado!",
           description: "Seu cadastro foi concluído com sucesso.",
         });
-        setLocation("/");
+        setTimeout(() => {
+          setLocation("/");
+        }, 3000); // Delay redirect to show confetti and toast
       }
     },
   });
 
   const handlePlanSelection = (plan: Plan) => {
-    // Se for plano básico, redireciona para registro
+    // Se for plano básico, redireciona para registro e mostra confetti
     if (plan.price.monthly === 0 && plan.price.yearly === 0) {
-      setLocation("/auth");
+      setShowConfetti(true);
+      setTimeout(() => {
+        setLocation("/auth");
+      }, 2000); // Delay redirect to show confetti
       return;
     }
 
@@ -230,6 +248,15 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+      {showConfetti && (
+        <ReactConfetti
+          width={window.innerWidth}
+          height={window.innerHeight}
+          recycle={false}
+          numberOfPieces={500}
+          gravity={0.3}
+        />
+      )}
       {/* Header */}
       <div className="px-4 py-16 mx-auto text-center sm:px-6 lg:px-8">
         <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-5xl md:text-6xl">
