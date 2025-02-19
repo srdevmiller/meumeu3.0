@@ -200,7 +200,7 @@ export default function PricingPage() {
 
       // Calcula o valor total baseado no plano (mensal ou anual)
       const amount = yearlyBilling
-        ? selectedPlan!.price.yearly * 12  // Preço anual * 12 meses
+        ? Number((selectedPlan!.price.yearly * 12).toFixed(2))  // Preço anual * 12 meses, fixando 2 casas decimais
         : selectedPlan!.price.monthly;     // Preço mensal
 
       // Gera o código PIX
