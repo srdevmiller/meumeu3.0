@@ -63,6 +63,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useTutorial } from "@/components/tutorial/TutorialContext";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -154,6 +155,37 @@ export default function HomePage() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [showPublishForm, setShowPublishForm] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const { startTutorial, nextStep, currentStep } = useTutorial();
+
+  // Start tutorial automatically for new users
+  useEffect(() => {
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+    if (!hasSeenTutorial && user) {
+      startTutorial([
+        {
+          target: '[data-tutorial="new-product"]',
+          content: 'Comece adicionando seu primeiro produto ao cardápio. Clique aqui para criar um novo item.',
+          title: 'Adicionar Produto',
+        },
+        {
+          target: '[data-tutorial="edit-profile"]',
+          content: 'Personalize seu perfil e configure as informações do seu estabelecimento.',
+          title: 'Configurar Perfil',
+        },
+        {
+          target: '[data-tutorial="view-menu"]',
+          content: 'Visualize como seu cardápio aparece para os clientes e compartilhe o link.',
+          title: 'Visualizar Cardápio',
+        },
+        {
+          target: '[data-tutorial="product-grid"]',
+          content: 'Aqui você pode ver todos os seus produtos, editá-los ou removê-los quando necessário.',
+          title: 'Gerenciar Produtos',
+        },
+      ]);
+      localStorage.setItem('hasSeenTutorial', 'true');
+    }
+  }, [user, startTutorial]);
 
   const form = useForm<InsertProduct>({
     resolver: zodResolver(insertProductSchema),
@@ -429,6 +461,7 @@ export default function HomePage() {
                   variant="outline"
                   className="relative overflow-hidden"
                   onClick={createRipple}
+                  data-tutorial="edit-profile"
                 >
                   <Settings className="w-4 h-4 mr-2" />
                   Editar Perfil
@@ -442,6 +475,7 @@ export default function HomePage() {
                   variant="outline"
                   className="relative overflow-hidden"
                   onClick={createRipple}
+                  data-tutorial="view-menu"
                 >
                   <ExternalLink className="w-4 h-4 mr-2" />
                   Ver Cardápio Público
@@ -454,6 +488,7 @@ export default function HomePage() {
             variant="default"
             onClick={() => setShowPublishForm(!showPublishForm)}
             className="w-full justify-center"
+            data-tutorial="new-product"
           >
             <Plus className="w-4 h-4 mr-2" />
             Novo Produto
@@ -716,7 +751,7 @@ export default function HomePage() {
                     Gerencie seus produtos publicados
                   </CardDescription>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2" data-tutorial="product-grid">
                   <Button
                     variant={viewMode === "grid" ? "default" : "outline"}
                     size="icon"

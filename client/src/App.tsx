@@ -11,6 +11,8 @@ import PricingPage from "@/pages/pricing-page";
 import { AuthProvider, useAuth } from "./hooks/use-auth";
 import { ProtectedRoute } from "@/components/protected-route";
 import { Toaster } from "@/components/ui/toaster";
+import { TutorialProvider } from "@/components/tutorial/TutorialContext";
+import { TutorialTooltip } from "@/components/tutorial/TutorialTooltip";
 
 // Separate component for root route to avoid conditional hook usage
 function RootRoute() {
@@ -36,8 +38,11 @@ function Router() {
 function App() {
   return (
     <AuthProvider>
-      <Router />
-      <Toaster />
+      <TutorialProvider>
+        <Router />
+        <TutorialTooltip />
+        <Toaster />
+      </TutorialProvider>
     </AuthProvider>
   );
 }
