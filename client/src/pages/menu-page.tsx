@@ -388,8 +388,8 @@ export default function MenuPage() {
                 onClick={() => setShowFilters(!showFilters)}
                 className="w-full flex items-center gap-2 bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 text-sm md:text-base"
               >
-                <Filter className="h-4 w-4" />
-                {showFilters ? "Ocultar filtros" : "Filtrar produtos"}
+                {/* Removed Filter icon */}
+                {showFilters ? "Ocultar filtros" : "Filtrar"}
               </Button>
 
               <AnimatePresence>
@@ -471,6 +471,17 @@ export default function MenuPage() {
                     Qtd Produtos {filteredProducts.length}
                   </span>
                   <div className="flex items-center gap-2">
+                    <Button
+                      variant={showFilters ? "default" : "outline"}
+                      size="icon"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className={`h-8 w-8 md:h-10 md:w-10 ${
+                        showFilters ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                      }`}
+                    >
+                      <Filter className="h-3 w-3 md:h-4 md:w-4" />
+                    </Button>
+
                     <Button
                       variant={sortOrder === "asc" ? "default" : "outline"}
                       size="icon"
