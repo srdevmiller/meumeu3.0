@@ -198,9 +198,14 @@ export default function PricingPage() {
       // First validate CPF
       await validateCPFMutation.mutateAsync(data.cpf);
 
+      // Calcula o valor total baseado no plano (mensal ou anual)
+      const amount = yearlyBilling 
+        ? selectedPlan!.price.yearly * 12  // Preço anual * 12 meses
+        : selectedPlan!.price.monthly;     // Preço mensal
+
       // Gera o código PIX
       const pixResponse = await generatePixMutation.mutateAsync({
-        amount: yearlyBilling ? selectedPlan!.price.yearly * 12 : selectedPlan!.price.monthly,
+        amount,
         planId: selectedPlan!.id,
         customerData: data,
       });

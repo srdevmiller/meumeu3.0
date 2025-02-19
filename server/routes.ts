@@ -485,12 +485,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/payments/pix", async (req, res) => {
     try {
-      const { amount, planId, customerData } = req.body;
+      const { amount, planId, customerData, planType } = req.body;
 
       // Formatar os dados do cliente para o Mercado Pago
       const paymentData = {
         transaction_amount: amount,
-        description: `Assinatura do Plano ${planId}`,
+        description: `Assinatura do Plano ${planId} - ${planType === 'monthly' ? 'Mensal' : 'Anual'}`,
         payer: {
           email: customerData.email,
           first_name: customerData.name.split(' ')[0],
@@ -499,6 +499,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
             type: "CPF",
             number: customerData.cpf
           }
+        },
+        metadata: {
+          plan_id: planId,
+          plan_type: planType,
+          user_data: customerData
         }
       };
 
@@ -522,10 +527,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Se o pagamento foi aprovado, criar o usuário com o plano escolhido
         const userData = status.metadata.user_data;
         const planId = status.metadata.plan_id;
+        const planType = status.metadata.plan_type;
 
         const user = await storage.createUser({
           ...userData,
-          planType: planId,
+          planType: planType,
           password: await hashPassword(userData.password),
           confirmPassword: userData.password
         });
