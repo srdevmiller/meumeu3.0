@@ -635,19 +635,19 @@ export default function HomePage() {
                             <div className="flex flex-col gap-2">
                               <Button
                                 variant="outline"
-                                className="text-[10px] h-6 py-0"
+                                className="text-[10px] h-6 py-0 px-2 min-w-[60px] max-w-full whitespace-nowrap overflow-hidden text-ellipsis"
                                 onClick={() => handleEdit(product)}
                               >
-                                <Pencil className="h-3 w-3 mr-1" />
-                                Editar
+                                <Pencil className="h-3 w-3 mr-1 flex-shrink-0" />
+                                <span className="truncate">Editar</span>
                               </Button>
                               <Button
                                 variant="outline"
-                                className="text-[10px] h-6 py-0 text-red-500 hover:text-red-600"
+                                className="text-[10px] h-6 py-0 px-2 min-w-[60px] max-w-full whitespace-nowrap overflow-hidden text-ellipsis text-red-500 hover:text-red-600"
                                 onClick={() => setProductToDelete(product)}
                               >
-                                <Trash2 className="h-3 w-3 mr-1" />
-                                Excluir
+                                <Trash2 className="h-3 w-3 mr-1 flex-shrink-0" />
+                                <span className="truncate">Excluir</span>
                               </Button>
                             </div>
                           </>
@@ -670,19 +670,19 @@ export default function HomePage() {
                               <div className="flex gap-2">
                                 <Button
                                   variant="outline"
-                                  className="text-[10px] h-6 py-0 flex-1"
+                                  className="text-[10px] h-6 py-0 px-2 min-w-[60px] flex-1 whitespace-nowrap overflow-hidden text-ellipsis"
                                   onClick={() => handleEdit(product)}
                                 >
-                                  <Pencil className="h-3 w-3 mr-1" />
-                                  Editar
+                                  <Pencil className="h-3 w-3 mr-1 flex-shrink-0" />
+                                  <span className="truncate">Editar</span>
                                 </Button>
                                 <Button
                                   variant="outline"
-                                  className="text-[10px] h-6 py-0 flex-1 text-red-500 hover:text-red-600"
+                                  className="text-[10px] h-6 py-0 px-2 min-w-[60px] flex-1 whitespace-nowrap overflow-hidden text-ellipsis text-red-500 hover:text-red-600"
                                   onClick={() => setProductToDelete(product)}
                                 >
-                                  <Trash2 className="h-3 w-3 mr-1" />
-                                  Excluir
+                                  <Trash2 className="h-3 w-3 mr-1 flex-shrink-0" />
+                                  <span className="truncate">Excluir</span>
                                 </Button>
                               </div>
                             </div>
