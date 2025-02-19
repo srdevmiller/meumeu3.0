@@ -226,6 +226,21 @@ export default function PricingPage() {
     staleTime: 0,
   });
 
+  // Effect to handle payment approval and toasts
+  useEffect(() => {
+    if (paymentApproved) {
+      console.log("Payment approved in useEffect");
+      toast({
+        title: "Pagamento aprovado!",
+        description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
+      });
+
+      // Clear states
+      setShowPixCode(false);
+      setPaymentId(null);
+    }
+  }, [paymentApproved, toast]);
+
   const handlePlanSelection = (plan: Plan) => {
     // Se for plano básico, redireciona para registro e mostra confetti
     if (plan.price.monthly === 0 && plan.price.yearly === 0) {
@@ -277,20 +292,6 @@ export default function PricingPage() {
     }
   };
 
-  // Effect to handle payment approval and toasts
-  useEffect(() => {
-    if (paymentApproved) {
-      console.log("Payment approved in useEffect");
-      toast({
-        title: "Pagamento aprovado!",
-        description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
-      });
-
-      // Clear states
-      setShowPixCode(false);
-      setPaymentId(null);
-    }
-  }, [paymentApproved, toast]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
