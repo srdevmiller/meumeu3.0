@@ -77,8 +77,8 @@ export default function MenuPage() {
   const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [showFilters, setShowFilters] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
+  const [showFilters, setShowFilters] = useState(window.innerWidth >= 640);
+  const [showSearch, setShowSearch] = useState(window.innerWidth >= 640);
   const { user } = useAuth();
   const { toast } = useToast();
   const [theme, setTheme] = useState<"light" | "dark">(
@@ -89,6 +89,17 @@ export default function MenuPage() {
   const [showCompareSheet, setShowCompareSheet] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isLargeScreen = window.innerWidth >= 640;
+      setShowSearch(isLargeScreen);
+      setShowFilters(isLargeScreen);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -372,6 +383,7 @@ export default function MenuPage() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2 }}
+                    className="sm:!h-auto sm:!opacity-100"
                   >
                     <Card>
                       <CardHeader className="pb-2">
@@ -397,7 +409,13 @@ export default function MenuPage() {
               </AnimatePresence>
               <AnimatePresence>
                 {showFilters && (
-                  <div className="space-y-4 md:space-y-6">
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="sm:!h-auto sm:!opacity-100"
+                  >
                     <Card>
                       <CardHeader>
                         <CardTitle>Categorias</CardTitle>
@@ -458,7 +476,7 @@ export default function MenuPage() {
                         </div>
                       </CardContent>
                     </Card>
-                  </div>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
@@ -478,7 +496,7 @@ export default function MenuPage() {
                       variant={showSearch ? "default" : "outline"}
                       size="icon"
                       onClick={() => setShowSearch(!showSearch)}
-                      className={`h-8 w-8 md:h-10 md:w-10 ${
+                      className={`h-8 w-8 md:h-10 md:w-10 sm:hidden ${
                         showSearch ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
                       }`}
                     >
@@ -489,7 +507,7 @@ export default function MenuPage() {
                       variant={showFilters ? "default" : "outline"}
                       size="icon"
                       onClick={() => setShowFilters(!showFilters)}
-                      className={`h-8 w-8 md:h-10 md:w-10 ${
+                      className={`h-8 w-8 md:h-10 md:w-10 sm:hidden ${
                         showFilters ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
                       }`}
                     >
@@ -876,7 +894,10 @@ export default function MenuPage() {
               color: white;
               transform: scale(1.05);            }
 
-            /* Scroll reveal animation.scroll-reveal {            opacity: 0;              transform: translateY(20px);
+            /* Scroll reveal animation*/
+            .scroll-reveal {
+              opacity: 0;
+              transform: translateY(20px);
               transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             }
             .scroll-reveal.visible {
