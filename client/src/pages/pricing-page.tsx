@@ -393,93 +393,97 @@ export default function PricingPage() {
         }
       }}>
         <DialogContent className="w-[85vw] max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Complete seu cadastro</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-2xl">Complete seu cadastro</DialogTitle>
+            <DialogDescription className="text-lg">
               Preencha seus dados para continuar com a assinatura do plano {selectedPlan?.name}
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nome Completo</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Seu nome completo" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input type="email" placeholder="seu@email.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Telefone</FormLabel>
-                    <FormControl>
-                      <Input type="tel" placeholder="(11) 99999-9999" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="cpf"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>CPF</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Apenas números" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Senha</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Digite sua senha" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirme sua senha</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Digite sua senha novamente" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 px-4">
+              <div className="grid gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome Completo</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Seu nome completo" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="seu@email.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Telefone</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="(11) 99999-9999" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="cpf"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CPF</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Apenas números" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Senha</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Digite sua senha" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirme sua senha</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Digite sua senha novamente" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Button type="submit" className="w-full py-6 text-lg">
                 Continuar
               </Button>
             </form>
@@ -490,25 +494,26 @@ export default function PricingPage() {
       {/* PIX QR Code Dialog */}
       <Dialog open={showPixCode} onOpenChange={setShowPixCode}>
         <DialogContent className="w-[85vw] max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Pagamento via PIX</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="text-center">
+            <DialogTitle className="text-2xl">Pagamento via PIX</DialogTitle>
+            <DialogDescription className="text-lg">
               Escaneie o QR Code ou copie o código PIX para realizar o pagamento
             </DialogDescription>
           </DialogHeader>
           {generatePixMutation.data && (
-            <div className="mt-4 text-center">
-              <div className="bg-white p-6 rounded-lg">
-                <img
-                  src={`data:image/png;base64,${generatePixMutation.data.point_of_interaction.transaction_data.qr_code_base64}`}
-                  alt="QR Code PIX"
-                  className="mx-auto w-48 h-48"
-                />
-                <div className="mt-4">
-                  <p className="text-xs text-gray-500 mb-2">Código PIX para copiar e colar:</p>
-                  <div className="relative">
+            <div className="mt-8">
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* QR Code Section */}
+                <div className="flex flex-col items-center space-y-6 p-6 bg-white rounded-lg">
+                  <img
+                    src={`data:image/png;base64,${generatePixMutation.data.point_of_interaction.transaction_data.qr_code_base64}`}
+                    alt="QR Code PIX"
+                    className="w-64 h-64"
+                  />
+                  <div className="w-full space-y-4">
+                    <p className="text-sm text-gray-500 text-center">Código PIX para copiar e colar:</p>
                     <div
-                      className="p-3 bg-gray-50 rounded border text-xs font-mono break-all cursor-pointer hover:bg-gray-100 transition-colors"
+                      className="p-4 bg-gray-50 rounded border text-xs font-mono break-all cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => {
                         navigator.clipboard.writeText(generatePixMutation.data.point_of_interaction.transaction_data.qr_code);
                         toast({
@@ -522,61 +527,60 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                {/* Nova seção - Dados do pedido */}
-                <div className="mt-6 border-t pt-4">
-                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Dados do pedido</h4>
-                  <div className="space-y-2 text-sm text-left">
-                    <p className="flex justify-between">
-                      <span className="text-gray-500">ID da transação:</span>
+                {/* Order Details Section */}
+                <div className="space-y-6 p-6 bg-gray-50 rounded-lg">
+                  <h4 className="text-xl font-semibold text-center">Dados do pedido</h4>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <span className="text-gray-600">ID da transação:</span>
                       <span className="font-medium">{generatePixMutation.data.charges_execution_info.internal_execution.execution_id}</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-500">Descrição:</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <span className="text-gray-600">Descrição:</span>
                       <span className="font-medium">{generatePixMutation.data.description}</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-500">Titular:</span>
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <span className="text-gray-600">Titular:</span>
                       <span className="font-medium">{generatePixMutation.data.point_of_interaction.transaction_data.bank_info.collector.account_holder_name}</span>
-                    </p>
-                    <p className="flex justify-between">
-                      <span className="text-gray-500">Valor:</span>
-                      <span className="font-medium">
+                    </div>
+                    <div className="flex justify-between items-center py-2 border-b">
+                      <span className="text-gray-600">Valor:</span>
+                      <span className="font-medium text-lg text-green-600">
                         {new Intl.NumberFormat('pt-BR', {
                           style: 'currency',
                           currency: 'BRL'
                         }).format(generatePixMutation.data.transaction_amount)}
                       </span>
-                    </p>
+                    </div>
                   </div>
+
+                  {/* Continue Button */}
+                  {paymentStatusQuery.data?.status === "approved" && (
+                    <Button
+                      className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-6 text-lg"
+                      onClick={() => {
+                        console.log("Form values:", {
+                          name: form.getValues("name"),
+                          email: form.getValues("email"),
+                          phone: form.getValues("phone"),
+                          planType: selectedPlan?.name
+                        });
+
+                        const welcomeParams = new URLSearchParams({
+                          name: form.getValues("name") || '',
+                          email: form.getValues("email") || '',
+                          phone: form.getValues("phone") || '',
+                          planType: selectedPlan?.name?.toLowerCase() || 'basic'
+                        });
+                        const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
+                        console.log("Redirecting to:", welcomeUrl);
+                        setLocation(welcomeUrl);
+                      }}
+                    >
+                      Continuar
+                    </Button>
+                  )}
                 </div>
-
-                {/* Botão Continuar - Visível apenas quando o pagamento for aprovado */}
-                {paymentStatusQuery.data?.status === "approved" && (
-                  <Button
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white"
-                    onClick={() => {
-                      // Debug log para verificar os valores antes do redirecionamento
-                      console.log("Form values:", {
-                        name: form.getValues("name"),
-                        email: form.getValues("email"),
-                        phone: form.getValues("phone"),
-                        planType: selectedPlan?.name
-                      });
-
-                      const welcomeParams = new URLSearchParams({
-                        name: form.getValues("name") || '',
-                        email: form.getValues("email") || '',
-                        phone: form.getValues("phone") || '',
-                        planType: selectedPlan?.name?.toLowerCase() || 'basic'
-                      });
-                      const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
-                      console.log("Redirecting to:", welcomeUrl);
-                      setLocation(welcomeUrl);
-                    }}
-                  >
-                    Continuar
-                  </Button>
-                )}
               </div>
             </div>
           )}
