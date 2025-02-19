@@ -4,20 +4,21 @@ import { Badge } from "./badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 import { cn } from "@/lib/utils";
 
-export type SuggestionType = 'popular' | 'healthy' | 'spicy' | 'vegetarian' | 'chefs-choice' | 'new' | 'premium';
+export interface SuggestionType {
+  type: 'popular' | 'healthy' | 'spicy' | 'vegetarian' | 'chefs-choice' | 'new' | 'premium' | 'out-of-stock';
+  color?: string;
+}
 
 interface SuggestionInfo {
-  id: string;
-  type: SuggestionType;
+  type: SuggestionType['type'];
   icon: React.ReactNode;
   label: string;
   description: string;
   color: string;
 }
 
-const suggestionTypes: Record<SuggestionType, SuggestionInfo> = {
+const suggestionTypes: Record<SuggestionType['type'], SuggestionInfo> = {
   'popular': {
-    id: 'popular',
     type: 'popular',
     icon: <Fire size={16} />,
     label: 'Mais Pedido',
@@ -25,7 +26,6 @@ const suggestionTypes: Record<SuggestionType, SuggestionInfo> = {
     color: 'text-orange-500'
   },
   'healthy': {
-    id: 'healthy',
     type: 'healthy',
     icon: <Leaf size={16} />,
     label: 'Saudável',
@@ -33,7 +33,6 @@ const suggestionTypes: Record<SuggestionType, SuggestionInfo> = {
     color: 'text-green-500'
   },
   'spicy': {
-    id: 'spicy',
     type: 'spicy',
     icon: <Fire size={16} />,
     label: 'Picante',
@@ -41,7 +40,6 @@ const suggestionTypes: Record<SuggestionType, SuggestionInfo> = {
     color: 'text-red-500'
   },
   'vegetarian': {
-    id: 'vegetarian',
     type: 'vegetarian',
     icon: <Leaf size={16} />,
     label: 'Vegetariano',
@@ -49,7 +47,6 @@ const suggestionTypes: Record<SuggestionType, SuggestionInfo> = {
     color: 'text-emerald-500'
   },
   'chefs-choice': {
-    id: 'chefs-choice',
     type: 'chefs-choice',
     icon: <ForkKnife size={16} />,
     label: 'Sugestão do Chef',
@@ -57,7 +54,6 @@ const suggestionTypes: Record<SuggestionType, SuggestionInfo> = {
     color: 'text-purple-500'
   },
   'new': {
-    id: 'new',
     type: 'new',
     icon: <Star size={16} />,
     label: 'Novidade',
@@ -65,17 +61,23 @@ const suggestionTypes: Record<SuggestionType, SuggestionInfo> = {
     color: 'text-blue-500'
   },
   'premium': {
-    id: 'premium',
     type: 'premium',
     icon: <Coffee size={16} />,
     label: 'Premium',
     description: 'Item especial com ingredientes selecionados',
     color: 'text-yellow-500'
+  },
+  'out-of-stock': {
+    type: 'out-of-stock',
+    icon: <Info size={16} />,
+    label: 'Em Falta',
+    description: 'Este item está temporariamente indisponível',
+    color: 'text-gray-500'
   }
 };
 
 interface SuggestionBadgeProps {
-  type: SuggestionType;
+  type: SuggestionType['type'];
   className?: string;
 }
 
@@ -111,16 +113,18 @@ export function SuggestionBadge({ type, className }: SuggestionBadgeProps) {
 }
 
 interface SuggestionsWidgetProps {
-  suggestions: SuggestionType[];
+  suggestions: string[];
   className?: string;
 }
 
 export function SuggestionsWidget({ suggestions, className }: SuggestionsWidgetProps) {
+  if (!suggestions || suggestions.length === 0) return null;
+
   return (
     <div className={cn("flex flex-wrap gap-1.5 items-center group", className)}>
       <Info size={16} className="text-muted-foreground flex-shrink-0 transition-transform duration-200 group-hover:rotate-12" />
       {suggestions.map((type) => (
-        <SuggestionBadge key={type} type={type} />
+        <SuggestionBadge key={type} type={type as SuggestionType['type']} />
       ))}
     </div>
   );

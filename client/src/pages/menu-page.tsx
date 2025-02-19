@@ -61,7 +61,7 @@ const categories = [
 
 type MenuData = {
   products: (Product & {
-    suggestions?: SuggestionType[];
+    suggestions?: string[];
   })[];
   businessName: string;
   bannerImageUrl?: string;
