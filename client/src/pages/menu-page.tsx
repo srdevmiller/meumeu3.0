@@ -66,11 +66,7 @@ const categories = [
 
 type MenuData = {
   products: (Product & {
-    suggestions?: Array<{
-      id: number;
-      text: string;
-      color?: string;
-    }>;
+    suggestions?: SuggestionType[];
   })[];
   businessName: string;
   bannerImageUrl?: string;
@@ -571,11 +567,7 @@ export default function MenuPage() {
                           </div>
                           {product.suggestions && product.suggestions.length > 0 && (
                             <SuggestionsWidget
-                              suggestions={product.suggestions.map(suggestion => ({
-                                id: suggestion.id,
-                                text: suggestion.text,
-                                color: suggestion.color || '#9914F0' // Fallback color if none is provided
-                              }))}
+                              suggestions={product.suggestions}
                               className="mt-1"
                             />
                           )}

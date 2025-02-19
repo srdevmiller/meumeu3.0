@@ -1,1 +1,5 @@
-export type SuggestionType = 'popular' | 'healthy' | 'spicy' | 'vegetarian' | 'chefs-choice' | 'new' | 'premium';
+export interface SuggestionType {
+  id: number;
+  text: string;
+  color?: string;
+}
