@@ -635,10 +635,10 @@ export default function HomePage() {
                           <p className="text-sm font-medium">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
-                          <div className={`flex gap-2 ${viewMode === "list" ? "flex-row" : "flex-col w-full"}`}>
+                          <div className={`flex gap-1 ${viewMode === "list" ? "flex-row" : "flex-col w-full"}`}>
                             <Button
                               variant="outline"
-                              className={`text-xs py-1 ${viewMode === "list" ? "flex-1" : "w-full"}`}
+                              className={`text-[10px] h-6 py-0 ${viewMode === "list" ? "flex-1" : "w-full"}`}
                               onClick={() => handleEdit(product)}
                             >
                               <Pencil className="h-3 w-3 mr-1" />
@@ -646,7 +646,7 @@ export default function HomePage() {
                             </Button>
                             <Button
                               variant="outline"
-                              className={`text-xs py-1 text-red-500 hover:text-red-600 ${viewMode === "list" ? "flex-1" : "w-full"}`}
+                              className={`text-[10px] h-6 py-0 text-red-500 hover:text-red-600 ${viewMode === "list" ? "flex-1" : "w-full"}`}
                               onClick={() => setProductToDelete(product)}
                             >
                               <Trash2 className="h-3 w-3 mr-1" />
