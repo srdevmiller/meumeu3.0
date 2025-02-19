@@ -176,7 +176,7 @@ export default function PricingPage() {
   });
 
   // Consulta periódica do status do pagamento
-  useQuery({
+  const paymentStatusQuery = useQuery({
     queryKey: ["payment-status", paymentId],
     queryFn: async () => {
       if (!paymentId) return null;
@@ -185,10 +185,11 @@ export default function PricingPage() {
       return response.json();
     },
     enabled: !!paymentId,
-    refetchInterval: (data: any) => {
+    refetchInterval: (data) => {
+      // Para de consultar quando o pagamento for aprovado
       return data?.status === "approved" ? false : 5000;
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data) => {
       if (data?.status === "approved") {
         setShowConfetti(true);
         toast({
@@ -196,11 +197,12 @@ export default function PricingPage() {
           description: "Seu cadastro foi concluído com sucesso.",
         });
         setTimeout(() => {
-          setLocation("/");
-        }, 3000); // Delay redirect to show confetti and toast
+          setLocation("/home");
+        }, 1500); // Redirecionamento mais rápido (1.5 segundos)
       }
     },
   });
+
 
   const handlePlanSelection = (plan: Plan) => {
     // Se for plano básico, redireciona para registro e mostra confetti
@@ -551,8 +553,14 @@ export default function PricingPage() {
                   <p className="text-sm text-gray-600">
                     Status do pagamento:
                   </p>
-                  <p className="text-sm font-medium text-yellow-600 mt-1">
-                    Aguardando confirmação...
+                  <p className={`text-sm font-medium mt-1 ${
+                    paymentStatusQuery.data?.status === "approved" 
+                      ? "text-green-600" 
+                      : "text-yellow-600"
+                  }`}>
+                    {paymentStatusQuery.data?.status === "approved" 
+                      ? "Pagamento aprovado!" 
+                      : "Aguardando confirmação..."}
                   </p>
                 </div>
               </div>
