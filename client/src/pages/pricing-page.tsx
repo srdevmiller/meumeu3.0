@@ -33,6 +33,11 @@ const customerFormSchema = z.object({
   email: z.string().email("Email inválido"),
   phone: z.string().min(10, "Telefone inválido"),
   cpf: z.string().min(11, "CPF inválido").max(11, "CPF inválido"),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+  confirmPassword: z.string()
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
 });
 
 type CustomerFormData = z.infer<typeof customerFormSchema>;
@@ -136,6 +141,8 @@ export default function PricingPage() {
       email: "",
       phone: "",
       cpf: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -438,6 +445,32 @@ export default function PricingPage() {
                     <FormLabel>CPF</FormLabel>
                     <FormControl>
                       <Input placeholder="Apenas números" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Senha</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Digite sua senha" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirme sua senha</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Digite sua senha novamente" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
