@@ -5,7 +5,7 @@ declare module 'express-session' {
   }
 }
 
-import { pgTable, text, serial, decimal, integer, timestamp, jsonb, PgArray } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, decimal, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -16,8 +16,8 @@ export const users = pgTable("users", {
   businessName: text("business_name").notNull(),
   phone: text("phone").notNull(),
   bannerImageUrl: text("banner_image_url"),
-  themeColor: text("theme_color").default("#7c3aed"), 
-  logoUrl: text("logo_url"), 
+  themeColor: text("theme_color").default("#7c3aed"),
+  logoUrl: text("logo_url"),
 });
 
 export const categories = pgTable("categories", {
@@ -90,7 +90,7 @@ export const insertProductSchema = createInsertSchema(products)
   })
   .extend({
     price: z.number().min(0, "O preço deve ser maior que zero"),
-    suggestions: z.array(z.enum(['popular', 'healthy', 'spicy', 'vegetarian', 'chefs-choice', 'new', 'premium'])).optional(),
+    suggestions: z.array(z.enum(['new', 'premium', 'popular'])).optional(),
   });
 
 export const updateProductSchema = createInsertSchema(products)
@@ -102,7 +102,7 @@ export const updateProductSchema = createInsertSchema(products)
   })
   .extend({
     price: z.number().min(0, "O preço deve ser maior que zero"),
-    suggestions: z.array(z.enum(['popular', 'healthy', 'spicy', 'vegetarian', 'chefs-choice', 'new', 'premium'])).optional(),
+    suggestions: z.array(z.enum(['new', 'premium', 'popular'])).optional(),
   })
   .partial();
 

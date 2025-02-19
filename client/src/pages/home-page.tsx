@@ -51,6 +51,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { motion } from 'framer-motion'; // Import motion
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/ui/toggle-group";
+import { Star, CupSoda, Flame } from "lucide-react";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -126,6 +131,7 @@ export default function HomePage() {
       price: 0,
       imageUrl: "",
       categoryId: 0,
+      suggestions: [],
     },
   });
 
@@ -232,6 +238,7 @@ export default function HomePage() {
       price: Number(product.price),
       imageUrl: product.imageUrl,
       categoryId: product.categoryId,
+      suggestions: product.suggestions, // Include suggestions in reset
     });
     setImagePreview(product.imageUrl);
   };
@@ -515,6 +522,50 @@ export default function HomePage() {
                               ))}
                             </SelectContent>
                           </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="suggestions"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Widgets do Produto</FormLabel>
+                          <FormControl>
+                            <ToggleGroup
+                              type="multiple"
+                              value={field.value || []}
+                              onValueChange={field.onChange}
+                              className="flex flex-wrap gap-2 mt-2"
+                            >
+                              <ToggleGroupItem
+                                value="new"
+                                aria-label="Marcar como Novidade"
+                                className="data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white"
+                              >
+                                <Star className="h-4 w-4 mr-2" />
+                                Novidade
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="premium"
+                                aria-label="Marcar como Premium"
+                                className="data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white"
+                              >
+                                <CupSoda className="h-4 w-4 mr-2" />
+                                Premium
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="popular"
+                                aria-label="Marcar como Mais Pedido"
+                                className="data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white"
+                              >
+                                <Flame className="h-4 w-4 mr-2" />
+                                Mais Pedido
+                              </ToggleGroupItem>
+                            </ToggleGroup>
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
