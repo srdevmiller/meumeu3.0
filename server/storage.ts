@@ -147,6 +147,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async deleteProduct(id: number, userId: number): Promise<void> {
+    // First delete all favorites that reference this product
+    await db
+      .delete(favorites)
+      .where(eq(favorites.productId, id));
+
+    // Then delete the product itself
     await db
       .delete(products)
       .where(
