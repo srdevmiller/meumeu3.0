@@ -7,6 +7,7 @@ import { eq, and, count, sql } from "drizzle-orm";
 import { products, users, favorites, paymentSettings } from "@shared/schema";
 import { db } from "./db";
 import { generatePix, checkPaymentStatus } from "./payment";
+import { sendWelcomeEmail } from './email';
 
 // Corrigindo o problema do req.ip undefined
 async function createAdminLog(req: Request, action: string, details: string) {
@@ -576,7 +577,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
             });
 
-            return res.json({ status: "approved", user: updatedUser });
+            // Enviar email de boas-vindas
+            await sendWelcomeEmail({
+              name: userData.name,
+              email: userData.email,
+              planType: planType
+            });
+
+            const welcomeUrl = `/welcome?name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&planType=${encodeURIComponent(planType)}`;
+            return res.json({ status: "approved", user: updatedUser, redirectUrl: welcomeUrl });
           }
 
           // Se o usuário não existe, crie um novo
@@ -602,29 +611,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           });
 
-          res.json({ status: "approved", user });
-        } catch (error) {
-          console.error("Erro ao criar/atualizar usuário:", error);
-          res.status(500).json({
-            error: "USER_ERROR",
-            message: "Erro ao processar cadastro do usuário"
+          // Enviar email de boas-vindas
+          await sendWelcomeEmail({
+            name: userData.name,
+            email: userData.email,
+            planType: planType
           });
-        }
-      } else {
-        res.json({
-          status: paymentData.status,
-          status_detail: paymentData.status_detail
+
+          const welcomeUrl = `/welcome?name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&planType=${encodeURIComponent(planType)}`;
+          res.json({ status: "approved", user, redirectUrl: welcomeUrl });
+      } catch (error) {
+        console.error("Erro ao criar/atualizar usuário:", error);
+        res.status(500).json({
+          error: "USER_ERROR",
+          message: "Erro ao processar cadastro do usuário"
         });
       }
-    } catch (error) {
-      console.error("Erro detalhado ao verificar status do pagamento:", error);
-      res.status(500).json({
-        error: "PAYMENT_ERROR",
-        message: "Erro ao verificar o status do pagamento",
-        details: error instanceof Error ? error.message : "Erro desconhecido"
+    } else {
+      res.json({
+        status: paymentData.status,
+        status_detail: paymentData.status_detail
       });
     }
-  });
+  } catch (error) {
+    console.error("Erro detalhado ao verificar status do pagamento:", error);
+    res.status(500).json({
+      error: "PAYMENT_ERROR",
+      message: "Erro ao verificar o status do pagamento",
+      details: error instanceof Error ? error.message : "Erro desconhecido"
+    });
+  }
+});
 
   const httpServer = createServer(app);
   return httpServer;

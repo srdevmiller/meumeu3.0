@@ -191,17 +191,16 @@ export default function PricingPage() {
     enabled: !!paymentId && showPixCode && !paymentApproved,
     refetchInterval: (data) => {
       console.log("Current payment status data:", data);
-      if (data?.status === "approved" && data?.user) {
-        console.log("Payment approved and user created, triggering redirect...");
+      if (data?.status === "approved" && data?.redirectUrl) {
+        console.log("Payment approved, redirecting to welcome page...");
         setPaymentApproved(true);
-        // Redirect immediately after receiving confirmation
+        // Redirect to welcome page with a small delay to ensure all states are updated
         setTimeout(() => {
-          console.log("Executing redirect to /home");
-          window.location.href = "/home"; // Using direct window.location for full page refresh
+          window.location.href = data.redirectUrl;
         }, 1500);
-        return false;
+        return false; // Stop polling
       }
-      return 5000;
+      return 5000; // Continue polling every 5 seconds
     },
     retry: 3,
     staleTime: 0,
