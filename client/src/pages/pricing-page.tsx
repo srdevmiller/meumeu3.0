@@ -392,7 +392,7 @@ export default function PricingPage() {
           form.reset();
         }
       }}>
-        <DialogContent className="w-[85vw] h-[90vh] max-w-4xl overflow-y-auto">
+        <DialogContent className="w-[85vw] max-w-4xl">
           <DialogHeader>
             <DialogTitle>Complete seu cadastro</DialogTitle>
             <DialogDescription>
@@ -489,7 +489,7 @@ export default function PricingPage() {
 
       {/* PIX QR Code Dialog */}
       <Dialog open={showPixCode} onOpenChange={setShowPixCode}>
-        <DialogContent className="w-[85vw] h-[90vh] max-w-4xl overflow-y-auto">
+        <DialogContent className="w-[85vw] max-w-4xl">
           <DialogHeader>
             <DialogTitle>Pagamento via PIX</DialogTitle>
             <DialogDescription>
