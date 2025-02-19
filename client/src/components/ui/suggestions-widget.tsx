@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tool
 import { cn } from "@/lib/utils";
 
 export interface SuggestionType {
-  type: 'popular' | 'healthy' | 'spicy' | 'vegetarian' | 'chefs-choice' | 'new' | 'premium' | 'out-of-stock';
+  type: 'popular' | 'healthy' | 'spicy' | 'vegetarian' | 'chefs-choice' | 'new' | 'premium' | 'out-of-stock' | 'promotion';
   color?: string;
 }
 
@@ -23,7 +23,35 @@ const suggestionTypes: Record<SuggestionType['type'], SuggestionInfo> = {
     icon: <Fire size={16} />,
     label: 'Mais Pedido',
     description: 'Este item é um dos mais populares do nosso cardápio',
+    color: 'text-blue-500'
+  },
+  'premium': {
+    type: 'premium',
+    icon: <Coffee size={16} />,
+    label: 'Premium',
+    description: 'Item especial com ingredientes selecionados',
+    color: 'text-purple-500'
+  },
+  'new': {
+    type: 'new',
+    icon: <Star size={16} />,
+    label: 'Novidade',
+    description: 'Item recém adicionado ao cardápio',
     color: 'text-orange-500'
+  },
+  'out-of-stock': {
+    type: 'out-of-stock',
+    icon: <Info size={16} />,
+    label: 'Em Falta',
+    description: 'Este item está temporariamente indisponível',
+    color: 'text-red-500'
+  },
+  'promotion': {
+    type: 'promotion',
+    icon: <Star size={16} />,
+    label: 'Promoção',
+    description: 'Este item está em promoção',
+    color: 'text-green-500'
   },
   'healthy': {
     type: 'healthy',
@@ -52,27 +80,6 @@ const suggestionTypes: Record<SuggestionType['type'], SuggestionInfo> = {
     label: 'Sugestão do Chef',
     description: 'Recomendação especial do nosso chef',
     color: 'text-purple-500'
-  },
-  'new': {
-    type: 'new',
-    icon: <Star size={16} />,
-    label: 'Novidade',
-    description: 'Item recém adicionado ao cardápio',
-    color: 'text-blue-500'
-  },
-  'premium': {
-    type: 'premium',
-    icon: <Coffee size={16} />,
-    label: 'Premium',
-    description: 'Item especial com ingredientes selecionados',
-    color: 'text-yellow-500'
-  },
-  'out-of-stock': {
-    type: 'out-of-stock',
-    icon: <Info size={16} />,
-    label: 'Em Falta',
-    description: 'Este item está temporariamente indisponível',
-    color: 'text-gray-500'
   }
 };
 
@@ -122,7 +129,6 @@ export function SuggestionsWidget({ suggestions, className }: SuggestionsWidgetP
 
   return (
     <div className={cn("flex flex-wrap gap-1.5 items-center group", className)}>
-      <Info size={16} className="text-muted-foreground flex-shrink-0 transition-transform duration-200 group-hover:rotate-12" />
       {suggestions.map((type) => (
         <SuggestionBadge key={type} type={type as SuggestionType['type']} />
       ))}
