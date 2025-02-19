@@ -618,7 +618,7 @@ export default function HomePage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
+                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3" : "p-3"}>
                         <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start">
                             <div>
@@ -632,7 +632,7 @@ export default function HomePage() {
                           </div>
                         </div>
                         <div className={`flex ${viewMode === "list" ? "flex-col" : "flex-col"} mt-auto`}>
-                          <p className="text-base font-bold">
+                          <p className="text-sm font-medium">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
                           <div className={`flex gap-2 ${viewMode === "list" ? "flex-row" : "flex-col w-full"}`}>
