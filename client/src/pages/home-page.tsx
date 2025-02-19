@@ -677,7 +677,7 @@ export default function HomePage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex items-center justify-between px-4" : "p-2.5 flex flex-col flex-grow"}>
+                      <div className={viewMode === "list" ? "flex-1 flex items-center justify-between px-4 mr-6" : "p-2.5 flex flex-col flex-grow"}>
                         <div className="flex-1">
                           <h3 className="text-[13px] font-semibold break-words">
                             {product.name}
@@ -689,7 +689,7 @@ export default function HomePage() {
                             {categories.find((c) => c.id === product.categoryId)?.name}
                           </span>
                         </div>
-                        <div className={`flex flex-col gap-2 ${viewMode === "list" ? "flex flex-col justify-center min-w-[80px] mr-6" : "mt-auto pt-2"}`}>
+                        <div className={`flex flex-col gap-2 ${viewMode === "list" ? "flex flex-col justify-center min-w-[80px]" : "mt-auto pt-2"}`}>
                           <Button
                             variant="outline"
                             className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
