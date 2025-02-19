@@ -540,13 +540,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/payments/status/:id", async (req, res) => {
     try {
       const paymentId = req.params.id;
-      const status = await checkPaymentStatus(paymentId);
+      console.log(`Consultando status do pagamento ${paymentId}`);
 
-      if (status.status === "approved") {
+      const paymentData = await checkPaymentStatus(paymentId);
+      console.log("Status do pagamento:", {
+        id: paymentId,
+        status: paymentData.status,
+        status_detail: paymentData.status_detail
+      });
+
+      // Lista de status que indicam pagamento aprovado
+      const approvedStatuses = ['approved', 'authorized', 'completed'];
+
+      if (approvedStatuses.includes(paymentData.status)) {
+        console.log("Pagamento aprovado, criando usuário...");
         // Se o pagamento foi aprovado, criar o usuário com o plano escolhido
-        const userData = status.metadata.user_data;
-        const planId = status.metadata.plan_id;
-        const planType = status.metadata.plan_type;
+        const userData = paymentData.metadata.user_data;
+        const planId = paymentData.metadata.plan_id;
+        const planType = paymentData.metadata.plan_type;
+
+        console.log("Dados para criação do usuário:", {
+          ...userData,
+          planType,
+          planId
+        });
 
         const user = await storage.createUser({
           ...userData,
@@ -555,15 +572,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
           confirmPassword: userData.password
         });
 
+        console.log("Usuário criado com sucesso:", {
+          id: user.id,
+          username: user.username
+        });
+
         res.json({ status: "approved", user });
       } else {
-        res.json({ status: status.status });
+        res.json({
+          status: paymentData.status,
+          status_detail: paymentData.status_detail
+        });
       }
     } catch (error) {
-      console.error("Erro ao verificar status do pagamento:", error);
+      console.error("Erro detalhado ao verificar status do pagamento:", error);
       res.status(500).json({
         error: "PAYMENT_ERROR",
-        message: "Erro ao verificar o status do pagamento"
+        message: "Erro ao verificar o status do pagamento",
+        details: error instanceof Error ? error.message : "Erro desconhecido"
       });
     }
   });

@@ -70,6 +70,8 @@ export async function checkPaymentStatus(paymentId: string) {
       throw new Error("Configurações de pagamento não encontradas");
     }
 
+    console.log(`Verificando status do pagamento ${paymentId}...`);
+
     const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
       method: 'GET',
       headers: {
@@ -84,7 +86,15 @@ export async function checkPaymentStatus(paymentId: string) {
       throw new Error(errorData.message || "Erro ao verificar o status do pagamento");
     }
 
-    return response.json();
+    const paymentData = await response.json();
+    console.log("Resposta do Mercado Pago (status):", {
+      id: paymentData.id,
+      status: paymentData.status,
+      status_detail: paymentData.status_detail,
+      metadata: paymentData.metadata
+    });
+
+    return paymentData;
   } catch (error) {
     console.error("Erro ao verificar o status de pagamento:", error);
     throw new Error("Erro ao verificar o status do pagamento");
