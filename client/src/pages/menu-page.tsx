@@ -522,8 +522,8 @@ export default function MenuPage() {
               <div
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-2 gap-3 md:gap-4 max-w-[900px] mx-auto"
-                    : "flex flex-col gap-3 md:gap-4"
+                    ? "grid grid-cols-2 gap-4 md:gap-6 max-w-[900px] mx-auto"
+                    : "flex flex-col gap-4 md:gap-6"
                 }
               >
                 {sortedProducts.map((product, index) => (
@@ -554,16 +554,18 @@ export default function MenuPage() {
                         />
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
-                        <div className="flex flex-col flex-grow">
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <h3 className="text-base sm:text-lg font-semibold truncate">
-                                {product.name}
-                              </h3>
-                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
-                                {categories.find((c) => c.id === product.categoryId)?.name}
-                              </span>
-                            </div>
+                        <div className={
+                          viewMode === "list"
+                            ? "flex flex-col flex-grow"
+                            : "flex flex-col flex-grow"
+                        }>
+                          <div className="flex flex-col space-y-1.5 mb-2">
+                            <h3 className="text-base sm:text-lg font-semibold line-clamp-1">
+                              {product.name}
+                            </h3>
+                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                              {categories.find((c) => c.id === product.categoryId)?.name}
+                            </span>
                           </div>
                           {product.suggestions && product.suggestions.length > 0 && (
                             <SuggestionsWidget
