@@ -609,17 +609,17 @@ export default function MenuPage() {
                           <h3 className="font-semibold text-lg line-clamp-2">
                             {product.name}
                           </h3>
-                          <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center rounded-md bg-[var(--theme-color)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--theme-color)]">
-                              {categories.find((c) => c.id === product.categoryId)?.name}
-                            </span>
-                            <SuggestionsWidget suggestions={product.suggestions || []} />
-                          </div>
                           {product.description && (
                             <p className="text-sm text-muted-foreground line-clamp-2">
                               {product.description}
                             </p>
                           )}
+                          <div className="flex items-start gap-2">
+                            <span className="inline-flex items-center rounded-md bg-[var(--theme-color)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--theme-color)]">
+                              {categories.find((c) => c.id === product.categoryId)?.name}
+                            </span>
+                            <SuggestionsWidget suggestions={product.suggestions || []} />
+                          </div>
                         </div>
 
                         <div className="mt-auto pt-4 flex items-center justify-between">
