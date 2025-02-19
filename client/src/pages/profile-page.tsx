@@ -10,25 +10,10 @@ import { motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
-const themeColors = [
-  { name: "Grapefruit", hex: "#F01414" }, // rgb(240, 20, 20)
-  { name: "Bittersweet", hex: "#14F07E" }, // rgb(20, 240, 126)
-  { name: "Sunflower", hex: "#1432F0" }, // rgb(20, 50, 240)
-  { name: "Grass", hex: "#9914F0" }, // rgb(153, 20, 240)
-  { name: "Mint", hex: "#48CEAD" },
-  { name: "Aqua", hex: "#3BC1E9" },
-  { name: "Blue Jeans", hex: "#5D96CC" },
-  { name: "Lavander", hex: "#AC92EC" },
-  { name: "Pink Rose", hex: "#EC87AD" },
-  { name: "Light Gray", hex: "#F5F7FA" },
-  { name: "Medium Gray", hex: "#CCD1D9" },
-  { name: "Dark Gray", hex: "#656D78" }
-];
-
 export default function ProfilePage() {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [selectedColor, setSelectedColor] = useState(user?.themeColor || themeColors[0].hex);
+  const [selectedColor, setSelectedColor] = useState(user?.themeColor || "#000000");
   const [previewBanner, setPreviewBanner] = useState<string | null>(user?.bannerImageUrl || null);
   const [previewLogo, setPreviewLogo] = useState<string | null>(user?.logoUrl || null);
 
@@ -104,10 +89,10 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSave = () => {
-    updateProfileMutation.mutate({
-      themeColor: selectedColor,
-    });
+  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newColor = event.target.value;
+    setSelectedColor(newColor);
+    updateProfileMutation.mutate({ themeColor: newColor });
   };
 
   return (
@@ -218,39 +203,23 @@ export default function ProfilePage() {
             <label className="block text-sm font-medium mb-4">
               Tema
             </label>
-            <div className="grid grid-cols-4 gap-4">
-              {themeColors.map((color) => (
-                <motion.button
-                  key={color.hex}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => {
-                    setSelectedColor(color.hex);
-                  }}
-                  className={`w-full aspect-square rounded-lg border-2 transition-all ${
-                    selectedColor === color.hex
-                      ? 'border-primary shadow-lg scale-105'
-                      : 'border-transparent hover:border-primary/50'
-                  }`}
-                  style={{ backgroundColor: color.hex }}
-                  title={color.name}
-                >
-                  <span className="sr-only">{color.name}</span>
-                </motion.button>
-              ))}
+            <div className="flex items-center gap-4">
+              <div className="flex-1">
+                <Input
+                  type="color"
+                  value={selectedColor}
+                  onChange={handleColorChange}
+                  className="w-full h-12 p-1 rounded-md cursor-pointer"
+                />
+              </div>
+              <div
+                className="w-12 h-12 rounded-md border-2 border-border"
+                style={{ backgroundColor: selectedColor }}
+              />
             </div>
-            <div className="mt-6">
-              <Button
-                onClick={handleSave}
-                disabled={updateProfileMutation.isPending || updateBannerMutation.isPending}
-                className="w-full"
-              >
-                {(updateProfileMutation.isPending || updateBannerMutation.isPending) && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                )}
-                Salvar Alterações
-              </Button>
-            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Escolha a cor do tema para seu cardápio
+            </p>
           </div>
         </CardContent>
       </Card>
