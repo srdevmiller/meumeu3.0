@@ -77,8 +77,8 @@ const plans: Plan[] = [
     name: "Profissional",
     description: "Ideal para estabelecimentos em crescimento",
     price: {
-      monthly: 49.90,
-      yearly: 39.90,
+      monthly: 0.10,
+      yearly: 0.10,
     },
     features: [
       { included: true, name: "Produtos ilimitados" },
