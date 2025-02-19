@@ -543,25 +543,25 @@ export default function HomePage() {
                               <ToggleGroupItem
                                 value="new"
                                 aria-label="Marcar como Novidade"
-                                className="data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
-                                <Star className="h-4 w-4 mr-2" />
+                                <Star className="h-4 w-4" />
                                 Novidade
                               </ToggleGroupItem>
                               <ToggleGroupItem
                                 value="premium"
                                 aria-label="Marcar como Premium"
-                                className="data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
-                                <CupSoda className="h-4 w-4 mr-2" />
+                                <CupSoda className="h-4 w-4" />
                                 Premium
                               </ToggleGroupItem>
                               <ToggleGroupItem
                                 value="popular"
                                 aria-label="Marcar como Mais Pedido"
-                                className="data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
-                                <Flame className="h-4 w-4 mr-2" />
+                                <Flame className="h-4 w-4" />
                                 Mais Pedido
                               </ToggleGroupItem>
                             </ToggleGroup>
