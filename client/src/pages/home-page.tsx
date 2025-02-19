@@ -349,6 +349,8 @@ export default function HomePage() {
     setLocation("/auth");
   };
 
+  const sortedProducts = products.sort((a, b) => b.id - a.id); // Sort products by ID in descending order
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-5xl mx-auto">
@@ -596,50 +598,62 @@ export default function HomePage() {
                   initial="hidden"
                   animate="show"
                   className={viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 gap-6"
+                    ? "grid grid-cols-2 gap-3 md:gap-4"
                     : "flex flex-col gap-4"}
                 >
-                  {products.map((product) => (
+                  {sortedProducts.map((product) => (
                     <motion.div
                       key={product.id}
                       variants={item}
                       className={`relative bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 ${
-                        viewMode === "list" ? "flex items-center" : ""
-                      }`}
+                        viewMode === "list"
+                          ? "flex items-center"
+                          : ""
+                      } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
-                      <div className={viewMode === "list" ? "w-24 h-24" : "aspect-square"}>
+                      <div className={viewMode === "list" ? "w-36 sm:w-48 h-full flex-shrink-0" : "aspect-square"}>
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={`p-4 ${viewMode === "list" ? "flex-1" : ""}`}>
-                        <h3 className="font-medium text-lg mb-1 truncate">{product.name}</h3>
-                        <p className="text-xl font-bold text-green-600 mb-2">
-                          R$ {Number(product.price).toFixed(2)}
-                        </p>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {categories.find((c) => c.id === product.categoryId)?.name}
-                        </p>
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEdit(product)}
-                          >
-                            <Pencil className="h-4 w-4 mr-1" />
-                            Editar
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setProductToDelete(product)}
-                            className="text-red-500 hover:text-red-600"
-                          >
-                            <Trash2 className="h-4 w-4 mr-1" />
-                            Excluir
-                          </Button>
+                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
+                        <div className="flex flex-col flex-grow">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h3 className="text-base sm:text-lg font-semibold truncate">
+                                {product.name}
+                              </h3>
+                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                                {categories.find((c) => c.id === product.categoryId)?.name}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex justify-between items-center mt-auto pt-2">
+                          <p className="text-base sm:text-lg font-bold">
+                            R$ {Number(product.price).toFixed(2)}
+                          </p>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEdit(product)}
+                            >
+                              <Pencil className="h-4 w-4 mr-1" />
+                              Editar
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setProductToDelete(product)}
+                              className="text-red-500 hover:text-red-600"
+                            >
+                              <Trash2 className="h-4 w-4 mr-1" />
+                              Excluir
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </motion.div>
