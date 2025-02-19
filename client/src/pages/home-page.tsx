@@ -592,7 +592,7 @@ export default function HomePage() {
                               <ToggleGroupItem
                                 value="new"
                                 aria-label="Marcar como Novidade"
-                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-purple-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-orange-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
                                 <Star className="h-4 w-4" />
                                 Novidade
@@ -600,7 +600,7 @@ export default function HomePage() {
                               <ToggleGroupItem
                                 value="premium"
                                 aria-label="Marcar como Premium"
-                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-amber-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-purple-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
                                 <CupSoda className="h-4 w-4" />
                                 Premium
@@ -608,7 +608,7 @@ export default function HomePage() {
                               <ToggleGroupItem
                                 value="popular"
                                 aria-label="Marcar como Mais Pedido"
-                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-green-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-blue-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
                                 <Flame className="h-4 w-4" />
                                 Mais Pedido
@@ -620,6 +620,14 @@ export default function HomePage() {
                               >
                                 <AlertTriangle className="h-4 w-4" />
                                 Em Falta
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="promotion"
+                                aria-label="Marcar como Promoção"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-green-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                              >
+                                <Star className="h-4 w-4" />
+                                Promoção
                               </ToggleGroupItem>
                             </ToggleGroup>
                           </FormControl>
