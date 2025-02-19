@@ -92,7 +92,7 @@ export const insertProductSchema = createInsertSchema(products)
   })
   .extend({
     price: z.number().min(0, "O preço deve ser maior que zero"),
-    suggestions: z.array(z.enum(['new', 'premium', 'popular', 'out-of-stock'])).optional(),
+    suggestions: z.array(z.enum(['new', 'premium', 'popular', 'out-of-stock', 'promotion'])).optional(),
     description: z.string().optional(),
   });
 
@@ -106,7 +106,7 @@ export const updateProductSchema = createInsertSchema(products)
   })
   .extend({
     price: z.number().min(0, "O preço deve ser maior que zero"),
-    suggestions: z.array(z.enum(['new', 'premium', 'popular', 'out-of-stock'])).optional(),
+    suggestions: z.array(z.enum(['new', 'premium', 'popular', 'out-of-stock', 'promotion'])).optional(),
     description: z.string().optional(),
   })
   .partial();
