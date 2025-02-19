@@ -11,12 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   Sheet,
   SheetContent,
@@ -48,7 +43,7 @@ import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
 import { SuggestionsWidget } from "@/components/ui/suggestions-widget";
-import { SuggestionType } from "@/types/suggestion";
+import { type SuggestionType } from "@/types/suggestion";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -832,8 +827,7 @@ export default function MenuPage() {
 
             .scroll-reveal.visible {
               opacity: 1;
-              transform: translateY(0);
-            }
+              transform: translateY(0);            }
 
             /* Loading skeleton pulse animation */
             @keyframes skeleton-pulse {
