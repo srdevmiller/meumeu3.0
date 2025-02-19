@@ -58,38 +58,6 @@ const suggestionTypes: Record<SuggestionType['type'], SuggestionInfo> = {
     description: 'Este item está em promoção',
     bgColor: 'bg-green-100 dark:bg-green-900/30',
     textColor: 'text-green-600 dark:text-green-400'
-  },
-  'healthy': {
-    type: 'healthy',
-    icon: <Leaf size={16} />,
-    label: 'Saudável',
-    description: 'Opção mais leve e nutritiva',
-    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
-    textColor: 'text-emerald-600 dark:text-emerald-400'
-  },
-  'spicy': {
-    type: 'spicy',
-    icon: <Fire size={16} />,
-    label: 'Picante',
-    description: 'Este prato contém ingredientes picantes',
-    bgColor: 'bg-red-100 dark:bg-red-900/30',
-    textColor: 'text-red-600 dark:text-red-400'
-  },
-  'vegetarian': {
-    type: 'vegetarian',
-    icon: <Leaf size={16} />,
-    label: 'Vegetariano',
-    description: 'Prato 100% vegetariano',
-    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
-    textColor: 'text-emerald-600 dark:text-emerald-400'
-  },
-  'chefs-choice': {
-    type: 'chefs-choice',
-    icon: <ForkKnife size={16} />,
-    label: 'Sugestão do Chef',
-    description: 'Recomendação especial do nosso chef',
-    bgColor: 'bg-purple-100 dark:bg-purple-900/30',
-    textColor: 'text-purple-600 dark:text-purple-400'
   }
 };
 
@@ -105,22 +73,20 @@ export function SuggestionBadge({ type, className }: SuggestionBadgeProps) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Badge 
-            variant="secondary" 
+          <div 
             className={cn(
-              "cursor-help transition-all duration-200 inline-flex items-center px-2 py-0.5 text-xs hover:scale-110 hover:shadow-md",
+              "inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium cursor-help",
+              "transition-all duration-200 hover:scale-105",
               suggestion.bgColor,
               suggestion.textColor,
-              "hover:bg-white/80 dark:hover:bg-gray-800/80",
-              "active:scale-95",
               className
             )}
           >
             <span className="transition-transform duration-200 group-hover:rotate-12">
               {suggestion.icon}
             </span>
-            <span className="ml-1 whitespace-nowrap">{suggestion.label}</span>
-          </Badge>
+            <span>{suggestion.label}</span>
+          </div>
         </TooltipTrigger>
         <TooltipContent sideOffset={5} className="animate-in fade-in-0 zoom-in-95">
           <p>{suggestion.description}</p>
@@ -139,7 +105,7 @@ export function SuggestionsWidget({ suggestions, className }: SuggestionsWidgetP
   if (!suggestions || suggestions.length === 0) return null;
 
   return (
-    <div className={cn("flex flex-wrap gap-1.5 items-center group", className)}>
+    <div className={cn("flex flex-wrap gap-1.5 items-center", className)}>
       {suggestions.map((type) => (
         <SuggestionBadge key={type} type={type as SuggestionType['type']} />
       ))}
