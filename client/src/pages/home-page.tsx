@@ -664,11 +664,11 @@ export default function HomePage() {
                     <motion.div
                       key={product.id}
                       variants={item}
-                      className={`relative bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 ${
+                      className={`relative bg-card rounded-lg shadow-sm overflow-hidden border border-gray-200 ${
                         viewMode === "list"
                           ? "flex items-center h-24"
                           : "flex flex-col"
-                        } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                        } border-border hover:border-border/40 hover:shadow-lg transition-all duration-300`}
                     >
                       <div className={viewMode === "list" ? "w-24 h-full flex-shrink-0" : "aspect-square"}>
                         <img
@@ -679,10 +679,10 @@ export default function HomePage() {
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex items-center px-4" : "p-2.5 flex flex-col flex-grow"}>
                         <div className="flex-1">
-                          <h3 className="text-[13px] font-semibold break-words text-foreground">
+                          <h3 className="text-[13px] font-semibold break-words text-card-foreground">
                             {product.name}
                           </h3>
-                          <p className="text-sm font-medium mt-1 text-foreground">
+                          <p className="text-sm font-medium mt-1 text-card-foreground">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
                           <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)] mt-1">
