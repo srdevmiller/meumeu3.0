@@ -30,13 +30,13 @@ import {
   Moon,
   Sun,
   Heart,
-  Filter,
   Share2,
   CheckCheck,
   Scale,
   ArrowUp01,
   ArrowDown01,
   X, // Import X from lucide-react
+  Filter, // Adding the missing Filter import
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -383,14 +383,6 @@ export default function MenuPage() {
                   </div>
                 </CardContent>
               </Card>
-
-              <Button
-                onClick={() => setShowFilters(!showFilters)}
-                className="w-full flex items-center gap-2 bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90 text-sm md:text-base"
-              >
-                {/* Removed Filter icon */}
-                {showFilters ? "Ocultar filtros" : "Filtrar"}
-              </Button>
 
               <AnimatePresence>
                 {showFilters && (
@@ -860,11 +852,9 @@ export default function MenuPage() {
             .filter-active {
               background: var(--theme-color);
               color: white;
-              transform: scale(1.05);
-            }
+              transform: scale(1.05);            }
 
-            /* Scroll reveal animation.scroll-reveal {            opacity: 0;
-              transform: translateY(20px);
+            /* Scroll reveal animation.scroll-reveal {            opacity: 0;              transform: translateY(20px);
               transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             }
             .scroll-reveal.visible {
