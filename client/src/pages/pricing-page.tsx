@@ -156,7 +156,7 @@ export default function PricingPage() {
   });
 
   // Consulta periódica do status do pagamento
-  const { data: paymentStatus } = useQuery({
+  useQuery({
     queryKey: ["payment-status", paymentId],
     queryFn: async () => {
       if (!paymentId) return null;
@@ -165,10 +165,10 @@ export default function PricingPage() {
       return response.json();
     },
     enabled: !!paymentId,
-    refetchInterval: (data) => {
+    refetchInterval: (data: any) => {
       return data?.status === "approved" ? false : 5000;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       if (data?.status === "approved") {
         toast({
           title: "Pagamento aprovado!",
@@ -401,19 +401,23 @@ export default function PricingPage() {
           </Form>
           {generatePixMutation.data && (
             <div className="mt-4 text-center">
-              <img
-                src={generatePixMutation.data.point_of_interaction.transaction_data.qr_code_base64}
-                alt="QR Code PIX"
-                className="mx-auto"
-              />
-              <p className="mt-2 text-sm text-gray-600">
-                Escaneie o QR Code para realizar o pagamento
-              </p>
-              <div className="mt-2 p-2 bg-gray-100 rounded">
-                <p className="text-xs font-mono break-all">
-                  {generatePixMutation.data.point_of_interaction.transaction_data.qr_code}
-                </p>
-              </div>
+              {generatePixMutation.data.qr_codes && generatePixMutation.data.qr_codes[0] && (
+                <>
+                  <img
+                    src={generatePixMutation.data.qr_codes[0].qr_code_base64}
+                    alt="QR Code PIX"
+                    className="mx-auto"
+                  />
+                  <p className="mt-2 text-sm text-gray-600">
+                    Escaneie o QR Code para realizar o pagamento
+                  </p>
+                  <div className="mt-2 p-2 bg-gray-100 rounded">
+                    <p className="text-xs font-mono break-all">
+                      {generatePixMutation.data.qr_codes[0].qr_code}
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </DialogContent>

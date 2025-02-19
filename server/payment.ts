@@ -1,3 +1,5 @@
+import { storage } from "./storage";
+
 export async function generatePix(paymentData: {
   transaction_amount: number;
   description: string;
@@ -12,12 +14,23 @@ export async function generatePix(paymentData: {
   }
 }) {
   try {
-    // Recuperar o AccessToken usando as configurações salvas
+    // Buscar o admin (primeiro usuário com username admin@admin.com)
+    const adminUser = await storage.getUserByUsername("admin@admin.com");
+    if (!adminUser) {
+      throw new Error("Configurações de pagamento não encontradas");
+    }
+
+    // Recuperar as configurações de pagamento do admin
+    const paymentSettings = await storage.getPaymentSettings(adminUser.id);
+    if (!paymentSettings) {
+      throw new Error("Configurações de pagamento não encontradas");
+    }
+
     const response = await fetch('https://api.mercadopago.com/v1/payments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`,
+        'Authorization': `Bearer ${paymentSettings.accessToken}`,
         'X-Idempotency-Key': generateIdempotencyKey()
       },
       body: JSON.stringify({
@@ -25,6 +38,12 @@ export async function generatePix(paymentData: {
         payment_method_id: 'pix'
       })
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Erro Mercado Pago:", errorData);
+      throw new Error(errorData.message || "Erro ao gerar o PIX");
+    }
 
     return response.json();
   } catch (error) {
@@ -39,13 +58,31 @@ function generateIdempotencyKey() {
 
 export async function checkPaymentStatus(paymentId: string) {
   try {
+    // Buscar o admin (primeiro usuário com username admin@admin.com)
+    const adminUser = await storage.getUserByUsername("admin@admin.com");
+    if (!adminUser) {
+      throw new Error("Configurações de pagamento não encontradas");
+    }
+
+    // Recuperar as configurações de pagamento do admin
+    const paymentSettings = await storage.getPaymentSettings(adminUser.id);
+    if (!paymentSettings) {
+      throw new Error("Configurações de pagamento não encontradas");
+    }
+
     const response = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`
+        'Authorization': `Bearer ${paymentSettings.accessToken}`
       }
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Erro Mercado Pago:", errorData);
+      throw new Error(errorData.message || "Erro ao verificar o status do pagamento");
+    }
 
     return response.json();
   } catch (error) {
