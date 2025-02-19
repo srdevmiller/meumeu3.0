@@ -621,51 +621,53 @@ export default function MenuPage() {
                         </div>
 
                         <div className="mt-auto pt-4 flex items-center justify-between">
-                          <p className="text-xl font-bold">
-                            {formatPrice(product.price)}
-                          </p>
-                          {viewMode === "grid" && (
-                            <div className="flex items-center" style={{ gap: "0.3rem" }}>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={`h-9 w-9 rounded-full transition-all duration-200 ${
-                                  compareProducts.some((p) => p.id === product.id)
-                                    ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
-                                    : "hover:bg-[var(--theme-color)]/5"
-                                }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleCompare(product);
-                                }}
-                              >
-                                <Scale
-                                  className={`h-4 w-4 ${
+                          {viewMode === "grid" ? (
+                            <>
+                              <p className="text-xl font-bold">
+                                {formatPrice(product.price)}
+                              </p>
+                              <div className="flex items-center" style={{ gap: "0.3rem" }}>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className={`h-9 w-9 rounded-full transition-all duration-200 ${
                                     compareProducts.some((p) => p.id === product.id)
-                                      ? "text-[var(--theme-color)]"
-                                      : "text-muted-foreground"
+                                      ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
+                                      : "hover:bg-[var(--theme-color)]/5"
                                   }`}
-                                />
-                              </Button>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-9 w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleFavorite(product.id);
-                                }}
-                              >
-                                <Heart
-                                  className={`h-4 w-4 transition-colors ${
-                                    data?.favorites.includes(product.id)
-                                      ? "fill-current text-red-500"
-                                      : "text-muted-foreground hover:text-red-400"
-                                  }`}
-                                />
-                              </Button>
-                            </div>
-                          )}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleCompare(product);
+                                  }}
+                                >
+                                  <Scale
+                                    className={`h-4 w-4 ${
+                                      compareProducts.some((p) => p.id === product.id)
+                                        ? "text-[var(--theme-color)]"
+                                        : "text-muted-foreground"
+                                    }`}
+                                  />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-9 w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFavorite(product.id);
+                                  }}
+                                >
+                                  <Heart
+                                    className={`h-4 w-4 transition-colors ${
+                                      data?.favorites.includes(product.id)
+                                        ? "fill-current text-red-500"
+                                        : "text-muted-foreground hover:text-red-400"
+                                    }`}
+                                  />
+                                </Button>
+                              </div>
+                            </>
+                          ) : null}
                         </div>
 
                         {viewMode === "list" && (
