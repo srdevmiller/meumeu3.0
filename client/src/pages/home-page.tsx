@@ -620,7 +620,7 @@ export default function HomePage() {
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
                         <div className="flex flex-col flex-grow">
-                          <div className="flex justify-between items-start mb-2">
+                          <div className="flex justify-between items-start">
                             <div>
                               <h3 className="text-[13px] font-semibold break-words max-h-[2.8rem] overflow-hidden">
                                 {product.name}
@@ -631,8 +631,8 @@ export default function HomePage() {
                             </div>
                           </div>
                         </div>
-                        <div className={`flex ${viewMode === "list" ? "flex-col" : "flex-col"} mt-auto pt-1`}>
-                          <p className="text-base font-bold mb-2">
+                        <div className={`flex ${viewMode === "list" ? "flex-col" : "flex-col"} mt-auto`}>
+                          <p className="text-base font-bold">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
                           <div className={`flex gap-2 ${viewMode === "list" ? "flex-row" : "flex-col w-full"}`}>
