@@ -125,29 +125,6 @@ export default function PricingPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
-  // Effect to handle payment approval and redirect
-  useEffect(() => {
-    if (paymentApproved) {
-      console.log("Payment approved, redirecting...");
-      toast({
-        title: "Pagamento aprovado!",
-        description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
-      });
-
-      // Clear states and redirect
-      setShowPixCode(false);
-      setPaymentId(null);
-
-      // Add a small delay before redirect
-      const redirectTimeout = setTimeout(() => {
-        console.log("Executing redirect to /home");
-        setLocation("/home");
-      }, 2000);
-
-      return () => clearTimeout(redirectTimeout);
-    }
-  }, [paymentApproved, setLocation, toast]);
-
   // Add effect to control confetti duration
   useEffect(() => {
     if (showConfetti) {
@@ -204,15 +181,24 @@ export default function PricingPage() {
     queryKey: ["payment-status", paymentId],
     queryFn: async () => {
       if (!paymentId) return null;
+      console.log("Checking payment status for ID:", paymentId);
       const response = await fetch(`/api/payments/status/${paymentId}`);
       if (!response.ok) throw new Error("Erro ao verificar pagamento");
-      return response.json();
+      const data = await response.json();
+      console.log("Payment status response:", data);
+      return data;
     },
     enabled: !!paymentId && showPixCode && !paymentApproved,
-    refetchInterval: (data: any) => {
-      if (data?.status === "approved") {
-        console.log("Payment approved in query, setting state...");
+    refetchInterval: (data) => {
+      console.log("Current payment status data:", data);
+      if (data?.status === "approved" && data?.user) {
+        console.log("Payment approved and user created, triggering redirect...");
         setPaymentApproved(true);
+        // Redirect immediately after receiving confirmation
+        setTimeout(() => {
+          console.log("Executing redirect to /home");
+          window.location.href = "/home"; // Using direct window.location for full page refresh
+        }, 1500);
         return false;
       }
       return 5000;
@@ -220,7 +206,6 @@ export default function PricingPage() {
     retry: 3,
     staleTime: 0,
   });
-
 
   const handlePlanSelection = (plan: Plan) => {
     // Se for plano básico, redireciona para registro e mostra confetti
@@ -272,6 +257,21 @@ export default function PricingPage() {
       });
     }
   };
+
+  // Effect to handle payment approval and redirect
+  useEffect(() => {
+    if (paymentApproved) {
+      console.log("Payment approved in useEffect");
+      toast({
+        title: "Pagamento aprovado!",
+        description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
+      });
+
+      // Clear states
+      setShowPixCode(false);
+      setPaymentId(null);
+    }
+  }, [paymentApproved, toast]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
