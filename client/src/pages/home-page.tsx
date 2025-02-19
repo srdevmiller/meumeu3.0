@@ -609,7 +609,7 @@ export default function HomePage() {
                         viewMode === "list"
                           ? "flex items-center h-24"
                           : ""
-                      } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                        } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
                       <div className={viewMode === "list" ? "w-24 h-full flex-shrink-0" : "aspect-square"}>
                         <img
@@ -619,21 +619,19 @@ export default function HomePage() {
                         />
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex items-center px-4" : "p-2.5"}>
-                        <div className={viewMode === "list" ? "flex-1" : "flex flex-col flex-grow"}>
-                          <div className={viewMode === "list" ? "flex flex-col" : "flex justify-between items-start"}>
-                            <h3 className="text-[13px] font-semibold break-words">
-                              {product.name}
-                            </h3>
-                            <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
-                              {categories.find((c) => c.id === product.categoryId)?.name}
-                            </span>
-                          </div>
-                        </div>
-                        {viewMode === "list" && (
-                          <div className="flex items-center gap-4 ml-auto">
-                            <p className="text-sm font-medium whitespace-nowrap">
-                              R$ {Number(product.price).toFixed(2)}
-                            </p>
+                        {viewMode === "list" ? (
+                          <>
+                            <div className="flex-1">
+                              <h3 className="text-[13px] font-semibold break-words">
+                                {product.name}
+                              </h3>
+                              <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                                {categories.find((c) => c.id === product.categoryId)?.name}
+                              </span>
+                              <p className="text-sm font-medium mt-1">
+                                R$ {Number(product.price).toFixed(2)}
+                              </p>
+                            </div>
                             <div className="flex flex-col gap-2">
                               <Button
                                 variant="outline"
@@ -652,32 +650,43 @@ export default function HomePage() {
                                 Excluir
                               </Button>
                             </div>
-                          </div>
-                        )}
-                        {viewMode !== "list" && (
-                          <div className="flex flex-col mt-auto">
-                            <p className="text-sm font-medium">
-                              R$ {Number(product.price).toFixed(2)}
-                            </p>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                className="text-[10px] h-6 py-0 flex-1"
-                                onClick={() => handleEdit(product)}
-                              >
-                                <Pencil className="h-3 w-3 mr-1" />
-                                Editar
-                              </Button>
-                              <Button
-                                variant="outline"
-                                className="text-[10px] h-6 py-0 flex-1 text-red-500 hover:text-red-600"
-                                onClick={() => setProductToDelete(product)}
-                              >
-                                <Trash2 className="h-3 w-3 mr-1" />
-                                Excluir
-                              </Button>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex flex-col flex-grow">
+                              <div className="flex justify-between items-start">
+                                <h3 className="text-[13px] font-semibold break-words">
+                                  {product.name}
+                                </h3>
+                                <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                                  {categories.find((c) => c.id === product.categoryId)?.name}
+                                </span>
+                              </div>
                             </div>
-                          </div>
+                            <div className="flex flex-col mt-auto">
+                              <p className="text-sm font-medium">
+                                R$ {Number(product.price).toFixed(2)}
+                              </p>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  className="text-[10px] h-6 py-0 flex-1"
+                                  onClick={() => handleEdit(product)}
+                                >
+                                  <Pencil className="h-3 w-3 mr-1" />
+                                  Editar
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  className="text-[10px] h-6 py-0 flex-1 text-red-500 hover:text-red-600"
+                                  onClick={() => setProductToDelete(product)}
+                                >
+                                  <Trash2 className="h-3 w-3 mr-1" />
+                                  Excluir
+                                </Button>
+                              </div>
+                            </div>
+                          </>
                         )}
                       </div>
                     </motion.div>
