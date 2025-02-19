@@ -553,7 +553,7 @@ export default function MenuPage() {
                       <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
                         <div className="flex flex-col flex-grow">
                           <div className="flex flex-col space-y-1.5 mb-2">
-                            <h3 className="text-base sm:text-lg font-semibold line-clamp-1">
+                            <h3 className="text-base sm:text-lg font-semibold line-clamp-1 text-foreground">
                               {product.name}
                             </h3>
                             <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
@@ -567,7 +567,7 @@ export default function MenuPage() {
                             />
                           )}
                           <div className="flex justify-between items-center mt-auto pt-2 flex-wrap gap-2">
-                            <p className="text-base sm:text-lg font-bold whitespace-nowrap">
+                            <p className="text-base sm:text-lg font-bold whitespace-nowrap text-foreground">
                               {formatPrice(product.price)}
                             </p>
                             <div className="flex items-center gap-1.5 shrink-0">
