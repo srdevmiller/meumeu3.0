@@ -92,7 +92,10 @@ export default function ProfilePage() {
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newColor = event.target.value;
     setSelectedColor(newColor);
-    updateProfileMutation.mutate({ themeColor: newColor });
+  };
+
+  const handleSave = () => {
+    updateProfileMutation.mutate({ themeColor: selectedColor });
   };
 
   return (
@@ -220,6 +223,20 @@ export default function ProfilePage() {
             <p className="text-sm text-muted-foreground mt-2">
               Escolha a cor do tema para seu cardápio
             </p>
+          </div>
+
+          {/* Botão Salvar */}
+          <div className="mt-6">
+            <Button
+              onClick={handleSave}
+              disabled={updateProfileMutation.isPending || updateBannerMutation.isPending}
+              className="w-full"
+            >
+              {(updateProfileMutation.isPending || updateBannerMutation.isPending) && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              Salvar Alterações
+            </Button>
           </div>
         </CardContent>
       </Card>
