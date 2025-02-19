@@ -91,23 +91,33 @@ async function compressImage(file: File): Promise<string> {
         let quality = 0.9;
         let canvas = document.createElement('canvas');
 
-        // Redimensionar se a imagem for muito grande
-        if (width > MAX_IMAGE_SIZE || height > MAX_IMAGE_SIZE) {
-          if (width > height) {
-            height = (height / width) * MAX_IMAGE_SIZE;
-            width = MAX_IMAGE_SIZE;
-          } else {
-            width = (width / height) * MAX_IMAGE_SIZE;
-            height = MAX_IMAGE_SIZE;
-          }
+        // Calcular dimensões para corte quadrado
+        const size = Math.min(width, height);
+        const startX = (width - size) / 2;
+        const startY = (height - size) / 2;
+
+        // Definir canvas como quadrado
+        canvas.width = size;
+        canvas.height = size;
+
+        // Se a imagem for muito grande, redimensionar mantendo o aspecto quadrado
+        if (size > MAX_IMAGE_SIZE) {
+          canvas.width = MAX_IMAGE_SIZE;
+          canvas.height = MAX_IMAGE_SIZE;
         }
 
-        canvas.width = width;
-        canvas.height = height;
         const ctx = canvas.getContext('2d')!;
         ctx.fillStyle = 'white'; // Fundo branco para imagens PNG
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(img, 0, 0, width, height);
+
+        // Desenhar a imagem cortada e redimensionada
+        ctx.drawImage(
+          img,
+          startX, startY, // Ponto de início do corte
+          size, size,     // Tamanho do corte
+          0, 0,          // Posição no canvas
+          canvas.width, canvas.height // Tamanho final
+        );
 
         // Tentar comprimir até atingir o tamanho desejado
         const isPNG = file.type === 'image/png';
@@ -481,11 +491,13 @@ export default function HomePage() {
                           className="cursor-pointer flex flex-col items-center"
                         >
                           {imagePreview ? (
-                            <img
-                              src={imagePreview}
-                              alt="Preview"
-                              className="w-32 h-32 object-cover rounded-lg"
-                            />
+                            <div className="w-32 h-32 relative">
+                              <img
+                                src={imagePreview}
+                                alt="Preview"
+                                className="absolute inset-0 w-full h-full object-cover rounded-lg"
+                              />
+                            </div>
                           ) : (
                             <div className="w-32 h-32 border-2 border-dashed rounded-lg flex items-center justify-center">
                               <Upload className="w-8 h-8 text-muted-foreground" />
@@ -740,11 +752,11 @@ export default function HomePage() {
                           : "flex flex-col"
                         } border-border hover:border-border/40 hover:shadow-lg transition-all duration-300`}
                     >
-                      <div className={viewMode === "list" ? "w-24 h-full flex-shrink-0" : "aspect-square"}>
+                      <div className={viewMode === "list" ? "w-24 h-24 flex-shrink-0" : "w-full pb-[100%] relative"}>
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className="w-full h-full object-cover"
+                          className={`absolute inset-0 w-full h-full object-cover`}
                         />
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex items-center px-4" : "p-2.5 flex flex-col flex-grow"}>
