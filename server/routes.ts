@@ -39,7 +39,7 @@ async function ensureAdminUser() {
   }
 }
 
-function trackVisit(req: Request, res: Response, next: NextFunction) {
+function trackVisit(req: Request, res: Response, next: any) {
   const ignoredPaths = [
     '/api/',
     '/assets/',
@@ -487,9 +487,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { amount, planId, customerData, planType } = req.body;
 
+      console.log("Dados recebidos para geração do PIX:", {
+        amount,
+        planId,
+        planType,
+        customerData: { ...customerData, cpf: "***" } // Log sem CPF por segurança
+      });
+
       // Formatar os dados do cliente para o Mercado Pago
       const paymentData = {
-        transaction_amount: amount,
+        transaction_amount: Number(amount), // Garantir que é um número
         description: `Assinatura do Plano ${planId} - ${planType === 'monthly' ? 'Mensal' : 'Anual'}`,
         payer: {
           email: customerData.email,
@@ -507,13 +514,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
 
+      console.log("Dados formatados para o Mercado Pago:", {
+        ...paymentData,
+        payer: { ...paymentData.payer, identification: { ...paymentData.payer.identification, number: "***" } }
+      });
+
       const pixData = await generatePix(paymentData);
+      console.log("Resposta do Mercado Pago:", {
+        id: pixData.id,
+        status: pixData.status,
+        qr_code: "***"
+      });
+
       res.json(pixData);
     } catch (error) {
-      console.error("Erro ao gerar PIX:", error);
+      console.error("Erro detalhado ao gerar PIX:", error);
       res.status(500).json({
         error: "PAYMENT_ERROR",
-        message: "Erro ao gerar o código PIX"
+        message: "Erro ao gerar o código PIX",
+        details: error instanceof Error ? error.message : "Erro desconhecido"
       });
     }
   });

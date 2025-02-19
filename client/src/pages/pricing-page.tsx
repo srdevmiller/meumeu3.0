@@ -141,7 +141,7 @@ export default function PricingPage() {
   });
 
   const generatePixMutation = useMutation({
-    mutationFn: async (data: { amount: number; planId: string; customerData: CustomerFormData }) => {
+    mutationFn: async (data: { amount: number; planId: string; customerData: CustomerFormData; planType: string }) => {
       const response = await fetch("/api/payments/pix", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -199,7 +199,7 @@ export default function PricingPage() {
       await validateCPFMutation.mutateAsync(data.cpf);
 
       // Calcula o valor total baseado no plano (mensal ou anual)
-      const amount = yearlyBilling 
+      const amount = yearlyBilling
         ? selectedPlan!.price.yearly * 12  // Preço anual * 12 meses
         : selectedPlan!.price.monthly;     // Preço mensal
 
@@ -208,6 +208,7 @@ export default function PricingPage() {
         amount,
         planId: selectedPlan!.id,
         customerData: data,
+        planType: yearlyBilling ? 'yearly' : 'monthly'  // Adicionando o tipo do plano
       });
 
       setPaymentId(pixResponse.id);
