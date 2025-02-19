@@ -184,7 +184,7 @@ export default function PricingPage() {
       if (!response.ok) throw new Error("Erro ao verificar pagamento");
       return response.json();
     },
-    enabled: !!paymentId,
+    enabled: !!paymentId && showPixCode, // Only enabled when PIX code is shown
     refetchInterval: (data) => {
       // Para de consultar quando o pagamento for aprovado
       return data?.status === "approved" ? false : 5000;
@@ -554,12 +554,12 @@ export default function PricingPage() {
                     Status do pagamento:
                   </p>
                   <p className={`text-sm font-medium mt-1 ${
-                    paymentStatusQuery.data?.status === "approved" 
-                      ? "text-green-600" 
+                    paymentStatusQuery.data?.status === "approved"
+                      ? "text-green-600"
                       : "text-yellow-600"
                   }`}>
-                    {paymentStatusQuery.data?.status === "approved" 
-                      ? "Pagamento aprovado!" 
+                    {paymentStatusQuery.data?.status === "approved"
+                      ? "Pagamento aprovado!"
                       : "Aguardando confirmação..."}
                   </p>
                 </div>
