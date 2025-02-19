@@ -184,16 +184,17 @@ export default function PricingPage() {
       console.log("Checking payment status for ID:", paymentId);
       const response = await fetch(`/api/payments/status/${paymentId}`);
       if (!response.ok) throw new Error("Erro ao verificar pagamento");
-      const data = await response.json();
-      console.log("Payment status response:", data);
-      return data;
+      return response.json();
     },
     enabled: !!paymentId && showPixCode && !paymentApproved,
     refetchInterval: (data) => {
+      if (!data) return 5000;
+
       console.log("Current payment status data:", data);
-      if (data?.status === "approved") {
+      if (data.status === "approved") {
         console.log("Payment approved, preparing redirect...");
         setPaymentApproved(true);
+        setShowPixCode(false);
 
         // Construct welcome page URL with user data
         const welcomeParams = new URLSearchParams({
@@ -205,18 +206,7 @@ export default function PricingPage() {
 
         const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
         console.log("Redirecting to:", welcomeUrl);
-
-        // Ensure all states are updated before redirect
-        setTimeout(() => {
-          try {
-            console.log("Executing redirect to:", welcomeUrl);
-            setLocation(welcomeUrl);
-          } catch (error) {
-            console.error("Error during redirect:", error);
-            // Fallback to window.location if wouter fails
-            window.location.href = welcomeUrl;
-          }
-        }, 3000); // Increased timeout to 3 seconds
+        setLocation(welcomeUrl);
 
         return false; // Stop polling
       }
@@ -226,23 +216,7 @@ export default function PricingPage() {
     staleTime: 0,
   });
 
-  // Effect to handle payment approval
-  useEffect(() => {
-    if (paymentApproved && !showPixCode) {
-      const welcomeParams = new URLSearchParams({
-        name: form.getValues("name"),
-        email: form.getValues("email"),
-        phone: form.getValues("phone"),
-        planType: selectedPlan?.name || ''
-      });
-
-      const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
-      console.log("Redirecting from effect to:", welcomeUrl);
-      setLocation(welcomeUrl);
-    }
-  }, [paymentApproved, showPixCode, form, selectedPlan?.name, setLocation]);
-
-  // Effect to handle payment approval and toasts
+  // Remover o useEffect de redirecionamento duplicado
   useEffect(() => {
     if (paymentApproved) {
       console.log("Payment approved in useEffect");
@@ -250,10 +224,6 @@ export default function PricingPage() {
         title: "Pagamento aprovado!",
         description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
       });
-
-      // Clear states
-      setShowPixCode(false);
-      setPaymentId(null);
     }
   }, [paymentApproved, toast]);
 
