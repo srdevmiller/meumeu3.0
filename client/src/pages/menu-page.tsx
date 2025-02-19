@@ -607,31 +607,32 @@ export default function MenuPage() {
                             : "p-6 flex flex-col"
                         }
                       >
-                        <div className="flex flex-col flex-grow">
-                          <div className="flex flex-col space-y-2 mb-4">
+                        <div className="flex flex-row justify-between flex-grow gap-4">
+                          <div className="flex flex-col space-y-2">
                             <h3 className="text-xl font-semibold line-clamp-2 text-foreground">
                               {product.name}
                             </h3>
                             <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-3 py-1 text-sm font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
-                          </div>
-                          {product.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-                              {product.description}
-                            </p>
-                          )}
-                          {product.suggestions && product.suggestions.length > 0 && (
-                            <SuggestionsWidget
-                              suggestions={product.suggestions}
-                              className="mb-4"
-                            />
-                          )}
-                          <div className="flex justify-between items-center mt-auto pt-2 flex-wrap gap-2">
-                            <p className="text-xl font-bold whitespace-nowrap text-foreground">
+                            {product.description && (
+                              <p className="text-sm text-muted-foreground line-clamp-2">
+                                {product.description}
+                              </p>
+                            )}
+                            <p className="text-xl font-bold whitespace-nowrap text-foreground mt-auto">
                               {formatPrice(product.price)}
                             </p>
-                            <div className="flex items-center gap-2">
+                          </div>
+
+                          <div className="flex flex-col justify-between items-end">
+                            {product.suggestions && product.suggestions.length > 0 && (
+                              <SuggestionsWidget
+                                suggestions={product.suggestions}
+                                className="mb-4"
+                              />
+                            )}
+                            <div className="flex items-center gap-2 mt-auto">
                               <Button
                                 variant="ghost"
                                 size="icon"
@@ -793,8 +794,9 @@ export default function MenuPage() {
           </div>
         </motion.div>
 
-        <style>
+        <style jsx global>
           {`
+            /* Animations */
             .ripple {
               position: absolute;
               border-radius: 50%;
@@ -811,175 +813,31 @@ export default function MenuPage() {
                 opacity: 0;
               }
             }
+
             /* Ensure proper stacking context for animations */
             .relative {
               position: relative;
             }
 
-            /* Smooth transitions for interactive elements */
-            button,
-            .card-interactive {
-              transition: all 0.2s ease-in-out;
-              transform: translateZ(0);
-              backface-visibility: hidden;
-            }
-
-            /* Prevent animation flicker */
-            .motion-safe:transform {
-              transform: translateZ(0);
-              backface-visibility: hidden;
-              perspective: 1000px;
-            }
-
-            /* Ensure proper z-index stacking for tooltips */
-            .tooltip-trigger {
-              position: relative;
-              z-index: 30;
-            }
-
-            /* Fix for Safari animation performance */
-            .animate-presence {
-              will-change: transform, opacity;
-            }
-
-            /* Smoother hover transitions */
+            /* Hover effects */
             .hover-scale {
               transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             .hover-scale:hover {
-              transform: scale(1.02);
+              transform: scale(1.05);
             }
-
-            /* Prevent layout shifts during animations */
-            .grid-container {
-              contain: layout style paint;
-            }
-
-            /* Enhanced hover effects */
-            .card-interactive {
-              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .card-interactive:hover {
-              transform: translateY(-4px);
-              box-shadow: 0 12px 24px -10px rgba(0,0, 0, 0.1);
-            }
-
-            /* Smooth transitions for filters */
-            .filter-transition {
-              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            /* Interactive tooltips */
-            .tooltip-content {
-              transform-origin: var(--radix-tooltip-content-transform-origin);
-              animation: tooltip-slide 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-            }
-
-            @keyframes tooltip-slide {
-              from {
-                opacity: 0;
-                transform: scale(0.96);
-              }
-              to {
-                opacity: 1;
-                transform: scale(1);
-              }
-            }
-
-            /* Filter highlight effect */
-            .filter-active {
-              background: var(--theme-color);
-              color: white;
-              transform: scale(1.05);            }
 
             /* Scroll reveal animation*/
             .scroll-reveal {
               opacity: 0;
               transform: translateY(20px);
-              transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+              transition: all 0.6s cubic-bezier(0.4,0, 0.2, 1);
             }
+
             .scroll-reveal.visible {
               opacity: 1;
-              transform: translateY(0);            }
-
-            /* Loading skeleton pulse animation */
-            @keyframes skeleton-pulse {
-              0% {
-                opacity: 0.6;
-              }
-              50% {
-                opacity: 0.8;
-              }
-              100% {
-                opacity: 0.6;
-              }
-            }
-
-            .animate-pulse {
-              animation: skeleton-pulse 1.5s ease-in-out infinite;
-            }
-
-            /* Smooth slider transitions */
-            [role="slider"] {
-              transition: transform 0.2s cubic-bezier(0.4, 00, 0.2, 1);
-            }
-
-            [role="slider"]:hover {
-              transform: scale(1.2);
-            }
-
-            [role="slider"]:active {
-              transform: scale(0.95);
-            }
-
-            /* Range track styling */
-            .range {
-              transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            /* Add spring effect to buttons */
-            button:active {
-              transform: scale(0.95);
-              transition: transform 0.1s;
-            }
-
-            /* Enhance ripple effect */
-            .ripple {
-              position: absolute;
-              border-radius:50%;
-              transform: scale(0);
-              animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-              background-color: rgba(255, 255, 255, 0.7);
-              pointer-events: none;
-              z-index: 50;
-            }
-
-            @keyframes ripple {
-              to {
-                transform: scale(4);
-                opacity: 0;
-              }
-            }
-
-            /* Checkbox animations */
-            [role="checkbox"] {
-              transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            [role="checkbox"]:hover {
-              background-color: var(--theme-color-90);
-            }
-
-            /* Category pill animations */
-            .category-pill {
-              transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .category-pill:hover {
-              transform: translateY(-2px);
-              box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.1);
+              transform: translateY(0);
             }
           `}
         </style>
