@@ -420,28 +420,28 @@ export default function PricingPage() {
               Escaneie o QR Code ou copie o código PIX para realizar o pagamento
             </DialogDescription>
           </DialogHeader>
-          {generatePixMutation.data && generatePixMutation.data.qr_codes && generatePixMutation.data.qr_codes[0] && (
+          {generatePixMutation.data && (
             <div className="mt-4 text-center">
               <div className="bg-white p-6 rounded-lg">
                 <img
-                  src={generatePixMutation.data.qr_codes[0].qr_code_base64}
+                  src={generatePixMutation.data.point_of_interaction.transaction_data.qr_code_base64}
                   alt="QR Code PIX"
                   className="mx-auto w-48 h-48"
                 />
                 <div className="mt-4">
                   <p className="text-xs text-gray-500 mb-2">Código PIX para copiar e colar:</p>
                   <div className="relative">
-                    <div 
+                    <div
                       className="p-3 bg-gray-50 rounded border text-xs font-mono break-all cursor-pointer hover:bg-gray-100 transition-colors"
                       onClick={() => {
-                        navigator.clipboard.writeText(generatePixMutation.data.qr_codes[0].qr_code);
+                        navigator.clipboard.writeText(generatePixMutation.data.point_of_interaction.transaction_data.qr_code);
                         toast({
                           title: "Código copiado!",
                           description: "Cole o código no seu aplicativo do banco",
                         });
                       }}
                     >
-                      {generatePixMutation.data.qr_codes[0].qr_code}
+                      {generatePixMutation.data.point_of_interaction.transaction_data.qr_code}
                     </div>
                   </div>
                 </div>
