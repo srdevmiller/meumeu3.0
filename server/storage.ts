@@ -112,6 +112,8 @@ export class DatabaseStorage implements IStorage {
       imageUrl: product.imageUrl,
       categoryId: product.categoryId,
       userId: product.userId,
+      description: product.description,
+      suggestions: product.suggestions
     }).returning();
     return newProduct;
   }
@@ -140,7 +142,8 @@ export class DatabaseStorage implements IStorage {
         ...(product.price && { price: product.price.toString() }),
         ...(product.imageUrl && { imageUrl: product.imageUrl }),
         ...(product.categoryId && { categoryId: product.categoryId }),
-        ...(product.suggestions !== undefined && { suggestions: product.suggestions })
+        ...(product.suggestions !== undefined && { suggestions: product.suggestions }),
+        ...(product.description !== undefined && { description: product.description })
       })
       .where(eq(products.id, id))
       .returning();
