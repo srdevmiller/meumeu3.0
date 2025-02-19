@@ -756,7 +756,7 @@ export default function HomePage() {
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className={`absolute inset-0 w-full h-full object-cover`}
+                          className={`${viewMode === "list" ? "w-full h-full" : "absolute inset-0 w-full h-full"} object-cover`}
                         />
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex items-center px-4" : "p-2.5 flex flex-col flex-grow"}>
