@@ -583,7 +583,7 @@ export default function HomePage() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-2.5">
               {isLoadingProducts ? (
                 <div className="flex justify-center">
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
