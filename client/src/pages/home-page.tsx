@@ -137,7 +137,7 @@ export default function HomePage() {
       name: "",
       price: 0,
       imageUrl: "",
-      categoryId: undefined, // Mudando de 0 para undefined
+      categoryId: undefined,
       suggestions: [],
       description: "",
     },
@@ -175,8 +175,16 @@ export default function HomePage() {
         title: "Produto criado",
         description: "O produto foi publicado com sucesso!",
       });
-      form.reset();
+      form.reset({
+        name: "",
+        price: 0,
+        imageUrl: "",
+        categoryId: undefined,
+        suggestions: [],
+        description: "",
+      });
       setImagePreview(null);
+      setShowPublishForm(false);
     },
     onError: (error: Error) => {
       toast({
@@ -190,7 +198,6 @@ export default function HomePage() {
   const updateProductMutation = useMutation({
     mutationFn: async (data: InsertProduct & { id: number }) => {
       const { id, ...product } = data;
-      console.log('Updating product with data:', product); // Log para debug
       const res = await apiRequest("PATCH", `/api/products/${id}`, product);
       if (!res.ok) {
         const error = await res.text();
@@ -205,7 +212,14 @@ export default function HomePage() {
         description: "O produto foi atualizado com sucesso!",
       });
       setEditingProduct(null);
-      form.reset();
+      form.reset({
+        name: "",
+        price: 0,
+        imageUrl: "",
+        categoryId: undefined,
+        suggestions: [],
+        description: "",
+      });
       setImagePreview(null);
       setShowPublishForm(false);
     },
