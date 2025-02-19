@@ -582,14 +582,14 @@ export default function MenuPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className={`h-7 w-7 sm:h-8 sm:w-8 rounded-full transition-all duration-200 ${
+                              className={`h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 ${
                                 compareProducts.some((p) => p.id === product.id)
                                   ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
                                   : "hover:bg-[var(--theme-color)]/5"
                               }`}
                               onClick={() => toggleCompare(product)}
                             >
-                              <Scale className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${
+                              <Scale className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 ${
                                 compareProducts.some((p) => p.id === product.id)
                                   ? "text-[var(--theme-color)]"
                                   : "text-muted-foreground"
@@ -597,12 +597,12 @@ export default function MenuPage() {
                             </Button>
                             <Button
                               variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 sm:h-8 sm:w-8 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
+                              size="icon" 
+                              className="h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
                               onClick={() => toggleFavorite(product.id)}
                             >
                               <Heart
-                                className={`h-3.5 w-3.5 sm:h-4 sm:w-4 transition-colors ${
+                                className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 transition-colors ${
                                   data?.favorites.includes(product.id)
                                     ? "fill-current text-red-500"
                                     : "text-muted-foreground hover:text-red-400"
