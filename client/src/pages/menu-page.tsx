@@ -4,6 +4,7 @@ import { useParams } from "wouter";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { SuggestionsWidget } from "@/components/ui/suggestions-widget";
 import {
   Card,
   CardContent,
@@ -42,7 +43,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
-import { SuggestionsWidget } from "@/components/ui/suggestions-widget";
+
 import { type SuggestionType } from "@/types/suggestion";
 import { ProductDetailsDialog } from "@/components/ui/product-details-dialog";
 
@@ -612,21 +613,7 @@ export default function MenuPage() {
                             <span className="inline-flex items-center rounded-md bg-[var(--theme-color)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
-                            {product.suggestions?.includes("premium") && (
-                              <span className="inline-flex items-center rounded-md bg-amber-50 dark:bg-amber-900/30 px-2.5 py-0.5 text-xs font-medium text-amber-600 dark:text-amber-400">
-                                Premium
-                              </span>
-                            )}
-                            {product.suggestions?.includes("mais_pedido") && (
-                              <span className="inline-flex items-center rounded-md bg-orange-50 dark:bg-orange-900/30 px-2.5 py-0.5 text-xs font-medium text-orange-600 dark:text-orange-400">
-                                Mais Pedido
-                              </span>
-                            )}
-                            {product.suggestions?.includes("novidade") && (
-                              <span className="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-                                Novidade
-                              </span>
-                            )}
+                            <SuggestionsWidget suggestions={product.suggestions || []} />
                           </div>
                           {product.description && (
                             <p className="text-sm text-muted-foreground line-clamp-2">
