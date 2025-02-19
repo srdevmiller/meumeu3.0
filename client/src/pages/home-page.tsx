@@ -137,9 +137,9 @@ export default function HomePage() {
       name: "",
       price: 0,
       imageUrl: "",
-      categoryId: 0,
+      categoryId: undefined, // Mudando de 0 para undefined
       suggestions: [],
-      description: "", // Add default value for description
+      description: "",
     },
   });
 
