@@ -445,6 +445,35 @@ export default function PricingPage() {
                     </div>
                   </div>
                 </div>
+
+                {/* Nova seção - Dados do pedido */}
+                <div className="mt-6 border-t pt-4">
+                  <h4 className="text-sm font-semibold text-gray-900 mb-3">Dados do pedido</h4>
+                  <div className="space-y-2 text-sm text-left">
+                    <p className="flex justify-between">
+                      <span className="text-gray-500">ID da transação:</span>
+                      <span className="font-medium">{generatePixMutation.data.charges_execution_info.internal_execution.execution_id}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-500">Descrição:</span>
+                      <span className="font-medium">{generatePixMutation.data.description}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-500">Titular:</span>
+                      <span className="font-medium">{generatePixMutation.data.point_of_interaction.transaction_data.bank_info.collector.account_holder_name}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-500">Valor:</span>
+                      <span className="font-medium">
+                        {new Intl.NumberFormat('pt-BR', {
+                          style: 'currency',
+                          currency: 'BRL'
+                        }).format(generatePixMutation.data.transaction_amount)}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
                 <div className="mt-6">
                   <p className="text-sm text-gray-600">
                     {paymentId ? (
