@@ -219,7 +219,7 @@ export default function AdminDashboard() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Painel de controle</h1>
+        <h1 className="text-4xl font-bold text-foreground">Painel de controle</h1>
         <div className="flex gap-4">
           <Link href="/admin/analytics">
             <Button variant="outline" className="flex items-center gap-2">
@@ -269,7 +269,7 @@ export default function AdminDashboard() {
       {/* Log de Atividades */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Log de Atividades</CardTitle>
+          <CardTitle className="text-foreground">Log de Atividades</CardTitle>
         </CardHeader>
         <CardContent>
           {isLoadingLogs ? (
@@ -280,21 +280,21 @@ export default function AdminDashboard() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Ação</TableHead>
-                  <TableHead>Detalhes</TableHead>
-                  <TableHead>IP</TableHead>
+                  <TableHead className="text-foreground">Data</TableHead>
+                  <TableHead className="text-foreground">Ação</TableHead>
+                  <TableHead className="text-foreground">Detalhes</TableHead>
+                  <TableHead className="text-foreground">IP</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {logsData?.logs.map((log) => (
                   <TableRow key={log.id}>
-                    <TableCell>
+                    <TableCell className="text-foreground">
                       {new Date(log.createdAt).toLocaleString('pt-BR')}
                     </TableCell>
-                    <TableCell>{log.action}</TableCell>
-                    <TableCell>{log.details}</TableCell>
-                    <TableCell>{log.ipAddress}</TableCell>
+                    <TableCell className="text-foreground">{log.action}</TableCell>
+                    <TableCell className="text-foreground">{log.details}</TableCell>
+                    <TableCell className="text-foreground">{log.ipAddress}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -305,7 +305,7 @@ export default function AdminDashboard() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Clientes:</CardTitle>
+          <CardTitle className="text-foreground">Clientes:</CardTitle>
         </CardHeader>
         <CardContent>
           {/* Search input */}
@@ -322,22 +322,22 @@ export default function AdminDashboard() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Telefone</TableHead>
-                <TableHead>email</TableHead>
-                <TableHead>id</TableHead>
-                <TableHead className="text-right">Qtd produtos</TableHead>
-                <TableHead className="w-[100px]">Ações</TableHead>
+                <TableHead className="text-foreground">Cliente</TableHead>
+                <TableHead className="text-foreground">Telefone</TableHead>
+                <TableHead className="text-foreground">email</TableHead>
+                <TableHead className="text-foreground">id</TableHead>
+                <TableHead className="text-right text-foreground">Qtd produtos</TableHead>
+                <TableHead className="w-[100px] text-foreground">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredUsers.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell>{user.businessName}</TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                  <TableCell>{user.username}</TableCell>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell className="text-right">{user.product_count}</TableCell>
+                  <TableCell className="text-foreground">{user.businessName}</TableCell>
+                  <TableCell className="text-foreground">{user.phone}</TableCell>
+                  <TableCell className="text-foreground">{user.username}</TableCell>
+                  <TableCell className="text-foreground">{user.id}</TableCell>
+                  <TableCell className="text-right text-foreground">{user.product_count}</TableCell>
                   <TableCell>
                     <Dialog open={editingUser?.id === user.id} onOpenChange={(open) => !open && setEditingUser(null)}>
                       <DialogTrigger asChild>
@@ -351,7 +351,7 @@ export default function AdminDashboard() {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Editar Cliente</DialogTitle>
+                          <DialogTitle className="text-foreground">Editar Cliente</DialogTitle>
                         </DialogHeader>
                         <Form {...form}>
                           <form onSubmit={form.handleSubmit(handleEditSubmit)} className="space-y-4">
@@ -360,7 +360,7 @@ export default function AdminDashboard() {
                               name="businessName"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Nome do Estabelecimento</FormLabel>
+                                  <FormLabel className="text-foreground">Nome do Estabelecimento</FormLabel>
                                   <FormControl>
                                     <Input {...field} />
                                   </FormControl>
@@ -373,7 +373,7 @@ export default function AdminDashboard() {
                               name="phone"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Telefone</FormLabel>
+                                  <FormLabel className="text-foreground">Telefone</FormLabel>
                                   <FormControl>
                                     <Input {...field} />
                                   </FormControl>
@@ -386,7 +386,7 @@ export default function AdminDashboard() {
                               name="username"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>Email</FormLabel>
+                                  <FormLabel className="text-foreground">Email</FormLabel>
                                   <FormControl>
                                     <Input {...field} type="email" />
                                   </FormControl>
