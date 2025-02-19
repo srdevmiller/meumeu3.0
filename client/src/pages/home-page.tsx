@@ -351,7 +351,7 @@ export default function HomePage() {
     "#7c3aed", // Roxo
     "#ef4444", // Vermelho
     "#f97316", // Laranja
-    "#84cc16", // Verde
+    "#0BD979", // Verde
     "#06b6d4", // Ciano
     "#3b82f6", // Azul
     "#ec4899", // Rosa

@@ -11,18 +11,18 @@ import { Loader2 } from "lucide-react";
 import { Link } from "wouter";
 
 const themeColors = [
-  { name: "Grapefruit", hex: "#F01414" }, // rgb(240, 20, 20)
-  { name: "Bittersweet", hex: "#14F07E" }, // rgb(20, 240, 126)
-  { name: "Sunflower", hex: "#1432F0" }, // rgb(20, 50, 240)
-  { name: "Grass", hex: "#9914F0" }, // rgb(153, 20, 240)
-  { name: "Mint", hex: "#48CEAD" },
-  { name: "Aqua", hex: "#3BC1E9" },
-  { name: "Blue Jeans", hex: "#5D96CC" },
-  { name: "Lavander", hex: "#AC92EC" },
-  { name: "Pink Rose", hex: "#EC87AD" },
-  { name: "Light Gray", hex: "#F5F7FA" },
-  { name: "Medium Gray", hex: "#CCD1D9" },
-  { name: "Dark Gray", hex: "#656D78" }
+  { name: "Grapefruit", hex: "#0BD979" },
+  { name: "Bittersweet", hex: "#F2CB05" },
+  { name: "Sunflower", hex: "#D90718" },
+  { name: "Grass", hex: "#F27405" },
+  { name: "Mint", hex: "#41A8BF" },
+  { name: "Aqua", hex: "#F2B077" },
+  { name: "Blue Jeans", hex: "#F25A38" },
+  { name: "Lavander", hex: "#7EADBF" },
+  { name: "Pink Rose", hex: "#F29991" },
+  { name: "Light Gray", hex: "#2730F2" },
+  { name: "Medium Gray", hex: "#D900D9" },
+  { name: "Dark Gray", hex: "#5C0499" }
 ];
 
 export default function ProfilePage() {
