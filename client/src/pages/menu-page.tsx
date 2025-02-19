@@ -521,7 +521,7 @@ export default function MenuPage() {
               <div
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-2 gap-4 md:gap-6 max-w-[900px] mx-auto"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 max-w-[1200px] mx-auto"
                     : "flex flex-col gap-4 md:gap-6"
                 }
               >
@@ -536,7 +536,7 @@ export default function MenuPage() {
                       className={`overflow-hidden ${
                         viewMode === "list"
                           ? "flex flex-row h-36 sm:h-48"
-                          : ""
+                          : "h-full"
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300 cursor-pointer`}
                       onClick={() => setSelectedProduct(product)}
                     >
@@ -544,60 +544,83 @@ export default function MenuPage() {
                         className={
                           viewMode === "list"
                             ? "w-36 sm:w-48 h-full flex-shrink-0"
-                            : "aspect-square"
+                            : "aspect-square w-full relative"
                         }
                       >
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className="w-full h-full object-cover"
+                          className={`${
+                            viewMode === "list"
+                              ? "w-full h-full"
+                              : "absolute inset-0 w-full h-full"
+                          } object-cover`}
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
+                      <div
+                        className={
+                          viewMode === "list"
+                            ? "flex-1 flex flex-col p-3 sm:p-4"
+                            : "p-4 flex flex-col"
+                        }
+                      >
                         <div className="flex flex-col flex-grow">
-                          <div className="flex flex-col space-y-1.5 mb-2">
-                            <h3 className="text-base sm:text-lg font-semibold line-clamp-1 text-foreground">
+                          <div className="flex flex-col space-y-2 mb-3">
+                            <h3 className="text-lg sm:text-xl font-semibold line-clamp-2 text-foreground">
                               {product.name}
                             </h3>
-                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-2.5 py-1 text-sm font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
                           </div>
+                          {product.description && (
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                              {product.description}
+                            </p>
+                          )}
                           {product.suggestions && product.suggestions.length > 0 && (
                             <SuggestionsWidget
                               suggestions={product.suggestions}
-                              className="mt-1"
+                              className="mb-3"
                             />
                           )}
                           <div className="flex justify-between items-center mt-auto pt-2 flex-wrap gap-2">
-                            <p className="text-base sm:text-lg font-bold whitespace-nowrap text-foreground">
+                            <p className="text-lg sm:text-xl font-bold whitespace-nowrap text-foreground">
                               {formatPrice(product.price)}
                             </p>
                             <div className="flex items-center gap-1.5 shrink-0">
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className={`h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 ${
+                                className={`h-8 w-8 sm:h-9 sm:w-9 rounded-full transition-all duration-200 ${
                                   compareProducts.some((p) => p.id === product.id)
                                     ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
                                     : "hover:bg-[var(--theme-color)]/5"
                                 }`}
-                                onClick={() => toggleCompare(product)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleCompare(product);
+                                }}
                               >
-                                <Scale className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 ${
-                                  compareProducts.some((p) => p.id === product.id)
-                                    ? "text-[var(--theme-color)]"
-                                    : "text-muted-foreground"
-                                }`} />
+                                <Scale
+                                  className={`h-4 w-4 sm:h-5 sm:w-5 ${
+                                    compareProducts.some((p) => p.id === product.id)
+                                      ? "text-[var(--theme-color)]"
+                                      : "text-muted-foreground"
+                                  }`}
+                                />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
-                                onClick={() => toggleFavorite(product.id)}
+                                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleFavorite(product.id);
+                                }}
                               >
                                 <Heart
-                                  className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 transition-colors ${
+                                  className={`h-4 w-4 sm:h-5 sm:w-5 transition-colors ${
                                     data?.favorites.includes(product.id)
                                       ? "fill-current text-red-500"
                                       : "text-muted-foreground hover:text-red-400"
