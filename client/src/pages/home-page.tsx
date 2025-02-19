@@ -421,35 +421,35 @@ export default function HomePage() {
           </Button>
         </div>
 
-        <div className="flex gap-2 mb-4">
-          <motion.div whileTap={{ scale: 0.95 }}>
-            <Link href="/profile">
-              <Button
-                variant="outline"
-                className="relative overflow-hidden"
-                onClick={createRipple}
-              >
-                <Settings className="w-4 h-4 mr-2" />
-                Editar Perfil
-              </Button>
-            </Link>
-          </motion.div>
-
-          <motion.div whileTap={{ scale: 0.95 }}>
-            <Link href={`/menu/${encodeURIComponent(user?.businessName || '')}/${user?.id}`}>
-              <Button
-                variant="outline"
-                className="relative overflow-hidden"
-                onClick={createRipple}
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Ver Cardápio Público
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-
         <div className="mb-8">
+          <div className="flex gap-2 mb-4">
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Link href="/profile">
+                <Button
+                  variant="outline"
+                  className="relative overflow-hidden"
+                  onClick={createRipple}
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Editar Perfil
+                </Button>
+              </Link>
+            </motion.div>
+
+            <motion.div whileTap={{ scale: 0.95 }}>
+              <Link href={`/menu/${encodeURIComponent(user?.businessName || '')}/${user?.id}`}>
+                <Button
+                  variant="outline"
+                  className="relative overflow-hidden"
+                  onClick={createRipple}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  Ver Cardápio Público
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+
           <Button
             variant="default"
             onClick={() => setShowPublishForm(!showPublishForm)}
