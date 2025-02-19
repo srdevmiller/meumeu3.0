@@ -35,8 +35,8 @@ import {
   Scale,
   ArrowUp01,
   ArrowDown01,
-  X, // Import X from lucide-react
-  Filter, // Adding the missing Filter import
+  X,
+  Filter,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -78,6 +78,7 @@ export default function MenuPage() {
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showFilters, setShowFilters] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
   const [theme, setTheme] = useState<"light" | "dark">(
@@ -364,26 +365,36 @@ export default function MenuPage() {
               animate={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.4 }}
             >
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Buscar</CardTitle>
-                </CardHeader>
-                <CardContent className="pb-4">
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Buscar produtos..."
-                      className="pl-8"
-                      value={search}
-                      onChange={(e) => {
-                        setSearch(e.target.value);
-                        if (showFilters) setShowFilters(false);
-                      }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
+              <AnimatePresence>
+                {showSearch && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <CardTitle>Buscar</CardTitle>
+                      </CardHeader>
+                      <CardContent className="pb-4">
+                        <div className="relative">
+                          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                          <Input
+                            placeholder="Buscar produtos..."
+                            className="pl-8"
+                            value={search}
+                            onChange={(e) => {
+                              setSearch(e.target.value);
+                              if (showFilters) setShowFilters(false);
+                            }}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <AnimatePresence>
                 {showFilters && (
                   <div className="space-y-4 md:space-y-6">
@@ -463,6 +474,17 @@ export default function MenuPage() {
                     Qtd Produtos {filteredProducts.length}
                   </span>
                   <div className="flex items-center gap-2">
+                    <Button
+                      variant={showSearch ? "default" : "outline"}
+                      size="icon"
+                      onClick={() => setShowSearch(!showSearch)}
+                      className={`h-8 w-8 md:h-10 md:w-10 ${
+                        showSearch ? "bg-[var(--theme-color)] hover:bg-[var(--theme-color)]/90" : ""
+                      }`}
+                    >
+                      <Search className="h-3 w-3 md:h-4 md:w-4" />
+                    </Button>
+
                     <Button
                       variant={showFilters ? "default" : "outline"}
                       size="icon"
