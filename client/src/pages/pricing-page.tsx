@@ -121,7 +121,6 @@ export default function PricingPage() {
   const [showPixCode, setShowPixCode] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [paymentApproved, setPaymentApproved] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
 
@@ -176,7 +175,7 @@ export default function PricingPage() {
     },
   });
 
-  // Payment status query
+  // Atualização do hook useQuery do status do pagamento
   const paymentStatusQuery = useQuery({
     queryKey: ["payment-status", paymentId],
     queryFn: async () => {
@@ -186,46 +185,24 @@ export default function PricingPage() {
       if (!response.ok) throw new Error("Erro ao verificar pagamento");
       return response.json();
     },
-    enabled: !!paymentId && showPixCode && !paymentApproved,
+    enabled: !!paymentId && showPixCode,
     refetchInterval: (data) => {
       if (!data) return 5000;
-
-      console.log("Current payment status data:", data);
-      if (data.status === "approved") {
-        console.log("Payment approved, preparing redirect...");
-        setPaymentApproved(true);
-        setShowPixCode(false);
-
-        // Construct welcome page URL with user data
-        const welcomeParams = new URLSearchParams({
-          name: form.getValues("name"),
-          email: form.getValues("email"),
-          phone: form.getValues("phone"),
-          planType: selectedPlan?.name || ''
-        });
-
-        const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
-        console.log("Redirecting to:", welcomeUrl);
-        setLocation(welcomeUrl);
-
-        return false; // Stop polling
-      }
-      return 5000; // Continue polling every 5 seconds
+      return data.status === "approved" ? false : 5000;
     },
     retry: 3,
     staleTime: 0,
   });
 
-  // Remover o useEffect de redirecionamento duplicado
+  // Manter apenas o useEffect para o toast de aprovação
   useEffect(() => {
-    if (paymentApproved) {
-      console.log("Payment approved in useEffect");
+    if (paymentStatusQuery.data?.status === "approved") {
       toast({
         title: "Pagamento aprovado!",
-        description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
+        description: "Clique em 'Continuar' para prosseguir.",
       });
     }
-  }, [paymentApproved, toast]);
+  }, [paymentStatusQuery.data?.status, toast]);
 
   const handlePlanSelection = (plan: Plan) => {
     // Se for plano básico, redireciona para registro e mostra confetti
@@ -574,10 +551,10 @@ export default function PricingPage() {
                 </div>
 
                 <div className="mt-6">
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 mb-2">
                     Status do pagamento:
                   </p>
-                  <p className={`text-sm font-medium mt-1 ${
+                  <p className={`text-sm font-medium ${
                     paymentStatusQuery.data?.status === "approved"
                       ? "text-green-600"
                       : "text-yellow-600"
@@ -586,6 +563,25 @@ export default function PricingPage() {
                       ? "Pagamento aprovado!"
                       : "Aguardando confirmação..."}
                   </p>
+
+                  {/* Botão Continuar - Visível apenas quando o pagamento for aprovado */}
+                  {paymentStatusQuery.data?.status === "approved" && (
+                    <Button
+                      className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white"
+                      onClick={() => {
+                        const welcomeParams = new URLSearchParams({
+                          name: form.getValues("name"),
+                          email: form.getValues("email"),
+                          phone: form.getValues("phone"),
+                          planType: selectedPlan?.name || ''
+                        });
+                        const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
+                        setLocation(welcomeUrl);
+                      }}
+                    >
+                      Continuar
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>
