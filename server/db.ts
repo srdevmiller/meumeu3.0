@@ -12,17 +12,22 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-// Configure the connection pool with proper error handling
+// Configure the connection pool with proper error handling and reconnection
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  max: 20,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  max: 10, // Reduced from 20 to prevent connection overload
+  idleTimeoutMillis: 10000, // Reduced from 30000 to clear idle connections faster
+  connectionTimeoutMillis: 2000, // Reduced from 5000 for faster timeout detection
+  retryLimit: 3, // Add retry limit for failed connections
+  ssl: { // Add explicit SSL configuration
+    rejectUnauthorized: true,
+  },
 });
 
 // Add error handler for the pool
 pool.on('error', (err, client) => {
   console.error('Unexpected error on idle client', err);
+  // Don't throw the error, just log it and let the pool handle reconnection
 });
 
 // Initialize Drizzle with the pool
@@ -33,3 +38,19 @@ process.on('SIGTERM', () => {
   console.log('Closing pool connections...');
   pool.end();
 });
+
+// Add health check function
+export const checkDatabaseConnection = async () => {
+  try {
+    const client = await pool.connect();
+    try {
+      await client.query('SELECT 1');
+      return true;
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('Database connection check failed:', error);
+    return false;
+  }
+};
