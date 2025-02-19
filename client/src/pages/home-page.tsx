@@ -55,7 +55,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@/components/ui/toggle-group";
-import { Star, CupSoda, Flame } from "lucide-react";
+import { Star, CupSoda, Flame, AlertTriangle } from "lucide-react";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -543,7 +543,7 @@ export default function HomePage() {
                               <ToggleGroupItem
                                 value="new"
                                 aria-label="Marcar como Novidade"
-                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-purple-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
                                 <Star className="h-4 w-4" />
                                 Novidade
@@ -551,7 +551,7 @@ export default function HomePage() {
                               <ToggleGroupItem
                                 value="premium"
                                 aria-label="Marcar como Premium"
-                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-amber-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
                                 <CupSoda className="h-4 w-4" />
                                 Premium
@@ -559,10 +559,18 @@ export default function HomePage() {
                               <ToggleGroupItem
                                 value="popular"
                                 aria-label="Marcar como Mais Pedido"
-                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm data-[state=on]:bg-[var(--theme-color)] data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-green-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
                               >
                                 <Flame className="h-4 w-4" />
                                 Mais Pedido
+                              </ToggleGroupItem>
+                              <ToggleGroupItem
+                                value="out-of-stock"
+                                aria-label="Marcar como Em Falta"
+                                className="flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm text-muted-foreground data-[state=on]:bg-red-500 data-[state=on]:text-white hover:bg-accent hover:text-accent-foreground"
+                              >
+                                <AlertTriangle className="h-4 w-4" />
+                                Em Falta
                               </ToggleGroupItem>
                             </ToggleGroup>
                           </FormControl>
