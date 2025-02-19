@@ -521,7 +521,7 @@ export default function MenuPage() {
               <div
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 max-w-[1200px] mx-auto"
+                    ? "grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 max-w-[1200px] mx-auto"
                     : "flex flex-col gap-4 md:gap-6"
                 }
               >
@@ -544,7 +544,7 @@ export default function MenuPage() {
                         className={
                           viewMode === "list"
                             ? "w-36 sm:w-48 h-full flex-shrink-0"
-                            : "aspect-square w-full relative"
+                            : "w-full aspect-square relative"
                         }
                       >
                         <img
@@ -561,38 +561,38 @@ export default function MenuPage() {
                         className={
                           viewMode === "list"
                             ? "flex-1 flex flex-col p-3 sm:p-4"
-                            : "p-4 flex flex-col"
+                            : "p-6 flex flex-col"
                         }
                       >
                         <div className="flex flex-col flex-grow">
-                          <div className="flex flex-col space-y-2 mb-3">
-                            <h3 className="text-lg sm:text-xl font-semibold line-clamp-2 text-foreground">
+                          <div className="flex flex-col space-y-2 mb-4">
+                            <h3 className="text-xl font-semibold line-clamp-2 text-foreground">
                               {product.name}
                             </h3>
-                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-2.5 py-1 text-sm font-medium text-[var(--theme-color)]">
+                            <span className="inline-flex items-center self-start rounded-full bg-[var(--theme-color)]/10 px-3 py-1 text-sm font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
                           </div>
                           {product.description && (
-                            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
                               {product.description}
                             </p>
                           )}
                           {product.suggestions && product.suggestions.length > 0 && (
                             <SuggestionsWidget
                               suggestions={product.suggestions}
-                              className="mb-3"
+                              className="mb-4"
                             />
                           )}
                           <div className="flex justify-between items-center mt-auto pt-2 flex-wrap gap-2">
-                            <p className="text-lg sm:text-xl font-bold whitespace-nowrap text-foreground">
+                            <p className="text-xl font-bold whitespace-nowrap text-foreground">
                               {formatPrice(product.price)}
                             </p>
-                            <div className="flex items-center gap-1.5 shrink-0">
+                            <div className="flex items-center gap-2">
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className={`h-8 w-8 sm:h-9 sm:w-9 rounded-full transition-all duration-200 ${
+                                className={`h-10 w-10 rounded-full transition-all duration-200 ${
                                   compareProducts.some((p) => p.id === product.id)
                                     ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
                                     : "hover:bg-[var(--theme-color)]/5"
@@ -603,7 +603,7 @@ export default function MenuPage() {
                                 }}
                               >
                                 <Scale
-                                  className={`h-4 w-4 sm:h-5 sm:w-5 ${
+                                  className={`h-5 w-5 ${
                                     compareProducts.some((p) => p.id === product.id)
                                       ? "text-[var(--theme-color)]"
                                       : "text-muted-foreground"
@@ -613,14 +613,14 @@ export default function MenuPage() {
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-8 w-8 sm:h-9 sm:w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
+                                className="h-10 w-10 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   toggleFavorite(product.id);
                                 }}
                               >
                                 <Heart
-                                  className={`h-4 w-4 sm:h-5 sm:w-5 transition-colors ${
+                                  className={`h-5 w-5 transition-colors ${
                                     data?.favorites.includes(product.id)
                                       ? "fill-current text-red-500"
                                       : "text-muted-foreground hover:text-red-400"
