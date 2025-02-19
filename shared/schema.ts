@@ -18,6 +18,7 @@ export const users = pgTable("users", {
   bannerImageUrl: text("banner_image_url"),
   themeColor: text("theme_color").default("#7c3aed"),
   logoUrl: text("logo_url"),
+  planType: text("plan_type").default("basic"), // Campo adicionado para tipo do plano
 });
 
 export const categories = pgTable("categories", {
@@ -82,9 +83,11 @@ export const insertUserSchema = createInsertSchema(users)
     bannerImageUrl: true,
     themeColor: true,
     logoUrl: true,
+    planType: true, // Campo adicionado ao schema de inserção
   })
   .extend({
     confirmPassword: z.string(),
+    planType: z.enum(["basic", "professional", "enterprise"]).default("basic"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "As senhas não coincidem",

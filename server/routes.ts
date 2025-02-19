@@ -1,11 +1,12 @@
-import type { Express, Request, Response, NextFunction } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { setupAuth, hashPassword } from "./auth";
 import { storage } from "./storage";
-import { insertProductSchema, insertFavoriteSchema, updateProductSchema, insertAdminLogSchema, insertSiteVisitSchema } from "@shared/schema";
+import { insertProductSchema, insertFavoriteSchema, updateProductSchema, insertAdminLogSchema, insertSiteVisitSchema, insertUserSchema } from "@shared/schema";
 import { eq, and, count, sql } from "drizzle-orm";
-import { products, users, favorites, paymentSettings, type PaymentSettings } from "@shared/schema";
+import { products, users, favorites, paymentSettings } from "@shared/schema";
 import { db } from "./db";
+import { generatePix, checkPaymentStatus } from "./payment";
 
 // Corrigindo o problema do req.ip undefined
 async function createAdminLog(req: Request, action: string, details: string) {
@@ -478,6 +479,66 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         error: "SERVER_ERROR",
         message: "Erro ao salvar configurações de pagamento"
+      });
+    }
+  });
+
+  app.post("/api/payments/pix", async (req, res) => {
+    try {
+      const { amount, planId, customerData } = req.body;
+
+      // Formatar os dados do cliente para o Mercado Pago
+      const paymentData = {
+        transaction_amount: amount,
+        description: `Assinatura do Plano ${planId}`,
+        payer: {
+          email: customerData.email,
+          first_name: customerData.name.split(' ')[0],
+          last_name: customerData.name.split(' ').slice(1).join(' '),
+          identification: {
+            type: "CPF",
+            number: customerData.cpf
+          }
+        }
+      };
+
+      const pixData = await generatePix(paymentData);
+      res.json(pixData);
+    } catch (error) {
+      console.error("Erro ao gerar PIX:", error);
+      res.status(500).json({
+        error: "PAYMENT_ERROR",
+        message: "Erro ao gerar o código PIX"
+      });
+    }
+  });
+
+  app.get("/api/payments/status/:id", async (req, res) => {
+    try {
+      const paymentId = req.params.id;
+      const status = await checkPaymentStatus(paymentId);
+
+      if (status.status === "approved") {
+        // Se o pagamento foi aprovado, criar o usuário com o plano escolhido
+        const userData = status.metadata.user_data;
+        const planId = status.metadata.plan_id;
+
+        const user = await storage.createUser({
+          ...userData,
+          planType: planId,
+          password: await hashPassword(userData.password),
+          confirmPassword: userData.password
+        });
+
+        res.json({ status: "approved", user });
+      } else {
+        res.json({ status: status.status });
+      }
+    } catch (error) {
+      console.error("Erro ao verificar status do pagamento:", error);
+      res.status(500).json({
+        error: "PAYMENT_ERROR",
+        message: "Erro ao verificar o status do pagamento"
       });
     }
   });
