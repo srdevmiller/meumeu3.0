@@ -612,7 +612,7 @@ export default function MenuPage() {
                             <span className="inline-flex items-center rounded-md bg-[var(--theme-color)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
-                            {product.suggestions && product.suggestions.includes("new") && (
+                            {product.suggestions && product.suggestions.includes("novidade") && (
                               <span className="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
                                 Novidade
                               </span>
