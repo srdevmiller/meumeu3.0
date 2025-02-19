@@ -622,7 +622,7 @@ export default function HomePage() {
                         <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <h3 className="text-base font-semibold break-words max-h-[2.8rem] overflow-hidden">
+                              <h3 className="text-[13px] font-semibold break-words max-h-[2.8rem] overflow-hidden">
                                 {product.name}
                               </h3>
                               <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
@@ -631,27 +631,25 @@ export default function HomePage() {
                             </div>
                           </div>
                         </div>
-                        <div className={`flex ${viewMode === "list" ? "flex-col" : "flex-col"} mt-auto pt-2`}>
+                        <div className={`flex ${viewMode === "list" ? "flex-col" : "flex-col"} mt-auto pt-1`}>
                           <p className="text-base font-bold mb-2">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
                           <div className={`flex gap-2 ${viewMode === "list" ? "flex-row" : "flex-col w-full"}`}>
                             <Button
                               variant="outline"
-                              size="sm"
+                              className={`text-xs py-1 ${viewMode === "list" ? "flex-1" : "w-full"}`}
                               onClick={() => handleEdit(product)}
-                              className={viewMode === "list" ? "flex-1" : "w-full"}
                             >
-                              <Pencil className="h-4 w-4 mr-1" />
+                              <Pencil className="h-3 w-3 mr-1" />
                               Editar
                             </Button>
                             <Button
                               variant="outline"
-                              size="sm"
+                              className={`text-xs py-1 text-red-500 hover:text-red-600 ${viewMode === "list" ? "flex-1" : "w-full"}`}
                               onClick={() => setProductToDelete(product)}
-                              className={`text-red-500 hover:text-red-600 ${viewMode === "list" ? "flex-1" : "w-full"}`}
                             >
-                              <Trash2 className="h-4 w-4 mr-1" />
+                              <Trash2 className="h-3 w-3 mr-1" />
                               Excluir
                             </Button>
                           </div>
