@@ -6,14 +6,14 @@ export default function WelcomePage() {
   const [, setLocation] = useLocation();
   const searchParams = new URLSearchParams(window.location.search);
   const userData = {
-    name: searchParams.get('name'),
-    email: searchParams.get('email'),
-    phone: searchParams.get('phone'),
-    planType: searchParams.get('planType'),
+    name: searchParams.get('name') || 'Usuário',
+    email: searchParams.get('email') || '',
+    phone: searchParams.get('phone') || '',
+    planType: searchParams.get('planType') || 'basic'
   };
 
-  const getPlanBenefits = (planType: string | null) => {
-    switch (planType) {
+  const getPlanBenefits = (planType: string) => {
+    switch (planType.toLowerCase()) {
       case 'professional':
         return [
           "Produtos ilimitados",
@@ -65,7 +65,7 @@ export default function WelcomePage() {
               <h3 className="text-xl font-semibold">Benefícios do seu plano:</h3>
               <ul className="list-disc pl-5 space-y-2">
                 {getPlanBenefits(userData.planType).map((benefit, index) => (
-                  <li key={index}>{benefit}</li>
+                  <li key={index} className="text-gray-700 dark:text-gray-300">{benefit}</li>
                 ))}
               </ul>
             </div>

@@ -550,39 +550,33 @@ export default function PricingPage() {
                   </div>
                 </div>
 
-                <div className="mt-6">
-                  <p className="text-sm text-gray-600 mb-2">
-                    Status do pagamento:
-                  </p>
-                  <p className={`text-sm font-medium ${
-                    paymentStatusQuery.data?.status === "approved"
-                      ? "text-green-600"
-                      : "text-yellow-600"
-                  }`}>
-                    {paymentStatusQuery.data?.status === "approved"
-                      ? "Pagamento aprovado!"
-                      : "Aguardando confirmação..."}
-                  </p>
+                {/* Botão Continuar - Visível apenas quando o pagamento for aprovado */}
+                {paymentStatusQuery.data?.status === "approved" && (
+                  <Button
+                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => {
+                      // Debug log para verificar os valores antes do redirecionamento
+                      console.log("Form values:", {
+                        name: form.getValues("name"),
+                        email: form.getValues("email"),
+                        phone: form.getValues("phone"),
+                        planType: selectedPlan?.name
+                      });
 
-                  {/* Botão Continuar - Visível apenas quando o pagamento for aprovado */}
-                  {paymentStatusQuery.data?.status === "approved" && (
-                    <Button
-                      className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white"
-                      onClick={() => {
-                        const welcomeParams = new URLSearchParams({
-                          name: form.getValues("name"),
-                          email: form.getValues("email"),
-                          phone: form.getValues("phone"),
-                          planType: selectedPlan?.name || ''
-                        });
-                        const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
-                        setLocation(welcomeUrl);
-                      }}
-                    >
-                      Continuar
-                    </Button>
-                  )}
-                </div>
+                      const welcomeParams = new URLSearchParams({
+                        name: form.getValues("name") || '',
+                        email: form.getValues("email") || '',
+                        phone: form.getValues("phone") || '',
+                        planType: selectedPlan?.name?.toLowerCase() || 'basic'
+                      });
+                      const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
+                      console.log("Redirecting to:", welcomeUrl);
+                      setLocation(welcomeUrl);
+                    }}
+                  >
+                    Continuar
+                  </Button>
+                )}
               </div>
             </div>
           )}
