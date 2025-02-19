@@ -75,6 +75,14 @@ const editUserSchema = z.object({
   phone: z.string().min(1, "Telefone é obrigatório"),
 });
 
+// Add payment settings schema
+const paymentSettingsSchema = z.object({
+  clientSecret: z.string().min(1, "Client Secret é obrigatório"),
+  accessToken: z.string().min(1, "Access Token é obrigatório"),
+});
+
+type PaymentSettingsFormData = z.infer<typeof paymentSettingsSchema>;
+
 export default function AdminDashboard() {
   const { user, logout, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -82,52 +90,71 @@ export default function AdminDashboard() {
   const [editingUser, setEditingUser] = useState<DashboardStats["users"][0] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Debug logs para acompanhar o estado da autenticação
+  // Add payment settings query
+  const { data: paymentSettings } = useQuery({
+    queryKey: ["/api/admin/payment-settings"],
+    queryFn: async () => {
+      const response = await fetch("/api/admin/payment-settings");
+      if (!response.ok) throw new Error("Failed to fetch payment settings");
+      return response.json();
+    },
+    enabled: !!user && user.username === "admin@admin.com",
+  });
+
+  // Add payment settings mutation
+  const updatePaymentSettingsMutation = useMutation({
+    mutationFn: async (data: PaymentSettingsFormData) => {
+      const response = await fetch("/api/admin/payment-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Falha ao salvar configurações de pagamento");
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Sucesso",
+        description: "Configurações de pagamento atualizadas com sucesso",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Erro",
+        description: error.message || "Erro ao atualizar configurações de pagamento",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Add payment settings form
+  const paymentForm = useForm<PaymentSettingsFormData>({
+    resolver: zodResolver(paymentSettingsSchema),
+    defaultValues: {
+      clientSecret: "",
+      accessToken: "",
+    },
+  });
+
+  // Load existing payment settings
   useEffect(() => {
-    console.log("AdminDashboard - Auth state:", {
-      user,
-      authLoading,
-      isAdmin: user?.username === "admin@admin.com"
-    });
-  }, [user, authLoading]);
+    if (paymentSettings) {
+      paymentForm.reset({
+        clientSecret: paymentSettings.clientSecret || "",
+        accessToken: paymentSettings.accessToken || "",
+      });
+    }
+  }, [paymentSettings, paymentForm]);
 
-  // Aguarda o carregamento da autenticação
-  if (authLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
-      </div>
-    );
-  }
+  const handlePaymentSettingsSubmit = (data: PaymentSettingsFormData) => {
+    updatePaymentSettingsMutation.mutate(data);
+  };
 
-  // Redireciona se não estiver autenticado
-  if (!user) {
-    return <Redirect to="/auth" />;
-  }
+  // ... rest of the original code ...
 
-  // Verifica se é admin
-  if (user.username !== "admin@admin.com") {
-    toast({
-      title: "Acesso negado",
-      description: "Você não tem permissão para acessar esta página.",
-      variant: "destructive",
-    });
-    return <Redirect to="/" />;
-  }
-
-  const { data: statsData, isLoading: isLoadingStats } = useQuery<DashboardStats>({
-    queryKey: ["/api/admin/stats"],
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: logsData, isLoading: isLoadingLogs } = useQuery<LogsResponse>({
-    queryKey: ["/api/admin/logs"],
-    retry: false,
-    refetchOnWindowFocus: false,
-  });
-
-  // Mutation para atualizar usuário
   const updateUserMutation = useMutation({
     mutationFn: async (data: { id: number, username: string, businessName: string, phone: string }) => {
       const { id, ...userData } = data;
@@ -164,6 +191,7 @@ export default function AdminDashboard() {
     },
   });
 
+
   useEffect(() => {
     if (editingUser) {
       form.reset({
@@ -183,6 +211,19 @@ export default function AdminDashboard() {
     }
   };
 
+
+  const { data: statsData, isLoading: isLoadingStats } = useQuery<DashboardStats>({
+    queryKey: ["/api/admin/stats"],
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: logsData, isLoading: isLoadingLogs } = useQuery<LogsResponse>({
+    queryKey: ["/api/admin/logs"],
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+
   // Função para filtrar usuários baseado na busca
   const filterUsers = (users: DashboardStats["users"]) => {
     if (!searchQuery) return users;
@@ -194,6 +235,37 @@ export default function AdminDashboard() {
       user.phone.includes(query)
     );
   };
+
+  useEffect(() => {
+    console.log("AdminDashboard - Auth state:", {
+      user,
+      authLoading,
+      isAdmin: user?.username === "admin@admin.com"
+    });
+  }, [user, authLoading]);
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  // Redireciona se não estiver autenticado
+  if (!user) {
+    return <Redirect to="/auth" />;
+  }
+
+  // Verifica se é admin
+  if (user.username !== "admin@admin.com") {
+    toast({
+      title: "Acesso negado",
+      description: "Você não tem permissão para acessar esta página.",
+      variant: "destructive",
+    });
+    return <Redirect to="/" />;
+  }
 
   if (isLoadingStats || isLoadingLogs) {
     return (
@@ -265,6 +337,56 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Payment Settings Card */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-foreground">Configurações de Pagamento</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...paymentForm}>
+            <form onSubmit={paymentForm.handleSubmit(handlePaymentSettingsSubmit)} className="space-y-4">
+              <FormField
+                control={paymentForm.control}
+                name="clientSecret"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">Client Secret</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={paymentForm.control}
+                name="accessToken"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground">Access Token</FormLabel>
+                    <FormControl>
+                      <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                type="submit"
+                disabled={updatePaymentSettingsMutation.isPending}
+                className="w-full"
+              >
+                {updatePaymentSettingsMutation.isPending ? (
+                  <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                ) : (
+                  "Salvar Configurações"
+                )}
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
 
       {/* Log de Atividades */}
       <Card className="mb-8">

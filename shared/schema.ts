@@ -64,6 +64,15 @@ export const siteVisits = pgTable("site_visits", {
   pageInteractions: jsonb("page_interactions"),
 });
 
+export const paymentSettings = pgTable("payment_settings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  clientSecret: text("client_secret").notNull(),
+  accessToken: text("access_token").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users)
   .pick({
     username: true,
@@ -133,6 +142,13 @@ export const insertSiteVisitSchema = createInsertSchema(siteVisits).pick({
   pageInteractions: true,
 });
 
+export const insertPaymentSettingsSchema = createInsertSchema(paymentSettings)
+  .pick({
+    userId: true,
+    clientSecret: true,
+    accessToken: true,
+  });
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type Product = typeof products.$inferSelect;
@@ -144,6 +160,8 @@ export type AdminLog = typeof adminLogs.$inferSelect;
 export type InsertAdminLog = z.infer<typeof insertAdminLogSchema>;
 export type SiteVisit = typeof siteVisits.$inferSelect;
 export type InsertSiteVisit = z.infer<typeof insertSiteVisitSchema>;
+export type PaymentSettings = typeof paymentSettings.$inferSelect;
+export type InsertPaymentSettings = z.infer<typeof insertPaymentSettingsSchema>;
 
 export type AnalyticsSummary = {
   totalVisits: number;

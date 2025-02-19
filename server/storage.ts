@@ -7,6 +7,7 @@ import { pool } from "./db";
 import { siteVisits, type SiteVisit, type InsertSiteVisit } from "@shared/schema";
 import { sql } from "drizzle-orm";
 import type { AnalyticsSummary } from "@shared/schema";
+import { paymentSettings, type PaymentSettings, type InsertPaymentSettings } from "@shared/schema";
 
 const PostgresSessionStore = connectPg(session);
 
@@ -46,6 +47,9 @@ export interface IStorage {
   getAnalyticsSummary(days: number): Promise<AnalyticsSummary>;
   getPopularPages(): Promise<{ path: string; visits: number; }[]>;
   getVisitsByTimeRange(startDate: Date, endDate: Date): Promise<{ date: string; visits: number; }[]>;
+  getPaymentSettings(userId: number): Promise<PaymentSettings | undefined>;
+  savePaymentSettings(settings: InsertPaymentSettings): Promise<PaymentSettings>;
+  updatePaymentSettings(userId: number, settings: Partial<InsertPaymentSettings>): Promise<PaymentSettings>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -406,6 +410,34 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
+  async getPaymentSettings(userId: number): Promise<PaymentSettings | undefined> {
+    const [settings] = await db
+      .select()
+      .from(paymentSettings)
+      .where(eq(paymentSettings.userId, userId));
+    return settings;
+  }
+
+  async savePaymentSettings(settings: InsertPaymentSettings): Promise<PaymentSettings> {
+    const [savedSettings] = await db
+      .insert(paymentSettings)
+      .values(settings)
+      .returning();
+    return savedSettings;
+  }
+
+  async updatePaymentSettings(userId: number, settings: Partial<InsertPaymentSettings>): Promise<PaymentSettings> {
+    const [updatedSettings] = await db
+      .update(paymentSettings)
+      .set({
+        ...(settings.clientSecret && { clientSecret: settings.clientSecret }),
+        ...(settings.accessToken && { accessToken: settings.accessToken }),
+        updatedAt: new Date(),
+      })
+      .where(eq(paymentSettings.userId, userId))
+      .returning();
+    return updatedSettings;
+  }
 }
 
 export const storage = new DatabaseStorage();
