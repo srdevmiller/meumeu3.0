@@ -682,7 +682,7 @@ export default function MenuPage() {
                                 compareProducts.some((p) => p.id === product.id)
                                   ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
                                   : "hover:bg-[var(--theme-color)]/5"
-                                }`}
+                              }`}
                               onClick={(e) => {
                                 e.stopPropagation();
                                 toggleCompare(product);
@@ -746,13 +746,13 @@ export default function MenuPage() {
               </SheetDescription>
             </SheetHeader>
             <div className="mt-6 space-y-6">
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 gap-6">
                 {compareProducts.map((product) => (
                   <div key={product.id} className="relative">
                     <Button
                       variant="outline"
                       size="icon"
-                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-background"
+                      className="absolute -top-2 -right-2 z-10 h-8 w-8 rounded-full bg-background hover:bg-destructive/10"
                       onClick={() => {
                         setCompareProducts((current) =>
                           current.filter((p) => p.id !== product.id)
@@ -764,24 +764,22 @@ export default function MenuPage() {
                     >
                       <X className="h-4 w-4" />
                     </Button>
-                    <Card>
-                      <div className="aspect-square w-24">
+                    <Card className="overflow-hidden">
+                      <div className="w-full">
                         <img
                           src={product.imageUrl}
                           alt={product.name}
-                          className="h-full w-full object-cover"
+                          className="w-full aspect-[4/3] object-cover"
                         />
                       </div>
-                      <CardHeader className="p-2">
-                        <CardTitle className="text-sm truncate">
-                          {product.name}
-                        </CardTitle>
-                        <CardDescription className="text-xs">
+                      <CardHeader className="p-4">
+                        <CardTitle className="text-lg">{product.name}</CardTitle>
+                        <CardDescription>
                           {categories.find((c) => c.id === product.categoryId)?.name}
                         </CardDescription>
                       </CardHeader>
-                      <CardContent className="p-2 pt-0">
-                        <p className="text-sm font-bold">
+                      <CardContent className="p-4 pt-0">
+                        <p className="text-xl font-bold text-[var(--theme-color)]">
                           {formatPrice(product.price)}
                         </p>
                       </CardContent>
@@ -827,7 +825,7 @@ export default function MenuPage() {
                 className="bg-white hover:bg-gray-50 text-black hover:text-black px-12 py-8 h-auto text-xl font-semibold tracking-wide rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-white/20"
               >
                 Crie seu cardápio gratuitamente
-                            </Button>
+              </Button>
             </Link>
           </div>
         </motion.div>
