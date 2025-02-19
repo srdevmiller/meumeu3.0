@@ -679,10 +679,10 @@ export default function HomePage() {
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex items-center px-4" : "p-2.5 flex flex-col flex-grow"}>
                         <div className="flex-1">
-                          <h3 className="text-[13px] font-semibold break-words">
+                          <h3 className="text-[13px] font-semibold break-words text-foreground">
                             {product.name}
                           </h3>
-                          <p className="text-sm font-medium mt-1">
+                          <p className="text-sm font-medium mt-1 text-foreground">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
                           <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)] mt-1">
@@ -701,7 +701,7 @@ export default function HomePage() {
                         </Button>
                         <Button
                           variant="outline"
-                          className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis text-red-500 hover:text-red-600"
+                          className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis text-destructive hover:text-destructive"
                           onClick={() => setProductToDelete(product)}
                         >
                           <Trash2 className="h-3 w-3 mr-2 flex-shrink-0" />
