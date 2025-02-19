@@ -112,6 +112,7 @@ export default function PricingPage() {
   const [yearlyBilling, setYearlyBilling] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [showCustomerForm, setShowCustomerForm] = useState(false);
+  const [showPixCode, setShowPixCode] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -182,6 +183,7 @@ export default function PricingPage() {
   const handlePlanSelection = (plan: Plan) => {
     setSelectedPlan(plan);
     setShowCustomerForm(true);
+    setShowPixCode(false);
   };
 
   const onSubmit = async (data: CustomerFormData) => {
@@ -197,6 +199,8 @@ export default function PricingPage() {
       });
 
       setPaymentId(pixResponse.id);
+      setShowCustomerForm(false);
+      setShowPixCode(true);
 
       toast({
         title: "Código PIX gerado",
@@ -332,7 +336,12 @@ export default function PricingPage() {
       </div>
 
       {/* Customer Form Dialog */}
-      <Dialog open={showCustomerForm} onOpenChange={setShowCustomerForm}>
+      <Dialog open={showCustomerForm} onOpenChange={(open) => {
+        setShowCustomerForm(open);
+        if (!open) {
+          form.reset();
+        }
+      }}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Complete seu cadastro</DialogTitle>
@@ -399,54 +408,58 @@ export default function PricingPage() {
               </Button>
             </form>
           </Form>
-          {generatePixMutation.data && (
+        </DialogContent>
+      </Dialog>
+
+      {/* PIX QR Code Dialog */}
+      <Dialog open={showPixCode} onOpenChange={setShowPixCode}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Pagamento via PIX</DialogTitle>
+            <DialogDescription>
+              Escaneie o QR Code ou copie o código PIX para realizar o pagamento
+            </DialogDescription>
+          </DialogHeader>
+          {generatePixMutation.data && generatePixMutation.data.qr_codes && generatePixMutation.data.qr_codes[0] && (
             <div className="mt-4 text-center">
-              {generatePixMutation.data.qr_codes && generatePixMutation.data.qr_codes[0] && (
-                <>
-                  <div className="bg-white p-6 rounded-lg shadow-lg">
-                    <h3 className="text-lg font-semibold mb-4">Realize o pagamento via PIX</h3>
-                    <img
-                      src={generatePixMutation.data.qr_codes[0].qr_code_base64}
-                      alt="QR Code PIX"
-                      className="mx-auto w-48 h-48"
-                    />
-                    <p className="mt-4 text-sm text-gray-600">
-                      Escaneie o QR Code acima ou use o código PIX abaixo
-                    </p>
-                    <div className="mt-4">
-                      <p className="text-xs text-gray-500 mb-2">Código PIX para copiar e colar:</p>
-                      <div className="relative">
-                        <div 
-                          className="p-3 bg-gray-50 rounded border text-xs font-mono break-all cursor-pointer hover:bg-gray-100 transition-colors"
-                          onClick={() => {
-                            navigator.clipboard.writeText(generatePixMutation.data.qr_codes[0].qr_code);
-                            toast({
-                              title: "Código copiado!",
-                              description: "Cole o código no seu aplicativo do banco",
-                            });
-                          }}
-                        >
-                          {generatePixMutation.data.qr_codes[0].qr_code}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-6">
-                      <p className="text-sm text-gray-600">
-                        {paymentId ? (
-                          <>
-                            Status do pagamento:{" "}
-                            <span className="font-medium text-yellow-600">
-                              Aguardando confirmação...
-                            </span>
-                          </>
-                        ) : (
-                          "Aguardando geração do pagamento..."
-                        )}
-                      </p>
+              <div className="bg-white p-6 rounded-lg">
+                <img
+                  src={generatePixMutation.data.qr_codes[0].qr_code_base64}
+                  alt="QR Code PIX"
+                  className="mx-auto w-48 h-48"
+                />
+                <div className="mt-4">
+                  <p className="text-xs text-gray-500 mb-2">Código PIX para copiar e colar:</p>
+                  <div className="relative">
+                    <div 
+                      className="p-3 bg-gray-50 rounded border text-xs font-mono break-all cursor-pointer hover:bg-gray-100 transition-colors"
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatePixMutation.data.qr_codes[0].qr_code);
+                        toast({
+                          title: "Código copiado!",
+                          description: "Cole o código no seu aplicativo do banco",
+                        });
+                      }}
+                    >
+                      {generatePixMutation.data.qr_codes[0].qr_code}
                     </div>
                   </div>
-                </>
-              )}
+                </div>
+                <div className="mt-6">
+                  <p className="text-sm text-gray-600">
+                    {paymentId ? (
+                      <>
+                        Status do pagamento:{" "}
+                        <span className="font-medium text-yellow-600">
+                          Aguardando confirmação...
+                        </span>
+                      </>
+                    ) : (
+                      "Aguardando geração do pagamento..."
+                    )}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
         </DialogContent>
