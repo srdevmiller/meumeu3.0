@@ -699,6 +699,14 @@ export default function MenuPage() {
         )}
 
 
+        {/* Product Details Dialog */}
+        <ProductDetailsDialog
+          product={selectedProduct}
+          categories={categories}
+          open={!!selectedProduct}
+          onOpenChange={(open) => !open && setSelectedProduct(null)}
+        />
+
         {/* Footer with CTA */}
         <motion.div
           className="py-8 bg-[var(--theme-color)] mt-12"
@@ -737,7 +745,6 @@ export default function MenuPage() {
                 opacity: 0;
               }
             }
-
             /* Ensure proper stacking context for animations */
             .relative {
               position: relative;
@@ -822,8 +829,7 @@ export default function MenuPage() {
               transform: scale(1.05);
             }
 
-            /* Scroll reveal animation */
-            .scroll-reveal {            opacity: 0;
+            /* Scroll reveal animation.scroll-reveal {            opacity: 0;
               transform: translateY(20px);
               transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             }
