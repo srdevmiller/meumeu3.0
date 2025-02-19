@@ -56,6 +56,13 @@ import {
   ToggleGroupItem,
 } from "@/components/ui/toggle-group";
 import { Star, CupSoda, Flame, AlertTriangle } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Textarea } from "@/components/ui/textarea";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -132,6 +139,7 @@ export default function HomePage() {
       imageUrl: "",
       categoryId: 0,
       suggestions: [],
+      description: "", // Add default value for description
     },
   });
 
@@ -240,6 +248,7 @@ export default function HomePage() {
       imageUrl: product.imageUrl,
       categoryId: product.categoryId,
       suggestions: product.suggestions || [], // Garantir que suggestions é um array
+      description: product.description || "", // Include description in reset
     });
     setImagePreview(product.imageUrl);
   };
@@ -578,6 +587,39 @@ export default function HomePage() {
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <Collapsible>
+                            <CollapsibleTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                className="flex items-center gap-2 w-full justify-between"
+                              >
+                                <span>Adicionar descrição</span>
+                                <ChevronDown className="h-4 w-4" />
+                              </Button>
+                            </CollapsibleTrigger>
+                            <CollapsibleContent className="mt-4">
+                              <FormLabel className="text-foreground">Descrição do Produto</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Digite uma descrição detalhada do produto..."
+                                  className="resize-none"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </CollapsibleContent>
+                          </Collapsible>
+                        </FormItem>
+                      )}
+                    />
+
 
                     <div className="flex gap-2 mt-8">
                       <Button

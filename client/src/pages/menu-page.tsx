@@ -44,6 +44,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "wouter";
 import { SuggestionsWidget } from "@/components/ui/suggestions-widget";
 import { type SuggestionType } from "@/types/suggestion";
+import { ProductDetailsDialog } from "@/components/ui/product-details-dialog";
 
 const categories = [
   { id: 1, name: "Bebidas" },
@@ -86,6 +87,7 @@ export default function MenuPage() {
   const [compareProducts, setCompareProducts] = useState<Product[]>([]);
   const [showCompareSheet, setShowCompareSheet] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.remove("light", "dark");
@@ -535,7 +537,8 @@ export default function MenuPage() {
                         viewMode === "list"
                           ? "flex flex-row h-36 sm:h-48"
                           : ""
-                      } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
+                      } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300 cursor-pointer`}
+                      onClick={() => setSelectedProduct(product)}
                     >
                       <div
                         className={
@@ -824,7 +827,6 @@ export default function MenuPage() {
               transform: translateY(20px);
               transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             }
-
             .scroll-reveal.visible {
               opacity: 1;
               transform: translateY(0);            }

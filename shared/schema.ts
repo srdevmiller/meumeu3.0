@@ -30,6 +30,7 @@ export const products = pgTable("products", {
   name: text("name").notNull(),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   imageUrl: text("image_url").notNull(),
+  description: text("description"),
   userId: integer("user_id").notNull().references(() => users.id),
   categoryId: integer("category_id").notNull().references(() => categories.id),
   suggestions: text("suggestions").array(),
@@ -87,10 +88,12 @@ export const insertProductSchema = createInsertSchema(products)
     imageUrl: true,
     categoryId: true,
     suggestions: true,
+    description: true,
   })
   .extend({
     price: z.number().min(0, "O preço deve ser maior que zero"),
     suggestions: z.array(z.enum(['new', 'premium', 'popular', 'out-of-stock'])).optional(),
+    description: z.string().optional(),
   });
 
 export const updateProductSchema = createInsertSchema(products)
@@ -99,10 +102,12 @@ export const updateProductSchema = createInsertSchema(products)
     imageUrl: true,
     categoryId: true,
     suggestions: true,
+    description: true,
   })
   .extend({
     price: z.number().min(0, "O preço deve ser maior que zero"),
     suggestions: z.array(z.enum(['new', 'premium', 'popular', 'out-of-stock'])).optional(),
+    description: z.string().optional(),
   })
   .partial();
 
