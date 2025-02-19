@@ -226,6 +226,22 @@ export default function PricingPage() {
     staleTime: 0,
   });
 
+  // Effect to handle payment approval
+  useEffect(() => {
+    if (paymentApproved && !showPixCode) {
+      const welcomeParams = new URLSearchParams({
+        name: form.getValues("name"),
+        email: form.getValues("email"),
+        phone: form.getValues("phone"),
+        planType: selectedPlan?.name || ''
+      });
+
+      const welcomeUrl = `/welcome?${welcomeParams.toString()}`;
+      console.log("Redirecting from effect to:", welcomeUrl);
+      setLocation(welcomeUrl);
+    }
+  }, [paymentApproved, showPixCode, form, selectedPlan?.name, setLocation]);
+
   // Effect to handle payment approval and toasts
   useEffect(() => {
     if (paymentApproved) {
