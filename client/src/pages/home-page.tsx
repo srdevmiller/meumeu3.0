@@ -199,16 +199,18 @@ export default function HomePage() {
         title: "Produto criado",
         description: "O produto foi publicado com sucesso!",
       });
+      // Reset completo do formulário
       form.reset({
         name: "",
         price: 0,
         imageUrl: "",
         categoryId: undefined,
-        suggestions: [],
+        suggestions: [], // Garantir que as tags sejam resetadas
         description: "",
       });
       setImagePreview(null);
       setShowPublishForm(false);
+      setEditingProduct(null); // Garantir que não haja produto em edição
     },
     onError: (error: Error) => {
       toast({
@@ -235,17 +237,18 @@ export default function HomePage() {
         title: "Produto atualizado",
         description: "O produto foi atualizado com sucesso!",
       });
-      setEditingProduct(null);
+      // Reset completo do formulário
       form.reset({
         name: "",
         price: 0,
         imageUrl: "",
         categoryId: undefined,
-        suggestions: [],
+        suggestions: [], // Garantir que as tags sejam resetadas
         description: "",
       });
       setImagePreview(null);
       setShowPublishForm(false);
+      setEditingProduct(null); // Garantir que não haja produto em edição
     },
     onError: (error: Error) => {
       toast({
