@@ -611,14 +611,14 @@ export default function HomePage() {
                           : ""
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
-                      <div className={viewMode === "list" ? "w-24 h-full flex-shrink-0" : "aspect-square"}> {/* Reduced width for list view */}
+                      <div className={viewMode === "list" ? "w-28 h-full flex-shrink-0" : "aspect-square"}> {/* Increased width for list view */}
                         <img
                           src={product.imageUrl}
                           alt={product.name}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-3" : "p-3"}>
+                      <div className={viewMode === "list" ? "flex-1 flex flex-col p-2.5" : "p-2.5"}> {/* Reduced padding */}
                         <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start">
                             <div>
