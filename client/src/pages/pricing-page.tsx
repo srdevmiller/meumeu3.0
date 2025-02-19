@@ -424,7 +424,7 @@ export default function PricingPage() {
             <div className="mt-4 text-center">
               <div className="bg-white p-6 rounded-lg">
                 <img
-                  src={generatePixMutation.data.point_of_interaction.transaction_data.qr_code_base64}
+                  src={`data:image/png;base64,${generatePixMutation.data.point_of_interaction.transaction_data.qr_code_base64}`}
                   alt="QR Code PIX"
                   className="mx-auto w-48 h-48"
                 />
