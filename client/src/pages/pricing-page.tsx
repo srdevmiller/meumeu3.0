@@ -403,18 +403,47 @@ export default function PricingPage() {
             <div className="mt-4 text-center">
               {generatePixMutation.data.qr_codes && generatePixMutation.data.qr_codes[0] && (
                 <>
-                  <img
-                    src={generatePixMutation.data.qr_codes[0].qr_code_base64}
-                    alt="QR Code PIX"
-                    className="mx-auto"
-                  />
-                  <p className="mt-2 text-sm text-gray-600">
-                    Escaneie o QR Code para realizar o pagamento
-                  </p>
-                  <div className="mt-2 p-2 bg-gray-100 rounded">
-                    <p className="text-xs font-mono break-all">
-                      {generatePixMutation.data.qr_codes[0].qr_code}
+                  <div className="bg-white p-6 rounded-lg shadow-lg">
+                    <h3 className="text-lg font-semibold mb-4">Realize o pagamento via PIX</h3>
+                    <img
+                      src={generatePixMutation.data.qr_codes[0].qr_code_base64}
+                      alt="QR Code PIX"
+                      className="mx-auto w-48 h-48"
+                    />
+                    <p className="mt-4 text-sm text-gray-600">
+                      Escaneie o QR Code acima ou use o código PIX abaixo
                     </p>
+                    <div className="mt-4">
+                      <p className="text-xs text-gray-500 mb-2">Código PIX para copiar e colar:</p>
+                      <div className="relative">
+                        <div 
+                          className="p-3 bg-gray-50 rounded border text-xs font-mono break-all cursor-pointer hover:bg-gray-100 transition-colors"
+                          onClick={() => {
+                            navigator.clipboard.writeText(generatePixMutation.data.qr_codes[0].qr_code);
+                            toast({
+                              title: "Código copiado!",
+                              description: "Cole o código no seu aplicativo do banco",
+                            });
+                          }}
+                        >
+                          {generatePixMutation.data.qr_codes[0].qr_code}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-6">
+                      <p className="text-sm text-gray-600">
+                        {paymentId ? (
+                          <>
+                            Status do pagamento:{" "}
+                            <span className="font-medium text-yellow-600">
+                              Aguardando confirmação...
+                            </span>
+                          </>
+                        ) : (
+                          "Aguardando geração do pagamento..."
+                        )}
+                      </p>
+                    </div>
                   </div>
                 </>
               )}
