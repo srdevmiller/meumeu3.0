@@ -631,15 +631,16 @@ export default function HomePage() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex justify-between items-center mt-auto pt-2">
-                          <p className="text-base sm:text-lg font-bold">
+                        <div className={`flex ${viewMode === "list" ? "justify-between items-center" : "flex-col"} mt-auto pt-2`}>
+                          <p className="text-base sm:text-lg font-bold mb-2">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
-                          <div className="flex gap-2">
+                          <div className={`flex gap-2 ${viewMode === "list" ? "" : "flex-col w-full"}`}>
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleEdit(product)}
+                              className={viewMode === "list" ? "" : "w-full"}
                             >
                               <Pencil className="h-4 w-4 mr-1" />
                               Editar
@@ -648,7 +649,7 @@ export default function HomePage() {
                               variant="outline"
                               size="sm"
                               onClick={() => setProductToDelete(product)}
-                              className="text-red-500 hover:text-red-600"
+                              className={`text-red-500 hover:text-red-600 ${viewMode === "list" ? "" : "w-full"}`}
                             >
                               <Trash2 className="h-4 w-4 mr-1" />
                               Excluir
