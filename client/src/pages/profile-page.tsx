@@ -5,10 +5,12 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { motion } from "framer-motion";
-import { Loader2 } from "lucide-react";
+import { Loader2, Palette } from "lucide-react";
 import { Link } from "wouter";
+import { HexColorPicker } from "react-colorful";
 
 export default function ProfilePage() {
   const { user } = useAuth();
@@ -89,8 +91,7 @@ export default function ProfilePage() {
     }
   };
 
-  const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newColor = event.target.value;
+  const handleColorChange = (newColor: string) => {
     setSelectedColor(newColor);
   };
 
@@ -207,18 +208,43 @@ export default function ProfilePage() {
               Tema
             </label>
             <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <Input
-                  type="color"
-                  value={selectedColor}
-                  onChange={handleColorChange}
-                  className="w-full h-12 p-1 rounded-md cursor-pointer"
-                />
-              </div>
-              <div
-                className="w-12 h-12 rounded-md border-2 border-border"
-                style={{ backgroundColor: selectedColor }}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start text-left font-normal h-12"
+                  >
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="h-6 w-6 rounded-md border border-border shadow-sm"
+                        style={{ backgroundColor: selectedColor }}
+                      />
+                      <Palette className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">
+                        Escolha uma cor
+                      </span>
+                    </div>
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-3">
+                  <HexColorPicker
+                    color={selectedColor}
+                    onChange={handleColorChange}
+                    style={{ width: "100%" }}
+                  />
+                  <div className="flex items-center gap-2 mt-4">
+                    <div
+                      className="h-8 w-8 rounded-md border border-border shadow-sm"
+                      style={{ backgroundColor: selectedColor }}
+                    />
+                    <Input
+                      value={selectedColor}
+                      onChange={(e) => handleColorChange(e.target.value)}
+                      className="flex-1 font-mono"
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
               Escolha a cor do tema para seu cardápio
