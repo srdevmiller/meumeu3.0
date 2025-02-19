@@ -288,13 +288,7 @@ export default function MenuPage() {
 
   return (
     <TooltipProvider delayDuration={150}>
-      <motion.div
-        className="min-h-screen bg-background motion-safe"
-        style={themeStyles}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
+      <div className="min-h-screen bg-background motion-safe" style={themeStyles}>
         <motion.div
           className="relative h-36 md:h-48 flex items-center justify-center overflow-hidden"
           initial={{ y: -20, opacity: 0 }}
@@ -618,12 +612,6 @@ export default function MenuPage() {
                             )}
                           </div>
 
-                          {product.description && (
-                            <p className="text-sm text-muted-foreground mt-2">
-                              {product.description}
-                            </p>
-                          )}
-
                           <div className="flex flex-col gap-2">
                             <span className="inline-flex items-center rounded-md bg-[var(--theme-color)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--theme-color)] w-fit">
                               {categories.find((c) => c.id === product.categoryId)?.name}
@@ -781,14 +769,22 @@ export default function MenuPage() {
                       </div>
                       <CardHeader className="p-4">
                         <CardTitle className="text-lg">{product.name}</CardTitle>
+                        {product.description && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            {product.description}
+                          </p>
+                        )}
                         <CardDescription>
                           {categories.find((c) => c.id === product.categoryId)?.name}
                         </CardDescription>
                       </CardHeader>
                       <CardContent className="p-4 pt-0">
-                        <p className="text-xl font-bold text-[var(--theme-color)]">
-                          {formatPrice(product.price)}
-                        </p>
+                        <div className="space-y-4">
+                          <p className="text-xl font-bold text-[var(--theme-color)]">
+                            {formatPrice(product.price)}
+                          </p>
+                          <SuggestionsWidget suggestions={product.suggestions || []} />
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
@@ -830,61 +826,58 @@ export default function MenuPage() {
               <Button
                 variant="outline"
                 className="bg-white hover:bg-gray-50 text-black hover:text-black px-12 py-8 h-auto text-xl font-semibold tracking-wide rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-white/20"
-              >
-                Crie seu cardápio gratuitamente
-              </Button>
+                >
+                  Crie seu cardápio gratuitamente
+                </Button>
             </Link>
           </div>
         </motion.div>
+        <style jsx global>{`
+          /* Animations */
+          .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(255, 255, 255, 0.7);
+            pointer-events: none;
+            z-index: 50;
+          }
 
-        <style jsx global>
-          {`
-            /* Animations */
-            .ripple {
-              position: absolute;
-              border-radius: 50%;
-              transform: scale(0);
-              animation: ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-              background-color: rgba(255, 255, 255, 0.7);
-              pointer-events: none;
-              z-index: 50;
-            }
-
-            @keyframes ripple {
-              to {
-                transform: scale(4);
-                opacity: 0;
-              }
-            }
-
-            /* Ensure proper stacking context for animations */
-            .relative {
-              position: relative;
-            }
-
-            /* Hover effects */
-            .hover-scale {
-              transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .hover-scale:hover {
-              transform: scale(1.05);
-            }
-
-            /* Scroll reveal animation*/
-            .scroll-reveal {
+          @keyframes ripple {
+            to {
+              transform: scale(4);
               opacity: 0;
-              transform: translateY(20px);
-              transition: all 0.6s cubic-bezier(0.4,0, 0.2, 1);
             }
+          }
 
-            .scroll-reveal.visible {
-              opacity:1;
-              transform: translateY(0);
-            }
-          `}
-        </style>
-      </motion.div>
+          /* Ensure proper stacking context for animations */
+          .relative {
+            position: relative;
+          }
+
+          /* Hover effects */
+          .hover-scale {
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          }
+
+          .hover-scale:hover {
+            transform: scale(1.05);
+          }
+
+          /* Scroll reveal animation*/
+          .scroll-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4,0, 0.2, 1);
+          }
+
+          .scroll-reveal.visible {
+            opacity:1;
+            transform: translateY(0);
+          }
+        `}</style>
+      </div>
     </TooltipProvider>
   );
 }
