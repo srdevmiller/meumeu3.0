@@ -421,7 +421,7 @@ export default function HomePage() {
           </Button>
         </div>
 
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-4">
           <motion.div whileTap={{ scale: 0.95 }}>
             <Link href="/profile">
               <Button
@@ -449,14 +449,16 @@ export default function HomePage() {
           </motion.div>
         </div>
 
-        <Button
-          variant="default"
-          onClick={() => setShowPublishForm(!showPublishForm)}
-          className="mb-4"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Novo Produto
-        </Button>
+        <div className="mb-8">
+          <Button
+            variant="default"
+            onClick={() => setShowPublishForm(!showPublishForm)}
+            className="w-full justify-center"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Novo Produto
+          </Button>
+        </div>
 
         <div className="grid gap-8 md:grid-cols-2">
           {showPublishForm && (
