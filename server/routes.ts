@@ -557,51 +557,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const userData = paymentData.metadata.user_data;
         const planType = paymentData.metadata.plan_type;
 
-        // Verificar se o usuário já existe
-        const existingUser = await storage.getUserByUsername(userData.email);
+        try {
+          // Verificar se o usuário já existe
+          const existingUser = await storage.getUserByUsername(userData.email);
 
-        if (existingUser) {
-          // Se o usuário já existe, apenas atualize o plano
-          const updatedUser = await storage.updateUserProfile(existingUser.id, {
-            planType,
+          if (existingUser) {
+            // Se o usuário já existe, apenas atualize o plano
+            const updatedUser = await storage.updateUserProfile(existingUser.id, {
+              planType: planType,
+              businessName: userData.name,
+              phone: userData.phone
+            });
+
+            // Fazer login automático
+            req.login(updatedUser, (err) => {
+              if (err) {
+                console.error("Erro ao fazer login automático:", err);
+              }
+            });
+
+            return res.json({ status: "approved", user: updatedUser });
+          }
+
+          // Se o usuário não existe, crie um novo
+          const user = await storage.createUser({
+            username: userData.email,
             businessName: userData.name,
-            phone: userData.phone
+            phone: userData.phone,
+            planType: planType,
+            password: await hashPassword(userData.password),
+            confirmPassword: userData.password
+          });
+
+          console.log("Usuário criado/atualizado com sucesso:", {
+            id: user.id,
+            username: user.username,
+            planType
           });
 
           // Fazer login automático
-          req.login(updatedUser, (err) => {
+          req.login(user, (err) => {
             if (err) {
               console.error("Erro ao fazer login automático:", err);
             }
           });
 
-          return res.json({ status: "approved", user: updatedUser });
+          res.json({ status: "approved", user });
+        } catch (error) {
+          console.error("Erro ao criar/atualizar usuário:", error);
+          res.status(500).json({
+            error: "USER_ERROR",
+            message: "Erro ao processar cadastro do usuário"
+          });
         }
-
-        // Se o usuário não existe, crie um novo
-        const user = await storage.createUser({
-          username: userData.email,
-          businessName: userData.name,
-          phone: userData.phone,
-          planType: planType,
-          password: await hashPassword(userData.password),
-          confirmPassword: userData.password
-        });
-
-        console.log("Usuário criado/atualizado com sucesso:", {
-          id: user.id,
-          username: user.username,
-          planType
-        });
-
-        // Fazer login automático
-        req.login(user, (err) => {
-          if (err) {
-            console.error("Erro ao fazer login automático:", err);
-          }
-        });
-
-        res.json({ status: "approved", user });
       } else {
         res.json({
           status: paymentData.status,
