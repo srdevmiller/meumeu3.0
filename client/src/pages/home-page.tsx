@@ -78,17 +78,18 @@ const categories = [
   { id: 11, name: "Outros" },
 ];
 
-const MAX_IMAGE_SIZE = 800; // pixels
+const MAX_FILE_SIZE = 1024 * 1024; // 1MB em bytes
+const MAX_IMAGE_SIZE = 1200; // pixels para largura ou altura máxima
 
-function resizeImage(file: File): Promise<string> {
-  return new Promise((resolve) => {
+async function compressImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = document.createElement('img');
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        let width = img.width;
-        let height = img.height;
+        let { width, height } = img;
+        let quality = 0.9;
+        let canvas = document.createElement('canvas');
 
         // Redimensionar se a imagem for muito grande
         if (width > MAX_IMAGE_SIZE || height > MAX_IMAGE_SIZE) {
@@ -104,19 +105,32 @@ function resizeImage(file: File): Promise<string> {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d')!;
-
-        // Configurar o canvas para preservar transparência
-        ctx.clearRect(0, 0, width, height);
-
+        ctx.fillStyle = 'white'; // Fundo branco para imagens PNG
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Verificar se é PNG para manter a transparência
+        // Tentar comprimir até atingir o tamanho desejado
         const isPNG = file.type === 'image/png';
-        const dataUrl = canvas.toDataURL(isPNG ? 'image/png' : 'image/jpeg', 0.9);
-        resolve(dataUrl);
+        const mimeType = isPNG ? 'image/png' : 'image/jpeg';
+
+        function tryCompress() {
+          const dataUrl = canvas.toDataURL(mimeType, quality);
+          const binary = atob(dataUrl.split(',')[1]);
+          const size = binary.length;
+
+          if (size > MAX_FILE_SIZE && quality > 0.1) {
+            quality -= 0.1;
+            tryCompress();
+          } else {
+            resolve(dataUrl);
+          }
+        }
+
+        tryCompress();
       };
       img.src = e.target?.result as string;
     };
+    reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
@@ -147,7 +161,7 @@ export default function HomePage() {
     const file = event.target.files?.[0];
     if (file) {
       try {
-        const optimizedImageUrl = await resizeImage(file);
+        const optimizedImageUrl = await compressImage(file);
         setImagePreview(optimizedImageUrl);
         form.setValue("imageUrl", optimizedImageUrl);
       } catch (error) {
