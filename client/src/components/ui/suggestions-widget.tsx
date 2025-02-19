@@ -14,7 +14,8 @@ interface SuggestionInfo {
   icon: React.ReactNode;
   label: string;
   description: string;
-  color: string;
+  bgColor: string;
+  textColor: string;
 }
 
 const suggestionTypes: Record<SuggestionType['type'], SuggestionInfo> = {
@@ -23,63 +24,72 @@ const suggestionTypes: Record<SuggestionType['type'], SuggestionInfo> = {
     icon: <Fire size={16} />,
     label: 'Mais Pedido',
     description: 'Este item é um dos mais populares do nosso cardápio',
-    color: 'text-blue-500'
+    bgColor: 'bg-blue-100 dark:bg-blue-900/30',
+    textColor: 'text-blue-600 dark:text-blue-400'
   },
   'premium': {
     type: 'premium',
     icon: <Coffee size={16} />,
     label: 'Premium',
     description: 'Item especial com ingredientes selecionados',
-    color: 'text-purple-500'
+    bgColor: 'bg-purple-100 dark:bg-purple-900/30',
+    textColor: 'text-purple-600 dark:text-purple-400'
   },
   'new': {
     type: 'new',
     icon: <Star size={16} />,
     label: 'Novidade',
     description: 'Item recém adicionado ao cardápio',
-    color: 'text-orange-500'
+    bgColor: 'bg-orange-100 dark:bg-orange-900/30',
+    textColor: 'text-orange-600 dark:text-orange-400'
   },
   'out-of-stock': {
     type: 'out-of-stock',
     icon: <Info size={16} />,
     label: 'Em Falta',
     description: 'Este item está temporariamente indisponível',
-    color: 'text-red-500'
+    bgColor: 'bg-red-100 dark:bg-red-900/30',
+    textColor: 'text-red-600 dark:text-red-400'
   },
   'promotion': {
     type: 'promotion',
     icon: <Star size={16} />,
     label: 'Promoção',
     description: 'Este item está em promoção',
-    color: 'text-green-500'
+    bgColor: 'bg-green-100 dark:bg-green-900/30',
+    textColor: 'text-green-600 dark:text-green-400'
   },
   'healthy': {
     type: 'healthy',
     icon: <Leaf size={16} />,
     label: 'Saudável',
     description: 'Opção mais leve e nutritiva',
-    color: 'text-green-500'
+    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
+    textColor: 'text-emerald-600 dark:text-emerald-400'
   },
   'spicy': {
     type: 'spicy',
     icon: <Fire size={16} />,
     label: 'Picante',
     description: 'Este prato contém ingredientes picantes',
-    color: 'text-red-500'
+    bgColor: 'bg-red-100 dark:bg-red-900/30',
+    textColor: 'text-red-600 dark:text-red-400'
   },
   'vegetarian': {
     type: 'vegetarian',
     icon: <Leaf size={16} />,
     label: 'Vegetariano',
     description: 'Prato 100% vegetariano',
-    color: 'text-emerald-500'
+    bgColor: 'bg-emerald-100 dark:bg-emerald-900/30',
+    textColor: 'text-emerald-600 dark:text-emerald-400'
   },
   'chefs-choice': {
     type: 'chefs-choice',
     icon: <ForkKnife size={16} />,
     label: 'Sugestão do Chef',
     description: 'Recomendação especial do nosso chef',
-    color: 'text-purple-500'
+    bgColor: 'bg-purple-100 dark:bg-purple-900/30',
+    textColor: 'text-purple-600 dark:text-purple-400'
   }
 };
 
@@ -96,11 +106,12 @@ export function SuggestionBadge({ type, className }: SuggestionBadgeProps) {
       <Tooltip>
         <TooltipTrigger asChild>
           <Badge 
-            variant="outline" 
+            variant="secondary" 
             className={cn(
               "cursor-help transition-all duration-200 inline-flex items-center px-2 py-0.5 text-xs hover:scale-110 hover:shadow-md",
-              suggestion.color,
-              "hover:bg-white dark:hover:bg-gray-800",
+              suggestion.bgColor,
+              suggestion.textColor,
+              "hover:bg-white/80 dark:hover:bg-gray-800/80",
               "active:scale-95",
               className
             )}
