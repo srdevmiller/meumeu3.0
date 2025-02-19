@@ -187,6 +187,10 @@ export default function PricingPage() {
     enabled: !!paymentId && showPixCode,
     refetchInterval: (data: any) => {
       if (data?.status === "approved") {
+        toast({
+          title: "Pagamento aprovado!",
+          description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
+        });
         // Quando aprovado, redireciona para home após um pequeno delay
         setTimeout(() => {
           window.location.href = "/home"; // Usando window.location para garantir refresh completo

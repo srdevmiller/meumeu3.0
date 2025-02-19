@@ -567,6 +567,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             businessName: userData.name,
             phone: userData.phone
           });
+
+          // Fazer login automático
+          req.login(updatedUser, (err) => {
+            if (err) {
+              console.error("Erro ao fazer login automático:", err);
+            }
+          });
+
           return res.json({ status: "approved", user: updatedUser });
         }
 
@@ -584,6 +592,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: user.id,
           username: user.username,
           planType
+        });
+
+        // Fazer login automático
+        req.login(user, (err) => {
+          if (err) {
+            console.error("Erro ao fazer login automático:", err);
+          }
         });
 
         res.json({ status: "approved", user });
