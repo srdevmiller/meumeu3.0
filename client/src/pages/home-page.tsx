@@ -608,7 +608,7 @@ export default function HomePage() {
                       className={`relative bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200 ${
                         viewMode === "list"
                           ? "flex items-center h-24"
-                          : ""
+                          : "flex flex-col"
                         } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
                       <div className={viewMode === "list" ? "w-24 h-full flex-shrink-0" : "aspect-square"}>
@@ -618,7 +618,7 @@ export default function HomePage() {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className={viewMode === "list" ? "flex-1 flex items-center justify-between px-4" : "p-2.5 flex flex-col h-full"}>
+                      <div className={viewMode === "list" ? "flex-1 flex items-center justify-between px-4" : "p-2.5 flex flex-col flex-grow"}>
                         <div className="flex-1 flex flex-col">
                           <h3 className="text-[13px] font-semibold break-words">
                             {product.name}
