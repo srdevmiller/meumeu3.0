@@ -622,7 +622,7 @@ export default function HomePage() {
                         <div className="flex flex-col flex-grow">
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <h3 className="text-base sm:text-lg font-semibold break-words max-h-[3.5rem] overflow-hidden">
+                              <h3 className="text-base font-semibold break-words max-h-[2.8rem] overflow-hidden">
                                 {product.name}
                               </h3>
                               <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
@@ -632,7 +632,7 @@ export default function HomePage() {
                           </div>
                         </div>
                         <div className={`flex ${viewMode === "list" ? "justify-between items-center" : "flex-col"} mt-auto pt-2`}>
-                          <p className="text-base sm:text-lg font-bold mb-2">
+                          <p className="text-base font-bold mb-2">
                             R$ {Number(product.price).toFixed(2)}
                           </p>
                           <div className={`flex gap-2 ${viewMode === "list" ? "" : "flex-col w-full"}`}>
