@@ -577,12 +577,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               }
             });
 
-            // Enviar email de boas-vindas
-            await sendWelcomeEmail({
-              name: userData.name,
-              email: userData.email,
-              planType: planType
-            });
 
             const welcomeUrl = `/welcome?name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&planType=${encodeURIComponent(planType)}`;
             return res.json({ status: "approved", user: updatedUser, redirectUrl: welcomeUrl });
@@ -611,37 +605,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           });
 
-          // Enviar email de boas-vindas
-          await sendWelcomeEmail({
-            name: userData.name,
-            email: userData.email,
-            planType: planType
-          });
-
           const welcomeUrl = `/welcome?name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&planType=${encodeURIComponent(planType)}`;
           res.json({ status: "approved", user, redirectUrl: welcomeUrl });
-      } catch (error) {
-        console.error("Erro ao criar/atualizar usuário:", error);
-        res.status(500).json({
-          error: "USER_ERROR",
-          message: "Erro ao processar cadastro do usuário"
+        } catch (error) {
+          console.error("Erro ao criar/atualizar usuário:", error);
+          res.status(500).json({
+            error: "USER_ERROR",
+            message: "Erro ao processar cadastro do usuário"
+          });
+        }
+      } else {
+        res.json({
+          status: paymentData.status,
+          status_detail: paymentData.status_detail
         });
       }
-    } else {
-      res.json({
-        status: paymentData.status,
-        status_detail: paymentData.status_detail
+    } catch (error) {
+      console.error("Erro detalhado ao verificar status do pagamento:", error);
+      res.status(500).json({
+        error: "PAYMENT_ERROR",
+        message: "Erro ao verificar o status do pagamento",
+        details: error instanceof Error ? error.message : "Erro desconhecido"
       });
     }
-  } catch (error) {
-    console.error("Erro detalhado ao verificar status do pagamento:", error);
-    res.status(500).json({
-      error: "PAYMENT_ERROR",
-      message: "Erro ao verificar o status do pagamento",
-      details: error instanceof Error ? error.message : "Erro desconhecido"
-    });
-  }
-});
+  });
 
   const httpServer = createServer(app);
   return httpServer;
