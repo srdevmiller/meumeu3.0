@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import ReactConfetti from 'react-confetti';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useLocation } from "wouter";
+
 
 // Validation schema for the customer form
 const customerFormSchema = z.object({
@@ -193,7 +193,7 @@ export default function PricingPage() {
         });
         // Quando aprovado, redireciona para home após um pequeno delay
         setTimeout(() => {
-          window.location.href = "/home"; // Usando window.location para garantir refresh completo
+          setLocation("/home"); // Using wouter's setLocation
         }, 1500);
         return false; // Para de consultar
       }
