@@ -554,11 +554,7 @@ export default function MenuPage() {
                         />
                       </div>
                       <div className={viewMode === "list" ? "flex-1 flex flex-col p-3 sm:p-4" : "p-3"}>
-                        <div className={
-                          viewMode === "list"
-                            ? "flex flex-col flex-grow"
-                            : "flex flex-col flex-grow"
-                        }>
+                        <div className="flex flex-col flex-grow">
                           <div className="flex flex-col space-y-1.5 mb-2">
                             <h3 className="text-base sm:text-lg font-semibold line-clamp-1">
                               {product.name}
@@ -573,42 +569,42 @@ export default function MenuPage() {
                               className="mt-1"
                             />
                           )}
-                        </div>
-                        <div className="flex justify-between items-center mt-auto pt-2 flex-wrap gap-2">
-                          <p className="text-base sm:text-lg font-bold whitespace-nowrap">
-                            {formatPrice(product.price)}
-                          </p>
-                          <div className="flex items-center gap-1.5 shrink-0">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className={`h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 ${
-                                compareProducts.some((p) => p.id === product.id)
-                                  ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
-                                  : "hover:bg-[var(--theme-color)]/5"
-                              }`}
-                              onClick={() => toggleCompare(product)}
-                            >
-                              <Scale className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 ${
-                                compareProducts.some((p) => p.id === product.id)
-                                  ? "text-[var(--theme-color)]"
-                                  : "text-muted-foreground"
-                              }`} />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon" 
-                              className="h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
-                              onClick={() => toggleFavorite(product.id)}
-                            >
-                              <Heart
-                                className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 transition-colors ${
-                                  data?.favorites.includes(product.id)
-                                    ? "fill-current text-red-500"
-                                    : "text-muted-foreground hover:text-red-400"
+                          <div className="flex justify-between items-center mt-auto pt-2 flex-wrap gap-2">
+                            <p className="text-base sm:text-lg font-bold whitespace-nowrap">
+                              {formatPrice(product.price)}
+                            </p>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 ${
+                                  compareProducts.some((p) => p.id === product.id)
+                                    ? "bg-[var(--theme-color)]/10 hover:bg-[var(--theme-color)]/20"
+                                    : "hover:bg-[var(--theme-color)]/5"
                                 }`}
-                              />
-                            </Button>
+                                onClick={() => toggleCompare(product)}
+                              >
+                                <Scale className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 ${
+                                  compareProducts.some((p) => p.id === product.id)
+                                    ? "text-[var(--theme-color)]"
+                                    : "text-muted-foreground"
+                                }`} />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 xs:h-7 xs:w-7 sm:h-8 sm:w-8 md:h-9 md:w-9 rounded-full transition-all duration-200 hover:bg-red-50 dark:hover:bg-red-950"
+                                onClick={() => toggleFavorite(product.id)}
+                              >
+                                <Heart
+                                  className={`h-3 w-3 xs:h-3.5 xs:w-3.5 sm:h-4 sm:w-4 md:h-5 md:w-5 transition-colors ${
+                                    data?.favorites.includes(product.id)
+                                      ? "fill-current text-red-500"
+                                      : "text-muted-foreground hover:text-red-400"
+                                  }`}
+                                />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -860,7 +856,8 @@ export default function MenuPage() {
             }
 
             [role="slider"]:hover {
-              transform: scale(1.2);            }
+              transform: scale(1.2);
+            }
 
             [role="slider"]:active {
               transform: scale(0.95);
@@ -869,7 +866,7 @@ export default function MenuPage() {
             /* Range track styling */
             .range {
               transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                        }
+            }
 
             /* Add spring effect to buttons */
             button:active {
