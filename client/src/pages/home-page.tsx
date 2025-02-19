@@ -611,7 +611,7 @@ export default function HomePage() {
                           : ""
                       } border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/40 hover:shadow-lg transition-all duration-300`}
                     >
-                      <div className={viewMode === "list" ? "w-36 sm:w-48 h-full flex-shrink-0" : "aspect-square"}>
+                      <div className={viewMode === "list" ? "w-24 h-full flex-shrink-0" : "aspect-square"}> {/* Reduced width for list view */}
                         <img
                           src={product.imageUrl}
                           alt={product.name}
