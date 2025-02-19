@@ -182,6 +182,7 @@ export default function HomePage() {
   const updateProductMutation = useMutation({
     mutationFn: async (data: InsertProduct & { id: number }) => {
       const { id, ...product } = data;
+      console.log('Updating product with data:', product); // Log para debug
       const res = await apiRequest("PATCH", `/api/products/${id}`, product);
       if (!res.ok) {
         const error = await res.text();
@@ -232,20 +233,19 @@ export default function HomePage() {
 
   const handleEdit = (product: Product) => {
     setEditingProduct(product);
-    setShowPublishForm(true); // Mostra o formulário quando editar
+    setShowPublishForm(true);
     form.reset({
       name: product.name,
       price: Number(product.price),
       imageUrl: product.imageUrl,
       categoryId: product.categoryId,
-      suggestions: product.suggestions, // Include suggestions in reset
+      suggestions: product.suggestions || [], // Garantir que suggestions é um array
     });
     setImagePreview(product.imageUrl);
   };
 
   const handleSubmit = (data: InsertProduct) => {
     if (editingProduct) {
-      // Garantir que o ID do produto está sendo passado corretamente
       updateProductMutation.mutate({
         ...data,
         id: editingProduct.id
