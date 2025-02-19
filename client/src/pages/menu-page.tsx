@@ -64,6 +64,7 @@ const categories = [
 type MenuData = {
   products: (Product & {
     suggestions?: string[];
+    description?: string; // Added description field
   })[];
   businessName: string;
   bannerImageUrl?: string;
@@ -616,6 +617,12 @@ export default function MenuPage() {
                               </p>
                             )}
                           </div>
+
+                          {product.description && (
+                            <p className="text-sm text-muted-foreground mt-2">
+                              {product.description}
+                            </p>
+                          )}
 
                           <div className="flex flex-col gap-2">
                             <span className="inline-flex items-center rounded-md bg-[var(--theme-color)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--theme-color)] w-fit">
