@@ -634,7 +634,7 @@ export default function HomePage() {
                             <p className="text-sm font-medium whitespace-nowrap">
                               R$ {Number(product.price).toFixed(2)}
                             </p>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col gap-2">
                               <Button
                                 variant="outline"
                                 className="text-[10px] h-6 py-0"
@@ -659,10 +659,10 @@ export default function HomePage() {
                             <p className="text-sm font-medium">
                               R$ {Number(product.price).toFixed(2)}
                             </p>
-                            <div className="flex flex-col w-full gap-1">
+                            <div className="flex gap-2">
                               <Button
                                 variant="outline"
-                                className="text-[10px] h-6 py-0 w-full"
+                                className="text-[10px] h-6 py-0 flex-1"
                                 onClick={() => handleEdit(product)}
                               >
                                 <Pencil className="h-3 w-3 mr-1" />
@@ -670,7 +670,7 @@ export default function HomePage() {
                               </Button>
                               <Button
                                 variant="outline"
-                                className="text-[10px] h-6 py-0 w-full text-red-500 hover:text-red-600"
+                                className="text-[10px] h-6 py-0 flex-1 text-red-500 hover:text-red-600"
                                 onClick={() => setProductToDelete(product)}
                               >
                                 <Trash2 className="h-3 w-3 mr-1" />
