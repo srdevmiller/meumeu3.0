@@ -624,7 +624,7 @@ export default function MenuPage() {
                           <p className="text-xl font-bold">
                             {formatPrice(product.price)}
                           </p>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center" style={{ gap: "0.3rem" }}>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -667,7 +667,7 @@ export default function MenuPage() {
                         </div>
 
                         {viewMode === "list" && (
-                          <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                          <div className="absolute bottom-4 right-4 flex items-center" style={{ gap: "0.3rem" }}>
                             <Button
                               variant="ghost"
                               size="icon"
@@ -823,11 +823,11 @@ export default function MenuPage() {
             <Link href="/">
               <Button
                 variant="outline"
-                className="bg-white hover:bg-gray-50 text-black hover:text-black px-12 py-8 h-auto text-xl font-semibold tracking-wide rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-white/20"
+                className="bg-white hover:bg-gray-50 text-black hover:text-black px-12 py-8 h-auto text-xl font-semibold tracking-wide rounded-xl shadow-lg transformtransition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-white/20"
               >
                 Crie seu cardápio gratuitamente
               </Button>
-                        </Link>
+            </Link>
           </div>
         </motion.div>
         <style jsx global>{`
