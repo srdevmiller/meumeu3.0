@@ -689,7 +689,7 @@ export default function HomePage() {
                             {categories.find((c) => c.id === product.categoryId)?.name}
                           </span>
                         </div>
-                        <div className={`flex flex-col gap-2 ${viewMode === "list" ? "flex justify-center min-w-[80px] mr-4" : "mt-auto pt-2"}`}>
+                        <div className={`flex flex-col gap-2 ${viewMode === "list" ? "flex flex-col justify-center min-w-[80px] mr-6" : "mt-auto pt-2"}`}>
                           <Button
                             variant="outline"
                             className="text-[10px] h-7 px-3 w-full whitespace-nowrap overflow-hidden text-ellipsis"
