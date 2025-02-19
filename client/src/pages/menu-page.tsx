@@ -604,16 +604,16 @@ export default function MenuPage() {
                             : "flex flex-col p-4 flex-1"
                         }
                       >
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-3">
                           <h3 className="font-semibold text-lg line-clamp-2">
                             {product.name}
                           </h3>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="inline-flex items-center rounded-full bg-[var(--theme-color)]/10 px-2 py-1 text-xs font-medium text-[var(--theme-color)]">
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center rounded-md bg-[var(--theme-color)]/10 px-2.5 py-0.5 text-xs font-medium text-[var(--theme-color)]">
                               {categories.find((c) => c.id === product.categoryId)?.name}
                             </span>
                             {product.suggestions && product.suggestions.includes("new") && (
-                              <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-2 py-1 text-xs font-medium text-green-600 dark:text-green-400">
+                              <span className="inline-flex items-center rounded-md bg-emerald-50 dark:bg-emerald-900/30 px-2.5 py-0.5 text-xs font-medium text-emerald-600 dark:text-emerald-400">
                                 Novidade
                               </span>
                             )}
