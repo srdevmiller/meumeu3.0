@@ -121,8 +121,32 @@ export default function PricingPage() {
   const [showPixCode, setShowPixCode] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [paymentApproved, setPaymentApproved] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+
+  // Effect to handle payment approval and redirect
+  useEffect(() => {
+    if (paymentApproved) {
+      console.log("Payment approved, redirecting...");
+      toast({
+        title: "Pagamento aprovado!",
+        description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
+      });
+
+      // Clear states and redirect
+      setShowPixCode(false);
+      setPaymentId(null);
+
+      // Add a small delay before redirect
+      const redirectTimeout = setTimeout(() => {
+        console.log("Executing redirect to /home");
+        setLocation("/home");
+      }, 2000);
+
+      return () => clearTimeout(redirectTimeout);
+    }
+  }, [paymentApproved, setLocation, toast]);
 
   // Add effect to control confetti duration
   useEffect(() => {
@@ -184,27 +208,17 @@ export default function PricingPage() {
       if (!response.ok) throw new Error("Erro ao verificar pagamento");
       return response.json();
     },
-    enabled: !!paymentId && showPixCode,
+    enabled: !!paymentId && showPixCode && !paymentApproved,
     refetchInterval: (data: any) => {
       if (data?.status === "approved") {
-        toast({
-          title: "Pagamento aprovado!",
-          description: "Seu cadastro foi concluído com sucesso. Redirecionando...",
-        });
-
-        // Limpar estados e redirecionar
-        setTimeout(() => {
-          setShowPixCode(false);
-          setPaymentId(null);
-          setLocation("/home");
-        }, 1500);
-
-        return false; // Para imediatamente de consultar
+        console.log("Payment approved in query, setting state...");
+        setPaymentApproved(true);
+        return false;
       }
-      return 5000; // Continua consultando a cada 5 segundos
+      return 5000;
     },
-    retry: 3, // Limita o número de tentativas em caso de erro
-    staleTime: 0, // Sempre busca dados frescos
+    retry: 3,
+    staleTime: 0,
   });
 
 
