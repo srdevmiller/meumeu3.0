@@ -564,7 +564,7 @@ export default function MenuPage() {
               <div
                 className={
                   viewMode === "grid"
-                    ? "grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 max-w-[1200px] mx-auto"
+                    ? "grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-[1200px] mx-auto"
                     : "flex flex-col gap-4 md:gap-6"
                 }
               >
